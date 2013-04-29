@@ -10,10 +10,60 @@
 
 @implementation FrecipeAppDelegate
 
+NSString *const FBSessionStateChangedNotification = @"com.Frecipe.Frecipe:FBSessionStateChangedNotification";
+
+- (void)sessionStateChanged:(FBSession *)session State: (FBSessionState) state Error: (NSError *)error {
+    switch (state) {
+        case FBSessionStateOpen:
+            if (!error) {
+            }
+            break;
+        case FBSessionStateClosed:
+        case FBSessionStateClosedLoginFailed:
+            [FBSession.activeSession closeAndClearTokenInformation];
+            break;
+        default:
+            break;
+    }
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:FBSessionStateChangedNotification object:session];
+    if (error) {
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:error.localizedDescription delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [alertView show];
+    }
+}
+
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     // Override point for customization after application launch.
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSString *authentication_token = [defaults objectForKey:@"authentication_token"];
+    
+    [[UIBarButtonItem appearance] setTintColor:[[UIColor alloc] initWithRed:0.86 green:0.30 blue:0.27 alpha:1]];
+    
+    
+    [[UINavigationBar appearance] setBackgroundImage:[UIImage imageNamed:@"bar_red.png"] forBarMetrics:UIBarMetricsDefault];
+    
+    [[UISearchBar appearance] setBackgroundImage:[UIImage imageNamed:@"bar_red.png"]];
+    
+    [[UIToolbar appearance] setBackgroundImage:[UIImage imageNamed:@"bar_red.png"] forToolbarPosition:UIToolbarPositionBottom barMetrics:UIBarMetricsDefault   ];
+    
+    UIStoryboard *storyboard = self.window.rootViewController.storyboard;
+    UIViewController *initViewController;
+
+    if (authentication_token) {
+        initViewController = [storyboard instantiateViewControllerWithIdentifier:@"Initial"];
+        
+    } else {
+        initViewController = [storyboard instantiateViewControllerWithIdentifier:@"Login"];
+    }
+    
+    self.window.rootViewController = initViewController;
     return YES;
+}
+
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
+    return [FBSession.activeSession handleOpenURL:url];
 }
 							
 - (void)applicationWillResignActive:(UIApplication *)application

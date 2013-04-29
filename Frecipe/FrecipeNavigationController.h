@@ -10,4 +10,6 @@
 
 @interface FrecipeNavigationController : UINavigationController
 
+- (void)revealMenu;
+
 @end

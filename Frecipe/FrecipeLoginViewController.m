@@ -7,8 +7,18 @@
 //
 
 #import "FrecipeLoginViewController.h"
+#import "FrecipeAPIClient.h"
+#import "FrecipeAppDelegate.h"
+#import "FrecipeSignupViewController.h"
+#import <QuartzCore/QuartzCore.h>
 
-@interface FrecipeLoginViewController ()
+@interface FrecipeLoginViewController () <UITextFieldDelegate>
+
+@property (strong, nonatomic) UITextField *currentField;
+@property (strong, nonatomic) NSString *email;
+@property (strong, nonatomic) NSString *firstName;
+@property (strong, nonatomic) NSString *lastName;
+@property (strong, nonatomic) NSString *uid;
 
 @end
 
@@ -27,12 +37,183 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
+    self.emailField.delegate = self;
+    self.passwordField.delegate = self;
+    [self addGestureRecognizers];
+}
+
+
+- (void)viewDidDisappear:(BOOL)animated {
+    [super viewDidDisappear:animated];
+    self.emailField.text = @"";
+    self.passwordField.text = @"";
+    [self.emailField resignFirstResponder];
+    [self.passwordField resignFirstResponder];
 }
 
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (IBAction)loginButtonPressed {
+    FrecipeAPIClient *client = [FrecipeAPIClient client];
+    [[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];
+    [[AFNetworkActivityIndicatorManager sharedManager] incrementActivityCount];
+    
+    NSString *path = @"tokens";
+    NSArray *keys = [NSArray arrayWithObjects:@"email", @"password",  nil];
+    NSArray *values = [NSArray arrayWithObjects:self.emailField.text, self.passwordField.text, nil];
+    NSDictionary *parameters = [NSDictionary dictionaryWithObjects:values forKeys:keys];
+    NSURLRequest *request = [client requestWithMethod:@"POST" path:path parameters:parameters];
+    
+    AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
+        
+        
+        // save retrieved user data
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        [defaults setObject:[JSON objectForKey:@"token"] forKey:@"authentication_token"];
+        [defaults setObject:[[JSON objectForKey:@"user"] objectForKey:@"id"] forKey:@"id"];
+        
+        if ([[NSString stringWithFormat:@"%@", [[JSON objectForKey:@"user"] objectForKey:@"provider"]] isEqualToString:@"facebook"]) {
+            [defaults setObject:[[JSON objectForKey:@"user"] objectForKey:@"provider"] forKey:@"provider"];
+            [defaults setObject:[[JSON objectForKey:@"user"] objectForKey:@"uid"] forKey:@"uid"];
+        }
+        
+        [defaults synchronize];
+        
+        [self performSegueWithIdentifier:@"Login" sender:self];
+        
+        [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
+        
+    } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
+        UIAlertView *errorView = [[UIAlertView alloc] initWithTitle:@"LoginError" message:[JSON objectForKey:@"message"] delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: nil];
+        [errorView show];
+        [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
+    }];
+    [operation start];
+}
+- (IBAction)loginWithFacebookButtonPressed {
+    NSArray *permissions = [[NSArray alloc] initWithObjects:
+                            @"email",
+                            @"user_likes",
+                            nil];
+    [FBSession openActiveSessionWithReadPermissions:permissions allowLoginUI:YES completionHandler:^(FBSession *session, FBSessionState status, NSError *error) {
+        FrecipeAppDelegate *delegate = [[UIApplication sharedApplication] delegate];
+        
+        [delegate sessionStateChanged:session State:status Error:error];
+        
+        if (FBSession.activeSession.isOpen) {
+            [[FBRequest requestForMe] startWithCompletionHandler:^(FBRequestConnection *connection, NSDictionary<FBGraphUser> *user, NSError *error) {
+                if (!error) {
+                    [self checkIfFacebookUserIsRegisteredWithId:user.id Email:[user objectForKey:@"email"] FirstName:user.first_name LastName:user.last_name];
+                } else {
+                    NSLog(@"error TT");
+                }
+                
+            }];
+        }
+    }];
+}
+
+- (void)checkIfFacebookUserIsRegisteredWithId:(NSString *)uid Email:(NSString *)email FirstName:(NSString *)firstName LastName:(NSString *)lastName {
+    NSString *path = @"tokens/facebook_check";
+    [[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];
+    [[AFNetworkActivityIndicatorManager sharedManager] incrementActivityCount];
+    
+    FrecipeAPIClient *client = [FrecipeAPIClient client];
+    
+    NSArray *keys = [NSArray arrayWithObjects:@"email", @"uid", nil];
+    NSArray *values = [NSArray arrayWithObjects:email, uid, nil];
+    
+    NSDictionary *parameters = [NSDictionary dictionaryWithObjects:values forKeys:keys];
+    
+    NSURLRequest *request = [client requestWithMethod:@"POST" path:path parameters:parameters];
+    
+    AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
+        NSString *message = [JSON objectForKey:@"message"];
+        if ([message isEqualToString:@"needs signup"]) {
+            self.email = email;
+            self.firstName = firstName;
+            self.lastName = lastName;
+            self.uid = uid;
+            [self performSegueWithIdentifier:@"Signup" sender:self];
+            
+        } else {
+            NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+            [defaults setObject:[JSON objectForKey:@"token"] forKey:@"authentication_token"];
+            
+            [defaults setObject:[[JSON objectForKey:@"user"] objectForKey:@"id"] forKey:@"id"];
+            [defaults setObject:[[JSON objectForKey:@"user"] objectForKey:@"provider"] forKey:@"provider"];
+            [defaults setObject:uid forKey:@"uid"];
+            [defaults synchronize];
+            
+            [self performSegueWithIdentifier:@"Login" sender:self];
+        }
+        [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
+    } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
+        NSLog(@"%@", error);
+        [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
+    }];
+    [operation start];
+}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    if ([segue.identifier isEqualToString:@"Signup"]) {
+        FrecipeSignupViewController *signupViewController = (FrecipeSignupViewController *)segue.destinationViewController;
+        if (signupViewController.view) {
+            if (self.email) {
+                //                signupViewController.emailField.text = self.email;
+                //                signupViewController.firstNameField.text = self.firstName;
+                //                signupViewController.secondNameField.text = self.lastName;
+                //                signupViewController.uid = self.uid;
+                //                signupViewController.emailField.enabled = NO;
+                //                signupViewController.firstNameField.enabled = NO;
+                //                signupViewController.secondNameField.enabled = NO;
+                //                signupViewController.emailField.backgroundColor = [UIColor lightGrayColor];
+                //                signupViewController.firstNameField.backgroundColor = [UIColor lightGrayColor];
+                //                signupViewController.secondNameField.backgroundColor = [UIColor lightGrayColor];
+                
+                self.email = nil;
+                self.firstName = nil;
+                self.lastName = nil;
+            } else {
+                //                signupViewController.emailField.enabled = YES;
+                //                signupViewController.firstNameField.enabled = YES;
+                //                signupViewController.secondNameField.enabled = YES;
+                //                signupViewController.emailField.backgroundColor = [UIColor whiteColor];
+                //                signupViewController.firstNameField.backgroundColor = [UIColor whiteColor];
+                //                signupViewController.secondNameField.backgroundColor = [UIColor whiteColor];
+            }
+        }
+    }
+}
+
+// gesture recognizers
+- (void)addGestureRecognizers {
+    UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissKeyboard)];
+    [self.view addGestureRecognizer:tapGestureRecognizer];
+}
+
+// text delegate methods
+
+- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField {
+    self.currentField = textField;
+    
+    self.scrollView.contentSize = CGSizeMake(self.view.frame.size.width, self.view.frame.size.height);
+    [self.scrollView scrollRectToVisible:textField.frame animated:YES];
+    
+    
+    return YES;
+}
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+    [textField resignFirstResponder];
+    return YES;
+}
+
+- (void)dismissKeyboard {
+    [self.currentField resignFirstResponder];
 }
 
 @end

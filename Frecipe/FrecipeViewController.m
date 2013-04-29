@@ -7,17 +7,47 @@
 //
 
 #import "FrecipeViewController.h"
+#import "FrecipeNavigationController.h"
+#import "FrecipeAPIClient.h"
+#import "FrecipeAppDelegate.h"
+#import "FrecipeRecipeDetailViewController.h"
+#import "FrecipeFunctions.h"
+#import <SDWebImage/UIImageView+WebCache.h>
 
-@interface FrecipeViewController ()
+@interface FrecipeViewController () <UICollectionViewDelegateFlowLayout, UICollectionViewDataSource>
+
+@property (strong, nonatomic) NSMutableArray *recipes;
+@property (strong, nonatomic) UIRefreshControl *refreshControl;
+@property (strong, nonatomic) NSDictionary *selectedRecipe;
+@property (strong, nonatomic) NSString *selectedUserId;
+@property (strong, nonatomic) NSMutableArray *facebookFriendsIds;
+@property (strong, nonatomic) NSMutableArray *facebookFriends;
 
 @end
 
 @implementation FrecipeViewController
 
+@synthesize facebookFriendsIds = _facebookFriendsIds;
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
+    self.navigationItem.titleView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"frecipe_name.png"]];
+    
+    self.recipesCollectionView.dataSource = self;
+    self.recipesCollectionView.delegate = self;
+    
+    [self addRefreshControl];
+    
+    self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Frecipe" style:UIBarButtonItemStyleBordered target:self action:nil];
+
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    [self fetchRecipes];
+    [self fetchFacebookFriends];
 }
 
 - (void)didReceiveMemoryWarning
@@ -26,4 +56,197 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (void)fetchRecipes {
+    NSString *path = @"/recipes/possible";
+    [[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];
+    [[AFNetworkActivityIndicatorManager sharedManager] incrementActivityCount];
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSString *authentication_token = [defaults objectForKey:@"authentication_token"];
+    NSDictionary *parameters = [NSDictionary dictionaryWithObject:authentication_token forKey:@"authentication_token"];
+    
+    FrecipeAPIClient *client = [FrecipeAPIClient client];
+    NSURLRequest *request = [client requestWithMethod:@"GET" path:path parameters:parameters];
+    
+    UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
+    spinner.center = self.view.center;
+    [spinner startAnimating];
+    [self.view addSubview:spinner];
+    
+    AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
+        self.recipes = JSON;
+        
+        self.refreshControl.attributedTitle = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"Last updated on %@", [FrecipeFunctions currentDate]]];
+        
+        
+        [spinner stopAnimating];
+        [spinner removeFromSuperview];
+        [self.refreshControl endRefreshing];
+        
+        [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
+        [self reloadRecipesTable];
+        
+    } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
+        NSLog(@"%@", error);
+        
+        [spinner stopAnimating];
+        [spinner removeFromSuperview];
+        [self.refreshControl endRefreshing];
+        
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:@"There was an error loading recipes. Retry?" delegate:self cancelButtonTitle:@"Retry" otherButtonTitles:@"Cancel", nil];
+        
+        [alertView show];
+        [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
+    }];
+    [operation start];
+}
+
+- (void)fetchFacebookFriends {
+    if (!FBSession.activeSession.isOpen) {
+        [FBSession openActiveSessionWithAllowLoginUI:NO];
+    }
+    
+    FBRequest *request = [FBRequest requestForMyFriends];
+    [request startWithCompletionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
+        self.facebookFriends = [NSMutableArray arrayWithArray:[result objectForKey:@"data"]];
+        for (NSDictionary *facebookFriend in self.facebookFriends) {
+            [self.facebookFriendsIds addObject:[NSString stringWithFormat:@"%@", [facebookFriend objectForKey:@"id"]]];
+        }
+        [self reloadRecipesTable];
+    }];
+}
+
+- (void)reloadRecipesTable {
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    
+    NSString *provider = [defaults stringForKey:@"provider"];
+    
+    if ([provider isEqualToString:@"facebook"]) {
+        if (self.facebookFriends != nil && self.recipes != nil) {
+            [self.recipesCollectionView reloadData];
+        }
+    } else {
+        [self.recipesCollectionView reloadData];
+    }
+}
+
+- (void)flipCell:(UITapGestureRecognizer *)tapGestureRecognizer {
+    UITableViewCell *cell;
+    
+    UIView *view1;
+    UIView *view2;
+    if (tapGestureRecognizer.view.tag == 8) {
+        cell = (UITableViewCell *)tapGestureRecognizer.view.superview.superview.superview;
+        
+        view1 = [cell viewWithTag:1];
+        view2 = [cell viewWithTag:5];
+        
+    } else {
+        cell = (UITableViewCell *)tapGestureRecognizer.view.superview.superview;
+        view1 = [cell viewWithTag:5];
+        view2 = [cell viewWithTag:1];
+    }
+    
+    
+    [UIView animateWithDuration:0.5 animations:^{
+        view1.alpha = 1.0;
+        view2.alpha = 0;
+        
+        //        cell.backView.alpha = 1.0;
+        //        cell.frontView.alpha = 0;
+    } completion:^(BOOL finished) {
+        //        UIView *tempView = cell.frontView;
+        //        cell.frontView = cell.backView;
+        //        cell.backView = tempView;
+    }];
+}
+
+- (void)addRefreshControl {
+    // pull to refresh
+    
+    UIRefreshControl *refreshControl = [[UIRefreshControl alloc] init];
+    [refreshControl addTarget:self action:@selector(fetchRecipes) forControlEvents:UIControlEventValueChanged];
+    refreshControl.attributedTitle = [[NSAttributedString alloc] initWithString:@"Pull down to refresh recipes!"];
+    [self.recipesCollectionView addSubview:refreshControl];
+    self.refreshControl = refreshControl;
+    self.recipesCollectionView.alwaysBounceVertical = YES;
+}
+
+// alert view delegate methods
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    if ([alertView.title isEqualToString:@"Error"]) {
+        if (buttonIndex == 0) {
+            [self fetchRecipes];
+        }
+    }
+}
+
+// collection view delegate methods
+
+- (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
+    return 1;
+}
+
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
+    return self.recipes.count;
+}
+
+- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
+    UICollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"RecipeCell" forIndexPath:indexPath];
+    UIImageView *recipeImageView = (UIImageView *)[cell viewWithTag:6];
+    if (PRODUCTION) {
+        [recipeImageView setImageWithURL:[[self.recipes objectAtIndex:indexPath.row] objectForKey:@"recipe_image"] placeholderImage:[UIImage imageNamed:@"bar_red.png"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType) {
+        }];
+    } else {
+        [recipeImageView setImageWithURL:[NSString stringWithFormat:@"http://localhost:5000/%@",[[self.recipes objectAtIndex:indexPath.row] objectForKey:@"recipe_image"]] placeholderImage:[UIImage imageNamed:@"bar_red.png"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType) {
+        }];
+    }
+    
+    UIView *flipView1 = [cell viewWithTag:8];
+    UIView *flipView2 = [cell viewWithTag:1];
+    
+    UITapGestureRecognizer *flipGestureRecognizer1 = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(flipCell:)];
+    UITapGestureRecognizer *flipGestureRecognizer2 = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(flipCell:)];
+    
+    [flipView1 addGestureRecognizer:flipGestureRecognizer1];
+    [flipView2 addGestureRecognizer:flipGestureRecognizer2];
+    
+    UITextView *recipeNameView = (UITextView *)[cell viewWithTag:8];
+    recipeNameView.text = [NSString stringWithFormat:@"%@", [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"recipe_name"]];
+    
+    UILabel *recipeNameLabel = (UILabel *)[cell viewWithTag:2];
+    recipeNameLabel.text = [NSString stringWithFormat:@"%@", [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"recipe_name"]];
+    
+    NSDictionary *user = [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"user"];
+    UIButton *chefNameButton = (UIButton *)[cell viewWithTag:3];
+    [chefNameButton setTitle:[NSString stringWithFormat:@"%@ %@", [user objectForKey:@"first_name"], [user objectForKey:@"last_name"]] forState:UIControlStateNormal];
+    
+    NSMutableArray *missingIngredientsStringArray = [[NSMutableArray alloc] init];
+    NSArray *missingIngredients = [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"missing_ingredients"];
+    for (NSDictionary *missingIngredient in missingIngredients) {
+        [missingIngredientsStringArray addObject:[missingIngredient objectForKey:@"name"]];
+    }
+    NSString *missingIngredientsString = [missingIngredientsStringArray componentsJoinedByString:@","];
+    
+    UITextView *missingIngredientsView = (UITextView *)[cell viewWithTag:4];
+    missingIngredientsView.text = [NSString stringWithFormat:@"%u Missing Ingredients: %@", missingIngredients.count, missingIngredientsString];
+    
+    
+    return cell;
+}
+
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+    self.selectedRecipe = [self.recipes objectAtIndex:indexPath.row];
+    [self performSegueWithIdentifier:@"RecipeDetail" sender:self];
+}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    if ([segue.identifier isEqualToString:@"RecipeDetail"]) {
+        FrecipeRecipeDetailViewController *recipeDetailViewController = (FrecipeRecipeDetailViewController *) segue.destinationViewController;
+        recipeDetailViewController.recipeId = [self.selectedRecipe objectForKey:@"id"];
+    } else if ([segue.identifier isEqualToString:@"Profile"]) {
+        
+    }
+}
 @end

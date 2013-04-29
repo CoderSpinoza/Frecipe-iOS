@@ -10,4 +10,5 @@
 
 @interface FrecipeViewController : UIViewController
 
+@property (weak, nonatomic) IBOutlet UICollectionView *recipesCollectionView;
 @end

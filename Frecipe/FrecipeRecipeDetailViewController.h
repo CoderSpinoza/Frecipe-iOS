@@ -10,4 +10,5 @@
 
 @interface FrecipeRecipeDetailViewController : UIViewController
 
+@property (strong, nonatomic) NSString *recipeId;
 @end

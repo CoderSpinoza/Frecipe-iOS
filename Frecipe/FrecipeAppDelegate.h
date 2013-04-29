@@ -7,9 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
-
+#import <FacebookSDK/FacebookSDK.h>
+#define PRODUCTION YES
 @interface FrecipeAppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
-
+extern NSString *const FBSessionStateChangedNotification;
+- (void)sessionStateChanged:(FBSession *)session State: (FBSessionState) state Error: (NSError *)error;
 @end

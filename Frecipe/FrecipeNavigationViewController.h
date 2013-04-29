@@ -10,4 +10,5 @@
 
 @interface FrecipeNavigationViewController : UIViewController
 
+@property (weak, nonatomic) IBOutlet UICollectionView *menuCollectionView;
 @end

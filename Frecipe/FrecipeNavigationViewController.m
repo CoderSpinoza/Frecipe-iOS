@@ -7,8 +7,12 @@
 //
 
 #import "FrecipeNavigationViewController.h"
+#import "ECSlidingViewController.h"
+#import <FacebookSDK/FacebookSDK.h>
 
-@interface FrecipeNavigationViewController ()
+@interface FrecipeNavigationViewController () <UICollectionViewDataSource, UICollectionViewDelegateFlowLayout>
+
+@property (strong, nonatomic) NSArray *menu;
 
 @end
 
@@ -27,12 +31,106 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
+    self.menu = [NSArray arrayWithObjects:@"frecipe.jpg", @"my_fridge.jpg", @"my_restaurant.jpg", @"grocery_list.jpg", @"logout.jpg", nil];
+    [self.slidingViewController setAnchorRightRevealAmount:200.0f];
+    self.slidingViewController.underLeftWidthLayout = ECFullWidth;
+    
+    self.menuCollectionView.delegate = self;
+    self.menuCollectionView.dataSource = self;
 }
 
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (IBAction)menuButtonPressed:(UIButton *)sender {
+    UICollectionViewCell *cell = (UICollectionViewCell *)sender.superview.superview;
+    
+    NSIndexPath *indexPath = [self.menuCollectionView indexPathForCell:cell];
+    
+    NSString *identifier = [NSString stringWithFormat:@"%@", [self.menu objectAtIndex:indexPath.row]];
+    
+    if ([identifier isEqualToString:@"logout.jpg"]) {
+        UIViewController *newTopViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"Login"];
+        
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        [defaults setObject:nil forKey:@"authentication_token"];
+        [defaults setObject:nil forKey:@"provider"];
+        [defaults setObject: nil forKey:@"uid"];
+        [defaults setObject:nil forKey:@"id"];
+        [defaults synchronize];
+        
+        [FBSession.activeSession closeAndClearTokenInformation];
+        [self.slidingViewController anchorTopViewOffScreenTo:ECRight animations:nil onComplete:^{
+            self.slidingViewController.topViewController = newTopViewController;
+            [self.slidingViewController resetTopView];
+            
+        }];
+    } else {
+        UIViewController *newTopViewController = [self.storyboard instantiateViewControllerWithIdentifier:identifier];
+        
+        [self.slidingViewController anchorTopViewOffScreenTo:ECRight animations:nil onComplete:^{
+            self.slidingViewController.topViewController = newTopViewController;
+            [self.slidingViewController resetTopView];
+            
+        }];
+    }
+}
+// collection view delegate and dataSource methods
+
+- (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
+    return 1;
+}
+
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
+    return self.menu.count;
+}
+
+- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
+    static NSString *CellIdentifier = @"MenuCell";
+    UICollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:CellIdentifier forIndexPath:indexPath];
+    
+    UIButton *button = (UIButton *)[cell viewWithTag:1];
+    
+    
+    [button setImage:[UIImage imageNamed:[self.menu objectAtIndex:indexPath.row]] forState:UIControlStateNormal];
+    
+    return cell;
+}
+
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+    
+    NSString *identifier = [NSString stringWithFormat:@"%@", [self.menu objectAtIndex:indexPath.row]];
+    
+    if ([identifier isEqualToString:@"logout.jpg"]) {
+        UIViewController *newTopViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"Login"];
+        
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        [defaults setObject:nil forKey:@"authentication_token"];
+        [defaults setObject:nil forKey:@"provider"];
+        [defaults setObject: nil forKey:@"uid"];
+        [defaults setObject:nil forKey:@"id"];
+        [defaults synchronize];
+        
+        [FBSession.activeSession closeAndClearTokenInformation];
+        [self.slidingViewController anchorTopViewOffScreenTo:ECRight animations:nil onComplete:^{
+            self.slidingViewController.topViewController = newTopViewController;
+            [self.slidingViewController resetTopView];
+            
+        }];
+        
+    } else {
+        UIViewController *newTopViewController = [self.storyboard instantiateViewControllerWithIdentifier:identifier];
+        
+        [self.slidingViewController anchorTopViewOffScreenTo:ECRight animations:nil onComplete:^{
+            self.slidingViewController.topViewController = newTopViewController;
+            [self.slidingViewController resetTopView];
+            
+        }];
+        
+    }
 }
 
 @end
