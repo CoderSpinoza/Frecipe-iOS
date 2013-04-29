@@ -105,7 +105,6 @@
     NSMutableArray *ids = [[NSMutableArray alloc] initWithCapacity:self.selectedGroceryList.count];
     for (id ingredient in self.selectedGroceryList) {
         NSString *ingredientId = [ingredient objectForKey:@"id"];
-        NSLog(@"%@", ingredient);
         [ids insertObject:ingredientId atIndex:0];
     }
     
@@ -156,6 +155,7 @@
         NSDictionary *addRow = [NSDictionary dictionaryWithObjects:values forKeys:keys];
         [self.groceryList insertObject:addRow atIndex:0];
         [self.groceryListTableView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:0 inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
+//        [self.groceryListTableView reloadData];
         
         [self.groceryListTableView setEditing:YES animated:YES];
         
