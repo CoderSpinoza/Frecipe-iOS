@@ -7,7 +7,25 @@
 //
 
 #import "FrecipeAPIClient.h"
+#import "FrecipeAppDelegate.h"
 
 @implementation FrecipeAPIClient
+
++ (FrecipeAPIClient *)client {
+    NSString *url;
+    if (PRODUCTION) {
+        url = @"http://fast-ravine-6720.herokuapp.com/";
+    } else {
+        url = @"http://localhost:5000/";
+    }
+    
+    static FrecipeAPIClient *sharedClient = nil;
+    static dispatch_once_t oncePredicate;
+    dispatch_once(&oncePredicate, ^{
+        sharedClient = [[self alloc] initWithBaseURL:[NSURL URLWithString:url]];
+    });
+    return sharedClient;
+}
+
 
 @end

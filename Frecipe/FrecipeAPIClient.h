@@ -7,7 +7,11 @@
 //
 
 #import "AFHTTPClient.h"
+#import "AFNetworkActivityIndicatorManager.h"
+#import "AFJSONRequestOperation.h"
 
 @interface FrecipeAPIClient : AFHTTPClient
+
++ (FrecipeAPIClient *)client;
 
 @end

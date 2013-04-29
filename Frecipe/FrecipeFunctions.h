@@ -10,4 +10,9 @@
 
 @interface FrecipeFunctions : NSObject
 
++ (NSString *)currentDate;
+
++ (NSString *)compareWithCurrentDate:(NSString *)specifiedDate;
+
+
 @end
