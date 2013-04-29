@@ -56,6 +56,20 @@
 		C2A3285C172E036300EBB23B /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = C2A3285B172E036300EBB23B /* Default.png */; };
 		C2A3285E172E036600EBB23B /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C2A3285D172E036600EBB23B /* Default@2x.png */; };
 		C2A32860172E036800EBB23B /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C2A3285F172E036800EBB23B /* Default-568h@2x.png */; };
+		C2A32863172E041D00EBB23B /* FrecipeInitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C2A32862172E041D00EBB23B /* FrecipeInitViewController.m */; };
+		C2A32866172E043B00EBB23B /* FrecipeNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = C2A32865172E043B00EBB23B /* FrecipeNavigationController.m */; };
+		C2A32869172E044800EBB23B /* FrecipeNavigationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C2A32868172E044800EBB23B /* FrecipeNavigationViewController.m */; };
+		C2A3286C172E045400EBB23B /* FrecipeLoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C2A3286B172E045400EBB23B /* FrecipeLoginViewController.m */; };
+		C2A3286F172E045B00EBB23B /* FrecipeSignupViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C2A3286E172E045B00EBB23B /* FrecipeSignupViewController.m */; };
+		C2A32872172E046900EBB23B /* FrecipeFridgeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C2A32871172E046900EBB23B /* FrecipeFridgeViewController.m */; };
+		C2A32875172E047300EBB23B /* FrecipeProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C2A32874172E047300EBB23B /* FrecipeProfileViewController.m */; };
+		C2A32878172E047F00EBB23B /* FrecipeGroceryListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C2A32877172E047F00EBB23B /* FrecipeGroceryListViewController.m */; };
+		C2A3287B172E048D00EBB23B /* FrecipeRecipeDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C2A3287A172E048D00EBB23B /* FrecipeRecipeDetailViewController.m */; };
+		C2A3287E172E049800EBB23B /* FrecipeAddIngredientsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C2A3287D172E049800EBB23B /* FrecipeAddIngredientsViewController.m */; };
+		C2A32881172E04A100EBB23B /* FrecipeAddRecipeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C2A32880172E04A100EBB23B /* FrecipeAddRecipeViewController.m */; };
+		C2A32884172E04AB00EBB23B /* FrecipeAddToGroceryListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C2A32883172E04AB00EBB23B /* FrecipeAddToGroceryListViewController.m */; };
+		C2A32887172E04BD00EBB23B /* FrecipeAPIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = C2A32886172E04BD00EBB23B /* FrecipeAPIClient.m */; };
+		C2A3288A172E04C500EBB23B /* FrecipeFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = C2A32889172E04C500EBB23B /* FrecipeFunctions.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -126,6 +140,34 @@
 		C2A3285B172E036300EBB23B /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 		C2A3285D172E036600EBB23B /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
 		C2A3285F172E036800EBB23B /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		C2A32861172E041D00EBB23B /* FrecipeInitViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrecipeInitViewController.h; sourceTree = "<group>"; };
+		C2A32862172E041D00EBB23B /* FrecipeInitViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FrecipeInitViewController.m; sourceTree = "<group>"; };
+		C2A32864172E043B00EBB23B /* FrecipeNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrecipeNavigationController.h; sourceTree = "<group>"; };
+		C2A32865172E043B00EBB23B /* FrecipeNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FrecipeNavigationController.m; sourceTree = "<group>"; };
+		C2A32867172E044800EBB23B /* FrecipeNavigationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrecipeNavigationViewController.h; sourceTree = "<group>"; };
+		C2A32868172E044800EBB23B /* FrecipeNavigationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FrecipeNavigationViewController.m; sourceTree = "<group>"; };
+		C2A3286A172E045400EBB23B /* FrecipeLoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrecipeLoginViewController.h; sourceTree = "<group>"; };
+		C2A3286B172E045400EBB23B /* FrecipeLoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FrecipeLoginViewController.m; sourceTree = "<group>"; };
+		C2A3286D172E045B00EBB23B /* FrecipeSignupViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrecipeSignupViewController.h; sourceTree = "<group>"; };
+		C2A3286E172E045B00EBB23B /* FrecipeSignupViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FrecipeSignupViewController.m; sourceTree = "<group>"; };
+		C2A32870172E046900EBB23B /* FrecipeFridgeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrecipeFridgeViewController.h; sourceTree = "<group>"; };
+		C2A32871172E046900EBB23B /* FrecipeFridgeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FrecipeFridgeViewController.m; sourceTree = "<group>"; };
+		C2A32873172E047300EBB23B /* FrecipeProfileViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrecipeProfileViewController.h; sourceTree = "<group>"; };
+		C2A32874172E047300EBB23B /* FrecipeProfileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FrecipeProfileViewController.m; sourceTree = "<group>"; };
+		C2A32876172E047F00EBB23B /* FrecipeGroceryListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrecipeGroceryListViewController.h; sourceTree = "<group>"; };
+		C2A32877172E047F00EBB23B /* FrecipeGroceryListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FrecipeGroceryListViewController.m; sourceTree = "<group>"; };
+		C2A32879172E048D00EBB23B /* FrecipeRecipeDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrecipeRecipeDetailViewController.h; sourceTree = "<group>"; };
+		C2A3287A172E048D00EBB23B /* FrecipeRecipeDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FrecipeRecipeDetailViewController.m; sourceTree = "<group>"; };
+		C2A3287C172E049800EBB23B /* FrecipeAddIngredientsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrecipeAddIngredientsViewController.h; sourceTree = "<group>"; };
+		C2A3287D172E049800EBB23B /* FrecipeAddIngredientsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FrecipeAddIngredientsViewController.m; sourceTree = "<group>"; };
+		C2A3287F172E04A100EBB23B /* FrecipeAddRecipeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrecipeAddRecipeViewController.h; sourceTree = "<group>"; };
+		C2A32880172E04A100EBB23B /* FrecipeAddRecipeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FrecipeAddRecipeViewController.m; sourceTree = "<group>"; };
+		C2A32882172E04AB00EBB23B /* FrecipeAddToGroceryListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrecipeAddToGroceryListViewController.h; sourceTree = "<group>"; };
+		C2A32883172E04AB00EBB23B /* FrecipeAddToGroceryListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FrecipeAddToGroceryListViewController.m; sourceTree = "<group>"; };
+		C2A32885172E04BD00EBB23B /* FrecipeAPIClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrecipeAPIClient.h; sourceTree = "<group>"; };
+		C2A32886172E04BD00EBB23B /* FrecipeAPIClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FrecipeAPIClient.m; sourceTree = "<group>"; };
+		C2A32888172E04C500EBB23B /* FrecipeFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrecipeFunctions.h; sourceTree = "<group>"; };
+		C2A32889172E04C500EBB23B /* FrecipeFunctions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FrecipeFunctions.m; sourceTree = "<group>"; };
 		CC3902FF59D545519B935676 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -227,8 +269,36 @@
 				C2A327E6172DFAAD00EBB23B /* FrecipeAppDelegate.m */,
 				C2A327EE172DFAAD00EBB23B /* MainStoryboard_iPhone.storyboard */,
 				C2A327F1172DFAAD00EBB23B /* MainStoryboard_iPad.storyboard */,
+				C2A32861172E041D00EBB23B /* FrecipeInitViewController.h */,
+				C2A32862172E041D00EBB23B /* FrecipeInitViewController.m */,
+				C2A32864172E043B00EBB23B /* FrecipeNavigationController.h */,
+				C2A32865172E043B00EBB23B /* FrecipeNavigationController.m */,
+				C2A32867172E044800EBB23B /* FrecipeNavigationViewController.h */,
+				C2A32868172E044800EBB23B /* FrecipeNavigationViewController.m */,
+				C2A3286A172E045400EBB23B /* FrecipeLoginViewController.h */,
+				C2A3286B172E045400EBB23B /* FrecipeLoginViewController.m */,
+				C2A3286D172E045B00EBB23B /* FrecipeSignupViewController.h */,
+				C2A3286E172E045B00EBB23B /* FrecipeSignupViewController.m */,
 				C2A327F4172DFAAD00EBB23B /* FrecipeViewController.h */,
 				C2A327F5172DFAAD00EBB23B /* FrecipeViewController.m */,
+				C2A32870172E046900EBB23B /* FrecipeFridgeViewController.h */,
+				C2A32871172E046900EBB23B /* FrecipeFridgeViewController.m */,
+				C2A32873172E047300EBB23B /* FrecipeProfileViewController.h */,
+				C2A32874172E047300EBB23B /* FrecipeProfileViewController.m */,
+				C2A32876172E047F00EBB23B /* FrecipeGroceryListViewController.h */,
+				C2A32877172E047F00EBB23B /* FrecipeGroceryListViewController.m */,
+				C2A32879172E048D00EBB23B /* FrecipeRecipeDetailViewController.h */,
+				C2A3287A172E048D00EBB23B /* FrecipeRecipeDetailViewController.m */,
+				C2A3287C172E049800EBB23B /* FrecipeAddIngredientsViewController.h */,
+				C2A3287D172E049800EBB23B /* FrecipeAddIngredientsViewController.m */,
+				C2A3287F172E04A100EBB23B /* FrecipeAddRecipeViewController.h */,
+				C2A32880172E04A100EBB23B /* FrecipeAddRecipeViewController.m */,
+				C2A32882172E04AB00EBB23B /* FrecipeAddToGroceryListViewController.h */,
+				C2A32883172E04AB00EBB23B /* FrecipeAddToGroceryListViewController.m */,
+				C2A32885172E04BD00EBB23B /* FrecipeAPIClient.h */,
+				C2A32886172E04BD00EBB23B /* FrecipeAPIClient.m */,
+				C2A32888172E04C500EBB23B /* FrecipeFunctions.h */,
+				C2A32889172E04C500EBB23B /* FrecipeFunctions.m */,
 				C2A327DD172DFAAD00EBB23B /* Supporting Files */,
 			);
 			path = Frecipe;
@@ -435,6 +505,20 @@
 				C2A327F6172DFAAD00EBB23B /* FrecipeViewController.m in Sources */,
 				C2A3284D172DFFDA00EBB23B /* ECSlidingViewController.m in Sources */,
 				C2A3284E172DFFDA00EBB23B /* UIImage+ImageWithUIView.m in Sources */,
+				C2A32863172E041D00EBB23B /* FrecipeInitViewController.m in Sources */,
+				C2A32866172E043B00EBB23B /* FrecipeNavigationController.m in Sources */,
+				C2A32869172E044800EBB23B /* FrecipeNavigationViewController.m in Sources */,
+				C2A3286C172E045400EBB23B /* FrecipeLoginViewController.m in Sources */,
+				C2A3286F172E045B00EBB23B /* FrecipeSignupViewController.m in Sources */,
+				C2A32872172E046900EBB23B /* FrecipeFridgeViewController.m in Sources */,
+				C2A32875172E047300EBB23B /* FrecipeProfileViewController.m in Sources */,
+				C2A32878172E047F00EBB23B /* FrecipeGroceryListViewController.m in Sources */,
+				C2A3287B172E048D00EBB23B /* FrecipeRecipeDetailViewController.m in Sources */,
+				C2A3287E172E049800EBB23B /* FrecipeAddIngredientsViewController.m in Sources */,
+				C2A32881172E04A100EBB23B /* FrecipeAddRecipeViewController.m in Sources */,
+				C2A32884172E04AB00EBB23B /* FrecipeAddToGroceryListViewController.m in Sources */,
+				C2A32887172E04BD00EBB23B /* FrecipeAPIClient.m in Sources */,
+				C2A3288A172E04C500EBB23B /* FrecipeFunctions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
