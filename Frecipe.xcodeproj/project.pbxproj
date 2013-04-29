@@ -14,9 +14,6 @@
 		C2A327E1172DFAAD00EBB23B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = C2A327DF172DFAAD00EBB23B /* InfoPlist.strings */; };
 		C2A327E3172DFAAD00EBB23B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = C2A327E2172DFAAD00EBB23B /* main.m */; };
 		C2A327E7172DFAAD00EBB23B /* FrecipeAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = C2A327E6172DFAAD00EBB23B /* FrecipeAppDelegate.m */; };
-		C2A327E9172DFAAD00EBB23B /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = C2A327E8172DFAAD00EBB23B /* Default.png */; };
-		C2A327EB172DFAAD00EBB23B /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C2A327EA172DFAAD00EBB23B /* Default@2x.png */; };
-		C2A327ED172DFAAD00EBB23B /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C2A327EC172DFAAD00EBB23B /* Default-568h@2x.png */; };
 		C2A327F0172DFAAD00EBB23B /* MainStoryboard_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C2A327EE172DFAAD00EBB23B /* MainStoryboard_iPhone.storyboard */; };
 		C2A327F3172DFAAD00EBB23B /* MainStoryboard_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C2A327F1172DFAAD00EBB23B /* MainStoryboard_iPad.storyboard */; };
 		C2A327F6172DFAAD00EBB23B /* FrecipeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C2A327F5172DFAAD00EBB23B /* FrecipeViewController.m */; };
@@ -53,6 +50,12 @@
 		C2A32847172DFFD100EBB23B /* SDWebImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C2A32846172DFFD100EBB23B /* SDWebImage.framework */; };
 		C2A3284D172DFFDA00EBB23B /* ECSlidingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C2A3284A172DFFDA00EBB23B /* ECSlidingViewController.m */; };
 		C2A3284E172DFFDA00EBB23B /* UIImage+ImageWithUIView.m in Sources */ = {isa = PBXBuildFile; fileRef = C2A3284C172DFFDA00EBB23B /* UIImage+ImageWithUIView.m */; };
+		C2A32850172E01DF00EBB23B /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C2A3284F172E01DF00EBB23B /* libsqlite3.dylib */; };
+		C2A32852172E02A600EBB23B /* favicon_57*57.png in Resources */ = {isa = PBXBuildFile; fileRef = C2A32851172E02A600EBB23B /* favicon_57*57.png */; };
+		C2A32854172E02A800EBB23B /* favicon_114*114.png in Resources */ = {isa = PBXBuildFile; fileRef = C2A32853172E02A800EBB23B /* favicon_114*114.png */; };
+		C2A3285C172E036300EBB23B /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = C2A3285B172E036300EBB23B /* Default.png */; };
+		C2A3285E172E036600EBB23B /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C2A3285D172E036600EBB23B /* Default@2x.png */; };
+		C2A32860172E036800EBB23B /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C2A3285F172E036800EBB23B /* Default-568h@2x.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -77,9 +80,6 @@
 		C2A327E4172DFAAD00EBB23B /* Frecipe-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Frecipe-Prefix.pch"; sourceTree = "<group>"; };
 		C2A327E5172DFAAD00EBB23B /* FrecipeAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FrecipeAppDelegate.h; sourceTree = "<group>"; };
 		C2A327E6172DFAAD00EBB23B /* FrecipeAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FrecipeAppDelegate.m; sourceTree = "<group>"; };
-		C2A327E8172DFAAD00EBB23B /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
-		C2A327EA172DFAAD00EBB23B /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
-		C2A327EC172DFAAD00EBB23B /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		C2A327EF172DFAAD00EBB23B /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard_iPhone.storyboard; sourceTree = "<group>"; };
 		C2A327F2172DFAAD00EBB23B /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard_iPad.storyboard; sourceTree = "<group>"; };
 		C2A327F4172DFAAD00EBB23B /* FrecipeViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FrecipeViewController.h; sourceTree = "<group>"; };
@@ -120,6 +120,12 @@
 		C2A3284A172DFFDA00EBB23B /* ECSlidingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECSlidingViewController.m; sourceTree = "<group>"; };
 		C2A3284B172DFFDA00EBB23B /* UIImage+ImageWithUIView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+ImageWithUIView.h"; sourceTree = "<group>"; };
 		C2A3284C172DFFDA00EBB23B /* UIImage+ImageWithUIView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+ImageWithUIView.m"; sourceTree = "<group>"; };
+		C2A3284F172E01DF00EBB23B /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
+		C2A32851172E02A600EBB23B /* favicon_57*57.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "favicon_57*57.png"; sourceTree = "<group>"; };
+		C2A32853172E02A800EBB23B /* favicon_114*114.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "favicon_114*114.png"; sourceTree = "<group>"; };
+		C2A3285B172E036300EBB23B /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
+		C2A3285D172E036600EBB23B /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
+		C2A3285F172E036800EBB23B /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		CC3902FF59D545519B935676 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -128,6 +134,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C2A32850172E01DF00EBB23B /* libsqlite3.dylib in Frameworks */,
 				C2A32839172DFFBC00EBB23B /* Accounts.framework in Frameworks */,
 				C2A3283A172DFFBC00EBB23B /* AdSupport.framework in Frameworks */,
 				C2A3283B172DFFBC00EBB23B /* AudioToolbox.framework in Frameworks */,
@@ -164,6 +171,12 @@
 		C2A327CA172DFAAD00EBB23B = {
 			isa = PBXGroup;
 			children = (
+				C2A3285F172E036800EBB23B /* Default-568h@2x.png */,
+				C2A3285D172E036600EBB23B /* Default@2x.png */,
+				C2A3285B172E036300EBB23B /* Default.png */,
+				C2A32853172E02A800EBB23B /* favicon_114*114.png */,
+				C2A32851172E02A600EBB23B /* favicon_57*57.png */,
+				C2A3284F172E01DF00EBB23B /* libsqlite3.dylib */,
 				C2A32848172DFFDA00EBB23B /* ECSlidingViewController */,
 				C2A32846172DFFD100EBB23B /* SDWebImage.framework */,
 				C2A32844172DFFC900EBB23B /* FacebookSDK.framework */,
@@ -241,9 +254,6 @@
 				C2A327DF172DFAAD00EBB23B /* InfoPlist.strings */,
 				C2A327E2172DFAAD00EBB23B /* main.m */,
 				C2A327E4172DFAAD00EBB23B /* Frecipe-Prefix.pch */,
-				C2A327E8172DFAAD00EBB23B /* Default.png */,
-				C2A327EA172DFAAD00EBB23B /* Default@2x.png */,
-				C2A327EC172DFAAD00EBB23B /* Default-568h@2x.png */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -352,9 +362,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				C2A327E1172DFAAD00EBB23B /* InfoPlist.strings in Resources */,
-				C2A327E9172DFAAD00EBB23B /* Default.png in Resources */,
-				C2A327EB172DFAAD00EBB23B /* Default@2x.png in Resources */,
-				C2A327ED172DFAAD00EBB23B /* Default-568h@2x.png in Resources */,
 				C2A327F0172DFAAD00EBB23B /* MainStoryboard_iPhone.storyboard in Resources */,
 				C2A327F3172DFAAD00EBB23B /* MainStoryboard_iPad.storyboard in Resources */,
 				C2A32815172DFB9000EBB23B /* menu_icon.png in Resources */,
@@ -370,6 +377,11 @@
 				C2A3282B172DFB9900EBB23B /* my_fridge.jpg in Resources */,
 				C2A3282C172DFB9900EBB23B /* my_restaurant.jpg in Resources */,
 				C2A3282D172DFB9900EBB23B /* comment.png in Resources */,
+				C2A32852172E02A600EBB23B /* favicon_57*57.png in Resources */,
+				C2A32854172E02A800EBB23B /* favicon_114*114.png in Resources */,
+				C2A3285C172E036300EBB23B /* Default.png in Resources */,
+				C2A3285E172E036600EBB23B /* Default@2x.png in Resources */,
+				C2A32860172E036800EBB23B /* Default-568h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
