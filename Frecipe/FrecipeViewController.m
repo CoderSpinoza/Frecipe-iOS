@@ -56,6 +56,12 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (IBAction)revealMenu:(UIBarButtonItem *)sender {
+    FrecipeNavigationController *navigationController = (FrecipeNavigationController *)self.navigationController;
+    [navigationController revealMenu];
+}
+
+
 - (void)fetchRecipes {
     NSString *path = @"/recipes/possible";
     [[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];

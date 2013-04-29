@@ -70,6 +70,9 @@
 		C2A32884172E04AB00EBB23B /* FrecipeAddToGroceryListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C2A32883172E04AB00EBB23B /* FrecipeAddToGroceryListViewController.m */; };
 		C2A32887172E04BD00EBB23B /* FrecipeAPIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = C2A32886172E04BD00EBB23B /* FrecipeAPIClient.m */; };
 		C2A3288A172E04C500EBB23B /* FrecipeFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = C2A32889172E04C500EBB23B /* FrecipeFunctions.m */; };
+		C2A3288D172E4A4700EBB23B /* like_pressed.jpg in Resources */ = {isa = PBXBuildFile; fileRef = C2A3288B172E4A4700EBB23B /* like_pressed.jpg */; };
+		C2A3288E172E4A4700EBB23B /* like.jpg in Resources */ = {isa = PBXBuildFile; fileRef = C2A3288C172E4A4700EBB23B /* like.jpg */; };
+		C2A32890172E4F6C00EBB23B /* iTunesArtwork.png in Resources */ = {isa = PBXBuildFile; fileRef = C2A3288F172E4F6C00EBB23B /* iTunesArtwork.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -168,6 +171,9 @@
 		C2A32886172E04BD00EBB23B /* FrecipeAPIClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FrecipeAPIClient.m; sourceTree = "<group>"; };
 		C2A32888172E04C500EBB23B /* FrecipeFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrecipeFunctions.h; sourceTree = "<group>"; };
 		C2A32889172E04C500EBB23B /* FrecipeFunctions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FrecipeFunctions.m; sourceTree = "<group>"; };
+		C2A3288B172E4A4700EBB23B /* like_pressed.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = like_pressed.jpg; sourceTree = "<group>"; };
+		C2A3288C172E4A4700EBB23B /* like.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = like.jpg; sourceTree = "<group>"; };
+		C2A3288F172E4F6C00EBB23B /* iTunesArtwork.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iTunesArtwork.png; sourceTree = "<group>"; };
 		CC3902FF59D545519B935676 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -307,6 +313,9 @@
 		C2A327DD172DFAAD00EBB23B /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				C2A3288F172E4F6C00EBB23B /* iTunesArtwork.png */,
+				C2A3288B172E4A4700EBB23B /* like_pressed.jpg */,
+				C2A3288C172E4A4700EBB23B /* like.jpg */,
 				C2A32816172DFB9900EBB23B /* bar_red.png */,
 				C2A32817172DFB9900EBB23B /* facebook_login_button.png */,
 				C2A32818172DFB9900EBB23B /* frecipe_name.png */,
@@ -452,6 +461,9 @@
 				C2A3285C172E036300EBB23B /* Default.png in Resources */,
 				C2A3285E172E036600EBB23B /* Default@2x.png in Resources */,
 				C2A32860172E036800EBB23B /* Default-568h@2x.png in Resources */,
+				C2A3288D172E4A4700EBB23B /* like_pressed.jpg in Resources */,
+				C2A3288E172E4A4700EBB23B /* like.jpg in Resources */,
+				C2A32890172E4F6C00EBB23B /* iTunesArtwork.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

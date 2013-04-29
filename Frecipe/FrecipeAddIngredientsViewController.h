@@ -9,5 +9,7 @@
 #import <UIKit/UIKit.h>
 
 @interface FrecipeAddIngredientsViewController : UIViewController
+@property (weak, nonatomic) IBOutlet UITextField *ingredientField;
+@property (weak, nonatomic) IBOutlet UITableView *ingredientsTableView;
 
 @end

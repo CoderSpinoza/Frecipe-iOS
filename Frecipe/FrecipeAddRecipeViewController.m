@@ -7,12 +7,41 @@
 //
 
 #import "FrecipeAddRecipeViewController.h"
+#import "FrecipeAPIClient.h"
 
-@interface FrecipeAddRecipeViewController ()
+@interface FrecipeAddRecipeViewController () <UITextFieldDelegate, UITableViewDataSource, UITableViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIAlertViewDelegate, UIActionSheetDelegate> {
+    BOOL userHasUploadedRecipePhoto;
+}
+
+@property (strong, nonatomic) UITextField *currentField;
 
 @end
 
 @implementation FrecipeAddRecipeViewController
+
+@synthesize ingredients = _ingredients;
+@synthesize directions = _directions;
+@synthesize recipeId = _recipeId;
+
+- (NSString *)recipeId {
+    if (_recipeId == nil) {
+        _recipeId = @"0";
+    }
+    return _recipeId;
+}
+- (NSMutableArray *)ingredients {
+    if (_ingredients == nil) {
+        _ingredients = [[NSMutableArray alloc] init];
+    }
+    return _ingredients;
+}
+
+- (NSMutableArray *)directions {
+    if (_directions == nil) {
+        _directions = [[NSMutableArray alloc] init];
+    }
+    return _directions;
+}
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -27,12 +56,337 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
+    self.recipeNameField.delegate = self;
+    self.ingredientField.delegate = self;
+    self.directionField.delegate = self;
+    
+    self.ingredientsTableView.dataSource = self;
+    self.ingredientsTableView.delegate = self;
+    
+    self.directionsTableView.dataSource = self;
+    self.directionsTableView.delegate = self;
+    
+    [self addGestureRecognizers];
+    [self registerForKeyboardNotifications];
 }
 
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (IBAction)cancelButtonPressed:(UIBarButtonItem *)sender {
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+- (IBAction)segmentedControlPressed:(UISegmentedControl *)sender {
+    if (sender.selectedSegmentIndex == 0) {
+        self.recipeNameField.hidden = NO;
+        self.recipeImageButton.hidden = NO;
+        self.ingredientField.hidden = YES;
+        self.ingredientsTableView.hidden = YES;
+        self.directionField.hidden = YES;
+        self.directionsTableView.hidden = YES;
+    } else if (sender.selectedSegmentIndex == 1) {
+        self.recipeNameField.hidden = YES;
+        self.recipeImageButton.hidden = YES;
+        self.ingredientField.hidden = NO;
+        self.ingredientsTableView.hidden = NO;
+        self.directionField.hidden = YES;
+        self.directionsTableView.hidden = YES;
+    } else if (sender.selectedSegmentIndex == 2) {
+        self.recipeNameField.hidden = YES;
+        self.recipeImageButton.hidden = YES;
+        self.ingredientField.hidden = YES;
+        self.ingredientsTableView.hidden = YES;
+        self.directionField.hidden = NO;
+        self.directionsTableView.hidden = NO;
+    }
+}
+
+
+- (IBAction)addButtonPressed:(UIBarButtonItem *)sender {
+    if (self.ingredients.count > 0 && userHasUploadedRecipePhoto) {
+        NSString *path;
+        NSString *method;
+        if ([self.editing isEqualToString:@"1"]) {
+            path = [NSString stringWithFormat:@"recipes/%@", self.recipeId];
+            method = @"PUT";
+        } else {
+            path = @"/recipes";
+            method = @"POST";
+        }
+        
+        [[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];
+        [[AFNetworkActivityIndicatorManager sharedManager] incrementActivityCount];
+        
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        NSString *authentication_token = [defaults objectForKey:@"authentication_token"];
+        
+        NSString *ingredients = [self.ingredients componentsJoinedByString:@","];
+        NSString *directions = [self.directions componentsJoinedByString:@"\n"];
+        NSArray *keys = [NSArray arrayWithObjects:@"authentication_token", @"recipe_name", @"ingredients", @"steps", @"recipe_id", nil];
+        NSArray *values = [NSArray arrayWithObjects:authentication_token, self.recipeNameField.text, ingredients, directions, self.recipeId, nil];
+        NSDictionary *parameters = [NSDictionary dictionaryWithObjects:values forKeys:keys];
+        
+        FrecipeAPIClient *client = [FrecipeAPIClient client];
+        NSMutableURLRequest *request = [client multipartFormRequestWithMethod:@"POST" path:path parameters:parameters constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
+            [formData appendPartWithFileData:UIImageJPEGRepresentation(self.recipeImageButton.imageView.image, 0.9) name:@"recipe_image" fileName:@"recipe_image.jpg" mimeType:@"image/jpeg"];
+        }];
+        
+        // add a spinning view
+        UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+        spinner.center = CGPointMake(self.view.frame.size.width / 2, self.view.frame.size.height / 2);
+        
+        UIView *blockingView = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y - 20, self.view.frame.size.width, self.view.frame.size.height)];
+        blockingView.backgroundColor = [UIColor blackColor];
+        blockingView.alpha = 0.5;
+        [blockingView addSubview:spinner];
+        
+        [self.view addSubview:blockingView];
+        
+        [spinner startAnimating];
+        
+        AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
+            [self dismissViewControllerAnimated:YES completion:nil];
+            [[AFNetworkActivityIndicatorManager sharedManager]decrementActivityCount];
+            [spinner stopAnimating];
+            [blockingView removeFromSuperview];
+        } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
+            NSLog(@"%@", error);
+            [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
+            [spinner stopAnimating];
+            [blockingView removeFromSuperview];
+            
+        }];
+        [operation start];
+    } else {
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Recipe Upload Error" message:@"You should upload image and ingredients" delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: nil];
+        [alertView show];
+    }
+}
+
+- (void)addGestureRecognizers {
+    UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissKeyboard)];
+    [self.view addGestureRecognizer:tapGestureRecognizer];
+}
+
+- (void)dismissKeyboard {
+    [self.currentField resignFirstResponder];
+}
+
+- (IBAction)showImagePickerActionSheet {
+    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"How to upload photo?" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Camera", @"Photo Library", nil];
+    [actionSheet showInView:self.view];
+}
+
+- (void)openRecipeImagePicker:(NSString *)sourceType {
+    UIImagePickerController *imagePickerController = [[UIImagePickerController alloc] init];
+    
+    if ([sourceType isEqualToString:@"camera"]) {
+        imagePickerController.sourceType = UIImagePickerControllerSourceTypeCamera;
+    } else {
+        imagePickerController.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+    }
+    imagePickerController.delegate = self;
+    imagePickerController.restorationIdentifier = @"recipeImage";
+    imagePickerController.allowsEditing = YES;
+    [self presentViewController:imagePickerController animated:YES completion:nil];
+}
+
+// text field delegate methods
+
+- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField {
+    self.currentField = textField;
+    return YES;
+    
+}
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+    if ([textField isEqual:self.recipeNameField]) {
+        [textField resignFirstResponder];
+        textField.text = [textField.text capitalizedString];
+    } else if ([textField isEqual:self.ingredientField]) {
+        if (![textField.text isEqualToString:@""]) {
+            [self.ingredients addObject:[textField.text capitalizedString]];
+            textField.text = @"";
+            [self.ingredientsTableView reloadData];
+            if (self.ingredients.count > 0) {
+                [self.ingredientsTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.ingredients.count - 1  inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+            }
+        } else {
+            [textField resignFirstResponder];
+        }
+    } else if ([textField isEqual:self.directionField]) {
+        if (![textField.text isEqualToString:@""]) {
+            [self.directions addObject:textField.text];
+            textField.text = @"";
+            [self.directionsTableView reloadData];
+            if (self.directions.count > 0) {
+                [self.directionsTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.directions.count - 1  inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+            }
+            
+        } else {
+            [textField resignFirstResponder];
+        }
+    }
+    return YES;
+}
+
+// action sheet delegate methods
+- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
+    if (buttonIndex == 0) {
+        [self openRecipeImagePicker:@"camera"];
+    } else if (buttonIndex == 1) {
+        [self openRecipeImagePicker:@"library"];
+    }
+    
+}
+
+// image picker delegate methods
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
+    if ([picker.restorationIdentifier isEqualToString:@"recipeImage"]) {
+        [self.recipeImageButton setImage:[info valueForKey:UIImagePickerControllerEditedImage] forState:UIControlStateNormal];
+        userHasUploadedRecipePhoto = YES;
+        [picker dismissViewControllerAnimated:YES completion:nil];
+    }
+}
+
+// table view delegate and dataSource Methods
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    if (editingStyle == UITableViewCellEditingStyleDelete) {
+        if ([tableView isEqual:self.ingredientsTableView]) {
+            [self.ingredients removeObjectAtIndex:indexPath.row];
+            [self.ingredientsTableView reloadData];
+        } else {
+            [self.directions removeObjectAtIndex:indexPath.row];
+            [self.directionsTableView reloadData];
+        }
+    }
+}
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    // Return the number of sections.
+    return 1;
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    // Return the number of rows in the section.
+    
+    if ([tableView isEqual:self.ingredientsTableView]) {
+        return self.ingredients.count;
+        
+    } else {
+        return self.directions.count;
+    }
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    CGSize size;
+    if ([tableView isEqual:self.ingredientsTableView]) {
+        size = [[NSString stringWithFormat:@"%u. %@", indexPath.row + 1, [self.ingredients objectAtIndex:indexPath.row]] sizeWithFont:[UIFont systemFontOfSize:18.0f] constrainedToSize:CGSizeMake(320.0f, 9999.0f) lineBreakMode:NSLineBreakByCharWrapping];
+    } else {
+        size = [[NSString stringWithFormat:@"%u. %@", indexPath.row + 1, [self.directions objectAtIndex:indexPath.row]] sizeWithFont:[UIFont systemFontOfSize:18.0f] constrainedToSize:CGSizeMake(200.0f, 9999.0f) lineBreakMode:NSLineBreakByWordWrapping];
+    }
+    NSInteger lines = round(size.height / 18);
+    if (lines < 2) {
+        return 44;
+    } else {
+        return size.height + 16;
+    }
+}
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    
+    if ([tableView isEqual:self.ingredientsTableView]) {
+        static NSString *CellIdentifier = @"IngredientCell";
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
+        
+        // Configure the cell...
+        
+        if (!cell) {
+            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"IngredientCell"];
+        }
+        cell.textLabel.text = [NSString stringWithFormat:@"%u. %@", indexPath.row + 1, [self.ingredients objectAtIndex:indexPath.row]];
+        return cell;
+    } else {
+        static NSString *CellIdentifier = @"DirectionCell";
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
+        
+        // Configure the cell...
+        
+        if (!cell) {
+            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"DirectionCell"];
+        }
+        
+        cell.textLabel.lineBreakMode = NSLineBreakByWordWrapping;
+        cell.textLabel.numberOfLines = 0;
+        
+        cell.textLabel.text = [NSString stringWithFormat:@"%u. %@", indexPath.row + 1, [self.directions objectAtIndex:indexPath.row]];
+        return cell;
+    }
+}
+
+// keyboard notification
+- (void)registerForKeyboardNotifications
+{
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardWillBeShown:)
+                                                 name:UIKeyboardWillShowNotification object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardWillBeHidden:)
+                                                 name:UIKeyboardWillHideNotification object:nil];
+}
+
+- (void)keyboardWillBeShown:(NSNotification *)notification {
+    NSDictionary *info = [notification userInfo];
+    CGSize keyboardSize = [[info objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
+    
+    [UIView animateWithDuration:0.3 delay:0 options:UIViewAnimationOptionTransitionFlipFromBottom animations:^{
+        if (self.recipeNameField.hidden == NO) {
+            
+            CGFloat difference = self.view.frame.size.height - self.recipeImageButton.frame.origin.y - self.recipeImageButton.frame.size.height - 44;
+            
+            self.recipeImageButton.frame = CGRectMake(self.recipeImageButton.frame.origin.x + difference / 2, self.recipeImageButton.frame.origin.y, self.recipeImageButton.frame.size.width - difference, self.recipeImageButton.frame.size.height - difference);
+        } else if (self.ingredientField.hidden == NO) {
+            self.ingredientsTableView.frame = CGRectMake(self.ingredientsTableView.frame.origin.x, self.ingredientsTableView.frame.origin.y, self.ingredientsTableView.frame.size.width, self.ingredientsTableView.frame.size.height - (keyboardSize.height - self.view.frame.size.height + self.ingredientsTableView.frame.origin.y + self.ingredientsTableView.frame.size.height));
+            
+            if (self.ingredients.count > 0) {
+                [self.ingredientsTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.ingredients.count - 1  inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+            }
+            
+        } else {
+            self.directionsTableView.frame = CGRectMake(self.directionsTableView.frame.origin.x, self.directionsTableView.frame.origin.y, self.directionsTableView.frame.size.width, self.directionsTableView.frame.size.height - (keyboardSize.height - self.view.frame.size.height + self.ingredientsTableView.frame.origin.y + self.ingredientsTableView.frame.size.height));
+            
+            if (self.directions.count > 0) {
+                [self.directionsTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.directions.count - 1  inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+            }
+            
+        }
+        
+    } completion:nil];
+    
+    
+    
+}
+
+- (void)keyboardWillBeHidden:(NSNotification *)notification {
+    if (self.recipeNameField.hidden == NO) {
+        [UIView animateWithDuration:0.3 delay:0.0 options:UIViewAnimationOptionCurveEaseOut animations:^{
+            self.recipeImageButton.frame = CGRectMake(20, 135, 280, 280);
+        } completion:^(BOOL finished) {
+        }];
+        
+    } else if (self.ingredientField.hidden == NO) {
+        self.ingredientsTableView.frame = CGRectMake(self.ingredientsTableView.frame.origin.x, self.ingredientsTableView.frame.origin.y, self.ingredientsTableView.frame.size.width, 280);
+    } else {
+        self.directionsTableView.frame = CGRectMake(self.directionsTableView.frame.origin.x, self.directionsTableView.frame.origin.y, self.directionsTableView.frame.size.width, 280);
+    }
+    
 }
 
 @end

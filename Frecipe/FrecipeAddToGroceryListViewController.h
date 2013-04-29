@@ -9,5 +9,6 @@
 #import <UIKit/UIKit.h>
 
 @interface FrecipeAddToGroceryListViewController : UIViewController
+@property (weak, nonatomic) IBOutlet UITextField *groceryField;
 
 @end

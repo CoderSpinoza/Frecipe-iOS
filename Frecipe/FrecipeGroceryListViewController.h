@@ -10,4 +10,5 @@
 
 @interface FrecipeGroceryListViewController : UIViewController
 
+@property (weak, nonatomic) IBOutlet UITableView *groceryListTableView;
 @end

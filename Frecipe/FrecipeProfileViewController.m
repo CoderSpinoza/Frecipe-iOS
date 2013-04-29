@@ -7,6 +7,7 @@
 //
 
 #import "FrecipeProfileViewController.h"
+#import "FrecipeNavigationController.h"
 
 @interface FrecipeProfileViewController ()
 
@@ -35,4 +36,8 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (IBAction)revealMenu:(UIBarButtonItem *)sender {
+    FrecipeNavigationController *navigationController = (FrecipeNavigationController *)self.navigationController;
+    [navigationController revealMenu];
+}
 @end
