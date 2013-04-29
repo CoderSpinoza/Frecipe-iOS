@@ -142,6 +142,7 @@
             
         } else {
             NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+            NSLog(@"%@", JSON);
             [defaults setObject:[JSON objectForKey:@"token"] forKey:@"authentication_token"];
             
             [defaults setObject:[[JSON objectForKey:@"user"] objectForKey:@"id"] forKey:@"id"];

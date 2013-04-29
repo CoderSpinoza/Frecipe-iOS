@@ -11,6 +11,7 @@
 #import "FrecipeAPIClient.h"
 #import "FrecipeAppDelegate.h"
 #import "FrecipeRecipeDetailViewController.h"
+#import "FrecipeProfileViewController.h"
 #import "FrecipeFunctions.h"
 #import <SDWebImage/UIImageView+WebCache.h>
 
@@ -39,9 +40,6 @@
     self.recipesCollectionView.delegate = self;
     
     [self addRefreshControl];
-    
-    self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Frecipe" style:UIBarButtonItemStyleBordered target:self action:nil];
-
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -153,17 +151,10 @@
         view2 = [cell viewWithTag:1];
     }
     
-    
     [UIView animateWithDuration:0.5 animations:^{
         view1.alpha = 1.0;
         view2.alpha = 0;
-        
-        //        cell.backView.alpha = 1.0;
-        //        cell.frontView.alpha = 0;
     } completion:^(BOOL finished) {
-        //        UIView *tempView = cell.frontView;
-        //        cell.frontView = cell.backView;
-        //        cell.backView = tempView;
     }];
 }
 
@@ -176,6 +167,26 @@
     [self.recipesCollectionView addSubview:refreshControl];
     self.refreshControl = refreshControl;
     self.recipesCollectionView.alwaysBounceVertical = YES;
+}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    if ([segue.identifier isEqualToString:@"RecipeDetail"]) {
+        FrecipeRecipeDetailViewController *recipeDetailViewController = (FrecipeRecipeDetailViewController *) segue.destinationViewController;
+        recipeDetailViewController.recipeId = [self.selectedRecipe objectForKey:@"id"];
+        self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Frecipe" style:UIBarButtonItemStyleBordered target:segue.destinationViewController action:nil];
+    } else if ([segue.identifier isEqualToString:@"Profile"]) {
+        FrecipeProfileViewController *destinationViewController = (FrecipeProfileViewController *)segue.destinationViewController;
+        UIButton *button = (UIButton *)sender;
+        UICollectionViewCell *cell = (UICollectionViewCell *)button.superview.superview.superview;
+        
+        NSDictionary *user = [[self.recipes objectAtIndex:[self.recipesCollectionView indexPathForCell:cell].row] objectForKey:@"user"];
+        NSLog(@"%@", user);
+        destinationViewController.userId = [NSString stringWithFormat:@"%@", [user objectForKey:@"id"]];
+        
+        destinationViewController.navigationItem.leftBarButtonItem = nil;
+        self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Frecipe" style:UIBarButtonItemStyleBordered target:destinationViewController action:@selector(popViewControllerFromStack)];
+//        destinationViewController.navigationItem.leftBarButtonItem = self.navigationItem.backBarButtonItem;
+    }
 }
 
 // alert view delegate methods
@@ -212,6 +223,8 @@
     UIView *flipView1 = [cell viewWithTag:8];
     UIView *flipView2 = [cell viewWithTag:1];
     
+    
+    
     UITapGestureRecognizer *flipGestureRecognizer1 = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(flipCell:)];
     UITapGestureRecognizer *flipGestureRecognizer2 = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(flipCell:)];
     
@@ -238,6 +251,10 @@
     UITextView *missingIngredientsView = (UITextView *)[cell viewWithTag:4];
     missingIngredientsView.text = [NSString stringWithFormat:@"%u Missing Ingredients: %@", missingIngredients.count, missingIngredientsString];
     
+    UIView *backView = [cell viewWithTag:1];
+    UIView *frontView = [cell viewWithTag:5];
+    frontView.alpha = 1.0;
+    backView.alpha = 0;
     
     return cell;
 }
@@ -245,14 +262,5 @@
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     self.selectedRecipe = [self.recipes objectAtIndex:indexPath.row];
     [self performSegueWithIdentifier:@"RecipeDetail" sender:self];
-}
-
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    if ([segue.identifier isEqualToString:@"RecipeDetail"]) {
-        FrecipeRecipeDetailViewController *recipeDetailViewController = (FrecipeRecipeDetailViewController *) segue.destinationViewController;
-        recipeDetailViewController.recipeId = [self.selectedRecipe objectForKey:@"id"];
-    } else if ([segue.identifier isEqualToString:@"Profile"]) {
-        
-    }
 }
 @end

@@ -9,6 +9,7 @@
 #import "FrecipeRecipeDetailViewController.h"
 #import "FrecipeAPIClient.h"
 #import "FrecipeAppDelegate.h"
+#import "FrecipeProfileViewController.h"
 #import <SDWebImage/UIImageView+WebCache.h>
 
 @interface FrecipeRecipeDetailViewController () <UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate>
@@ -109,6 +110,15 @@
         [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
     }];
     [operation start];
+}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    if ([segue.identifier isEqualToString:@"Profile"]) {
+        FrecipeProfileViewController *destinationViewController = segue.destinationViewController;
+        destinationViewController.userId = [NSString stringWithFormat:@"%@", [self.user objectForKey:@"id"]];
+        destinationViewController.navigationItem.leftBarButtonItem = nil;
+        self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:self.title style:UIBarButtonItemStyleBordered target:destinationViewController action:@selector(popViewControllerFromStack)];
+    }
 }
 
 // table view delegate methods

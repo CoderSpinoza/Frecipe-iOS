@@ -73,6 +73,7 @@
 		C2A3288D172E4A4700EBB23B /* like_pressed.jpg in Resources */ = {isa = PBXBuildFile; fileRef = C2A3288B172E4A4700EBB23B /* like_pressed.jpg */; };
 		C2A3288E172E4A4700EBB23B /* like.jpg in Resources */ = {isa = PBXBuildFile; fileRef = C2A3288C172E4A4700EBB23B /* like.jpg */; };
 		C2A32890172E4F6C00EBB23B /* iTunesArtwork.png in Resources */ = {isa = PBXBuildFile; fileRef = C2A3288F172E4F6C00EBB23B /* iTunesArtwork.png */; };
+		C2A32893172E988D00EBB23B /* FrecipeFacebookInviteViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C2A32892172E988C00EBB23B /* FrecipeFacebookInviteViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -174,6 +175,8 @@
 		C2A3288B172E4A4700EBB23B /* like_pressed.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = like_pressed.jpg; sourceTree = "<group>"; };
 		C2A3288C172E4A4700EBB23B /* like.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = like.jpg; sourceTree = "<group>"; };
 		C2A3288F172E4F6C00EBB23B /* iTunesArtwork.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iTunesArtwork.png; sourceTree = "<group>"; };
+		C2A32891172E988C00EBB23B /* FrecipeFacebookInviteViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrecipeFacebookInviteViewController.h; sourceTree = "<group>"; };
+		C2A32892172E988C00EBB23B /* FrecipeFacebookInviteViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FrecipeFacebookInviteViewController.m; sourceTree = "<group>"; };
 		CC3902FF59D545519B935676 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -301,6 +304,8 @@
 				C2A32880172E04A100EBB23B /* FrecipeAddRecipeViewController.m */,
 				C2A32882172E04AB00EBB23B /* FrecipeAddToGroceryListViewController.h */,
 				C2A32883172E04AB00EBB23B /* FrecipeAddToGroceryListViewController.m */,
+				C2A32891172E988C00EBB23B /* FrecipeFacebookInviteViewController.h */,
+				C2A32892172E988C00EBB23B /* FrecipeFacebookInviteViewController.m */,
 				C2A32885172E04BD00EBB23B /* FrecipeAPIClient.h */,
 				C2A32886172E04BD00EBB23B /* FrecipeAPIClient.m */,
 				C2A32888172E04C500EBB23B /* FrecipeFunctions.h */,
@@ -531,6 +536,7 @@
 				C2A32884172E04AB00EBB23B /* FrecipeAddToGroceryListViewController.m in Sources */,
 				C2A32887172E04BD00EBB23B /* FrecipeAPIClient.m in Sources */,
 				C2A3288A172E04C500EBB23B /* FrecipeFunctions.m in Sources */,
+				C2A32893172E988D00EBB23B /* FrecipeFacebookInviteViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
