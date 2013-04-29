@@ -108,4 +108,88 @@
     
 }
 
+- (IBAction)cancelButtonPressed:(UIBarButtonItem *)sender {
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+- (IBAction)inviteButtonPressed:(UIBarButtonItem *)sender {
+    NSArray *keys = [NSArray arrayWithObjects:@"message", @"to", nil];
+    NSArray *values = [NSArray arrayWithObjects:@"Frecipe Request", [self.selectedFriends componentsJoinedByString:@","], nil];
+    
+    NSDictionary *parameters = [NSDictionary dictionaryWithObjects:values forKeys:keys];
+    
+    [FBWebDialogs presentRequestsDialogModallyWithSession:nil message:nil title:nil parameters:parameters handler:^(FBWebDialogResult result, NSURL *resultURL, NSError *error) {
+        if (!error) {
+            [self dismissViewControllerAnimated:YES completion:nil];
+        }
+    }];
+}
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    // Return the number of sections.
+    return 1;
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    // Return the number of rows in the section.
+    return self.facebookFriends.count;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    static NSString *CellIdentifier = @"FriendCell";
+    UITableViewCell *cell = [self.facebookFriendsTableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
+    
+    // Configure the cell...
+    
+    if (!cell) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"FriendCell"];
+    }
+    
+    NSDictionary *facebookFriend = [self.facebookFriends objectAtIndex:indexPath.row];
+    
+    
+    FBProfilePictureView *profilePictureView = (FBProfilePictureView *)[cell viewWithTag:1];
+    
+    UILabel *nameLabel = (UILabel *)[cell viewWithTag:2];
+    
+    profilePictureView.profileID = [NSString stringWithFormat:@"%@", [facebookFriend objectForKey:@"id"]];
+    nameLabel.text = [NSString stringWithFormat:@"%@", [facebookFriend objectForKey:@"name"]];
+    
+    
+    if ([self.selectedFriends containsObject:[facebookFriend objectForKey:@"id"]]) {
+        cell.accessoryType = UITableViewCellAccessoryCheckmark;
+    } else {
+        cell.accessoryType = UITableViewCellAccessoryNone;
+    }
+    return cell;
+}
+
+//- (NSIndexPath *)tableView:(UITableView *)tableView willSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+//    return nil;
+//}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+    cell.accessoryType = UITableViewCellAccessoryCheckmark;
+    
+    NSDictionary *facebookFriend = [self.facebookFriends objectAtIndex:indexPath.row];
+    
+    [self.selectedFriends addObject:[NSString stringWithFormat:@"%@", [facebookFriend objectForKey:@"id"]]];
+    NSLog(@"%@", self.selectedFriends);
+}
+
+- (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+    cell.accessoryType = UITableViewCellAccessoryNone;
+    
+    NSDictionary *facebookFriend = [self.facebookFriends objectAtIndex:indexPath.row];
+    [self.selectedFriends removeObject:[NSString stringWithFormat:@"%@", [facebookFriend objectForKey:@"id"]]];
+    NSLog(@"%@", self.selectedFriends);
+}
+
 @end

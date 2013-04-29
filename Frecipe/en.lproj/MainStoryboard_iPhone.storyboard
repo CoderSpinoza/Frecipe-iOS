@@ -819,6 +819,7 @@
                         <outlet property="profilePictureView" destination="iVX-TH-Cst" id="q0Y-li-ewl"/>
                         <outlet property="recipesCollectionView" destination="OQb-Bg-KeQ" id="2js-Yf-QOg"/>
                         <outlet property="scrollView" destination="rdM-VD-HbP" id="qYt-uL-fQl"/>
+                        <segue destination="3s6-3o-xkU" kind="modal" identifier="FacebookInvites" modalTransitionStyle="coverVertical" id="K7T-aO-viH"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="bn6-TZ-w8m" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -838,8 +839,16 @@
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                                 <items>
                                     <navigationItem title="Invite Friends" id="3GG-Dy-VrH">
-                                        <barButtonItem key="leftBarButtonItem" title="Cancel" id="1Xn-DC-6NO"/>
-                                        <barButtonItem key="rightBarButtonItem" title="Invite" id="kvQ-Ro-NK6"/>
+                                        <barButtonItem key="leftBarButtonItem" title="Cancel" id="1Xn-DC-6NO">
+                                            <connections>
+                                                <action selector="cancelButtonPressed:" destination="3s6-3o-xkU" id="AZa-4Y-xuv"/>
+                                            </connections>
+                                        </barButtonItem>
+                                        <barButtonItem key="rightBarButtonItem" title="Invite" id="kvQ-Ro-NK6">
+                                            <connections>
+                                                <action selector="inviteButtonPressed:" destination="3s6-3o-xkU" id="ke5-Rd-hYs"/>
+                                            </connections>
+                                        </barButtonItem>
                                     </navigationItem>
                                 </items>
                             </navigationBar>
@@ -851,17 +860,31 @@
                                     <outlet property="delegate" destination="3s6-3o-xkU" id="gqR-Bm-pPH"/>
                                 </connections>
                             </searchBar>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="hDj-bt-tZ4">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" allowsMultipleSelection="YES" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="hDj-bt-tZ4">
                                 <rect key="frame" x="0.0" y="88" width="320" height="460"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" indentationWidth="10" reuseIdentifier="FriendCell" id="fqU-pZ-u5h">
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="FriendCell" id="fqU-pZ-u5h">
                                         <rect key="frame" x="0.0" y="22" width="320" height="44"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
                                             <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <view tag="1" contentMode="scaleToFill" id="Boz-S5-77Q" customClass="FBProfilePictureView">
+                                                    <rect key="frame" x="0.0" y="0.0" width="44" height="44"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                                                </view>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="2" contentMode="left" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="VGn-Wd-DDW">
+                                                    <rect key="frame" x="52" y="11" width="199" height="21"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <color key="highlightedColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                </label>
+                                            </subviews>
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </view>
                                     </tableViewCell>
@@ -887,7 +910,7 @@
                     </connections>
                 </searchDisplayController>
             </objects>
-            <point key="canvasLocation" x="1945" y="1404"/>
+            <point key="canvasLocation" x="2057" y="1404"/>
         </scene>
         <!--Frecipe Navigation Controller-->
         <scene sceneID="1He-IC-G9U">
@@ -1187,6 +1210,8 @@
         <class className="FrecipeFacebookInviteViewController" superclassName="UIViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeFacebookInviteViewController.h"/>
             <relationships>
+                <relationship kind="action" name="cancelButtonPressed:" candidateClass="UIBarButtonItem"/>
+                <relationship kind="action" name="inviteButtonPressed:" candidateClass="UIBarButtonItem"/>
                 <relationship kind="outlet" name="facebookFriendsTableView" candidateClass="UITableView"/>
                 <relationship kind="outlet" name="searchBar" candidateClass="UISearchBar"/>
             </relationships>
@@ -1221,6 +1246,7 @@
         <class className="FrecipeNavigationViewController" superclassName="UIViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeNavigationViewController.h"/>
             <relationships>
+                <relationship kind="action" name="menuButtonPressed:" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="menuCollectionView" candidateClass="UICollectionView"/>
             </relationships>
         </class>
@@ -1275,6 +1301,9 @@
         </class>
         <class className="UICollectionViewFlowLayout" superclassName="UICollectionViewLayout">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/UICollectionViewFlowLayout.h"/>
+        </class>
+        <class className="UICollectionViewLayout" superclassName="NSObject">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/UICollectionViewLayout.h"/>
         </class>
     </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
