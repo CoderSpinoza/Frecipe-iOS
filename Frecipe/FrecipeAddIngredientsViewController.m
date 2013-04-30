@@ -9,9 +9,12 @@
 #import "FrecipeAddIngredientsViewController.h"
 #import "FrecipeAPIClient.h"
 
-@interface FrecipeAddIngredientsViewController () <UITextFieldDelegate, UITableViewDataSource, UITableViewDelegate>
+@interface FrecipeAddIngredientsViewController () <UITextFieldDelegate, UITableViewDataSource, UITableViewDelegate> {
+    CGFloat originalHeight;
+}
 
 @property (strong, nonatomic) NSMutableArray *ingredients;
+
 @end
 
 @implementation FrecipeAddIngredientsViewController
@@ -42,7 +45,10 @@
     self.ingredientsTableView.delegate = self;
     self.ingredientsTableView.dataSource = self;
     
+    
+    NSLog(@"%f", self.ingredientsTableView.frame.size.height);
     [self addGestureRecognizers];
+    [self registerForKeyboardNotification];
 }
 
 - (void)didReceiveMemoryWarning
@@ -55,7 +61,7 @@
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
-- (IBAction)addButtonPressed {
+- (IBAction)addButtonPressed:(UIBarButtonItem *)sender {
     NSString *path = @"/user_ingredients";
     FrecipeAPIClient *client = [FrecipeAPIClient client];
     [[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];
@@ -100,11 +106,15 @@
 // text field delegate methods
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
     
-    if ([textField isEqual:self.ingredientField]) {
+    if ([textField isEqual:self.ingredientField] && ![textField.text isEqualToString:@""]) {
         if (![self.ingredients containsObject:textField.text]) {
             [self.ingredients addObject:[textField.text capitalizedString]];
             [self.ingredientsTableView reloadData];
             self.ingredientField.text = @"";
+            
+            if (self.ingredients.count > 0) {
+                [self.ingredientsTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.ingredients.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+            }
         }
         
     }
@@ -147,6 +157,34 @@
             [self.ingredientsTableView reloadData];
         }
     }
+}
+
+// keybaord notification
+- (void)registerForKeyboardNotification {
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
+}
+
+- (void)keyboardWillShow:(NSNotification *)notification {
+    originalHeight = self.ingredientsTableView.frame.size.height;
+    
+    NSDictionary *info = [notification userInfo];
+    CGSize keyboardSize = [[info objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
+    
+    
+    [UIView animateWithDuration:0.3 animations:^{        
+        self.ingredientsTableView.frame = CGRectMake(self.ingredientsTableView.frame.origin.x, self.ingredientsTableView.frame.origin.y, self.ingredientsTableView.frame.size.width, self.ingredientsTableView.frame.size.height - (keyboardSize.height - self.view.frame.size.height + self.ingredientsTableView.frame.origin.y + self.ingredientsTableView.frame.size.height));
+        
+        
+        
+        if (self.ingredients.count > 0) {
+            [self.ingredientsTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.ingredients.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+        }
+    }];
+}
+
+- (void)keyboardWillHide:(NSNotification *)notification {
+    self.ingredientsTableView.frame = CGRectMake(self.ingredientsTableView.frame.origin.x, self.ingredientsTableView.frame.origin.y, self.ingredientsTableView.frame.size.width, originalHeight);
 }
 
 @end

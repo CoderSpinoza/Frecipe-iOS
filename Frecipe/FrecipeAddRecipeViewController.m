@@ -107,17 +107,17 @@
 
 
 - (IBAction)addButtonPressed:(UIBarButtonItem *)sender {
+    NSString *path;
+    NSString *method;
+    if ([self.editing isEqualToString:@"1"]) {
+        path = [NSString stringWithFormat:@"recipes/%@", self.recipeId];
+        method = @"PUT";
+        userHasUploadedRecipePhoto = YES;
+    } else {
+        path = @"/recipes";
+        method = @"POST";
+    }
     if (self.ingredients.count > 0 && userHasUploadedRecipePhoto) {
-        NSString *path;
-        NSString *method;
-        if ([self.editing isEqualToString:@"1"]) {
-            path = [NSString stringWithFormat:@"recipes/%@", self.recipeId];
-            method = @"PUT";
-        } else {
-            path = @"/recipes";
-            method = @"POST";
-        }
-        
         [[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];
         [[AFNetworkActivityIndicatorManager sharedManager] incrementActivityCount];
         
@@ -131,7 +131,7 @@
         NSDictionary *parameters = [NSDictionary dictionaryWithObjects:values forKeys:keys];
         
         FrecipeAPIClient *client = [FrecipeAPIClient client];
-        NSMutableURLRequest *request = [client multipartFormRequestWithMethod:@"POST" path:path parameters:parameters constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
+        NSMutableURLRequest *request = [client multipartFormRequestWithMethod:method path:path parameters:parameters constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
             [formData appendPartWithFileData:UIImageJPEGRepresentation(self.recipeImageButton.imageView.image, 0.9) name:@"recipe_image" fileName:@"recipe_image.jpg" mimeType:@"image/jpeg"];
         }];
         

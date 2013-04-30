@@ -9,6 +9,7 @@
 #import "FrecipeNavigationViewController.h"
 #import "ECSlidingViewController.h"
 #import <FacebookSDK/FacebookSDK.h>
+#import <SDWebImage/UIImageView+WebCache.h>
 
 @interface FrecipeNavigationViewController () <UICollectionViewDataSource, UICollectionViewDelegateFlowLayout>
 
@@ -31,12 +32,14 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
-    self.menu = [NSArray arrayWithObjects:@"frecipe.jpg", @"my_fridge.jpg", @"my_restaurant.jpg", @"grocery_list.jpg", @"logout.jpg", nil];
+    self.menu = [NSArray arrayWithObjects:@"frecipe.jpg", @"my_fridge.jpg", @"my_restaurant.jpg", @"grocery_list.jpg", @"settings.png", @"logout.jpg", nil];
     [self.slidingViewController setAnchorRightRevealAmount:200.0f];
     self.slidingViewController.underLeftWidthLayout = ECFullWidth;
     
     self.menuCollectionView.delegate = self;
     self.menuCollectionView.dataSource = self;
+    
+    [self fetchUserInfo];
 }
 
 - (void)didReceiveMemoryWarning
@@ -78,6 +81,24 @@
         }];
     }
 }
+- (IBAction)notificationButtonPressed {
+}
+
+- (void)fetchUserInfo {
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    
+    NSString *provider = [defaults stringForKey:@"provider"];
+    if ([provider isEqualToString:@"facebook"]) {
+        self.profilePictureView.hidden = YES;
+        self.fbProfilePictureView.profileID = [defaults stringForKey:@"uid"];
+    } else {
+        self.fbProfilePictureView.hidden = YES;
+        [self.profilePictureView setImageWithURL:[NSString stringWithFormat:@"%@", [defaults stringForKey:@"profile_picture"]]];
+    }
+    
+[self.nameButton setTitle:[defaults stringForKey:@"name"] forState:UIControlStateNormal];
+}
+
 // collection view delegate and dataSource methods
 
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {

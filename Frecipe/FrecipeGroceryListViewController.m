@@ -93,6 +93,8 @@
         [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         NSLog(@"%@", error);
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:@"There was an error loading your grocery list. Retry?" delegate:self cancelButtonTitle:@"Retry" otherButtonTitles:@"Cancel", nil];
+        [alertView show];
         [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
         
     }];
@@ -136,6 +138,15 @@
 - (void)openAddToGroceryListModal {
     [self performSegueWithIdentifier:@"AddToGroceryList" sender:self];
 }
+
+// alert view delegate methods
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    if (buttonIndex == 0) {
+        [self fetchGroceryList];
+    }
+}
+
+// table view delegate and dataSource methods
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {

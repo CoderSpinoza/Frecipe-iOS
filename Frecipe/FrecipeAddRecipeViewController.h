@@ -10,6 +10,7 @@
 
 @interface FrecipeAddRecipeViewController : UIViewController
 
+@property (weak, nonatomic) IBOutlet UINavigationBar *navigationBar;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *segmentedControl;
 @property (weak, nonatomic) IBOutlet UITextField *recipeNameField;
 @property (weak, nonatomic) IBOutlet UITextField *ingredientField;

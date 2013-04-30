@@ -7,8 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
-
+#import <FacebookSDK/FacebookSDK.h>
 @interface FrecipeNavigationViewController : UIViewController
+
+@property (weak, nonatomic) IBOutlet FBProfilePictureView *fbProfilePictureView;
+@property (weak, nonatomic) IBOutlet UIImageView *profilePictureView;
+@property (weak, nonatomic) IBOutlet UIButton *nameButton;
 
 @property (weak, nonatomic) IBOutlet UICollectionView *menuCollectionView;
 @end

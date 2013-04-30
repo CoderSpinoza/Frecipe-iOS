@@ -9,6 +9,7 @@
 #import "FrecipeProfileViewController.h"
 #import "FrecipeNavigationController.h"
 #import "FrecipeAPIClient.h"
+#import "FrecipeAppDelegate.h"
 #import "FrecipeRecipeDetailViewController.h"
 #import <QuartzCore/QuartzCore.h>
 #import <SDWebImage/UIImageView+WebCache.h>
@@ -35,6 +36,9 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
+    
+    self.recipesCollectionView.dataSource = self;
+    self.recipesCollectionView.delegate = self;
     [self fetchUserInfo];
 }
 
@@ -84,12 +88,10 @@
     
     NSDictionary *parameters;
     if (self.userId) {
-        NSLog(@"segue");
         NSArray *keys = [NSArray arrayWithObjects:@"authentication_token", @"id", nil];
         NSArray *values = [NSArray arrayWithObjects:authentication_token, self.userId, nil];
         parameters = [NSDictionary dictionaryWithObjects:values forKeys:keys];
     } else {
-        NSLog(@"profile");
         parameters = [NSDictionary dictionaryWithObject:authentication_token forKey:@"authentication_token"];
     }
 
@@ -101,7 +103,6 @@
     spinner.center = CGPointMake(self.view.frame.size.width / 2, self.view.frame.size.height / 2 - self.navigationController.navigationBar.frame.size.height / 2);
     [spinner startAnimating];
     [self.view addSubview:spinner];
-    NSLog(@"%@", parameters);
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
         NSDictionary *user = [JSON objectForKey:@"user"];
         self.title = [NSString stringWithFormat:@"%@ %@", [user objectForKey:@"first_name"], [user objectForKey:@"last_name"]];
@@ -174,7 +175,6 @@
         
         [spinner stopAnimating];
         [spinner removeFromSuperview];
-        NSLog(@"%@", JSON);
         [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         
@@ -262,53 +262,50 @@
     return 1;
 }
 
-//- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
-//    UICollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"RecipeCell" forIndexPath:indexPath];
-//    UIImageView *recipeImageView = (UIImageView *)[cell viewWithTag:1];
-//    if (PRODUCTION) {
-//        [recipeImageView setImageWithURL:[[self.recipes objectAtIndex:indexPath.row] objectForKey:@"recipe_image"] placeholderImage:[UIImage imageNamed:@"placeholder.png"]];
-//    } else {
-//        [recipeImageView setImageWithURL:[NSString stringWithFormat:@"http://localhost:5000/%@",[[self.recipes objectAtIndex:indexPath.row] objectForKey:@"recipe_image"]] placeholderImage:[UIImage imageNamed:@"placeholder.png"]];
-//    }
-//    
-//    UIView *flipView = [cell viewWithTag:3];
-//    UITapGestureRecognizer *flipGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(flipCell:)];
-//    [flipView addGestureRecognizer:flipGestureRecognizer];
-//    //
-//    UIView *flipView2 = [cell viewWithTag:6];
-//    UITapGestureRecognizer *flipGestureRecognizer2 = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(flipCell:)];
-//    [flipView2 addGestureRecognizer:flipGestureRecognizer2];
-//    
+- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
+    UICollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"RecipeCell" forIndexPath:indexPath];
+    UIImageView *recipeImageView = (UIImageView *)[cell viewWithTag:6];
+    if (PRODUCTION) {
+        [recipeImageView setImageWithURL:[[self.recipes objectAtIndex:indexPath.row] objectForKey:@"recipe_image"] placeholderImage:[UIImage imageNamed:@"placeholder.png"]];
+    } else {
+        [recipeImageView setImageWithURL:[NSString stringWithFormat:@"http://localhost:5000/%@",[[self.recipes objectAtIndex:indexPath.row] objectForKey:@"recipe_image"]] placeholderImage:[UIImage imageNamed:@"placeholder.png"]];
+    }
+    
+    UIView *flipView = [cell viewWithTag:1];
+    UITapGestureRecognizer *flipGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(flipCell:)];
+    [flipView addGestureRecognizer:flipGestureRecognizer];
+    //
+    UIView *flipView2 = [cell viewWithTag:8];
+    UITapGestureRecognizer *flipGestureRecognizer2 = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(flipCell:)];
+    [flipView2 addGestureRecognizer:flipGestureRecognizer2];
+    
 //    UIView *frontView = [cell viewWithTag:4];
 //    UIView *backView = [cell viewWithTag:6];
-//    FrecipeRecipeCell *recipeCell = (FrecipeRecipeCell *)cell;
-//    recipeCell.frontView = frontView;
-//    recipeCell.backView = backView;
 //    
 //    [UIView animateWithDuration:0.5 animations:^{
 //        frontView.alpha = 1.0;
 //        recipeImageView.alpha = 1.0;
 //    }];
-//    UITextView *recipeNameVIew = (UITextView *)[cell viewWithTag:3];
-//    recipeNameVIew.text = [NSString stringWithFormat:@"%@",[[self.recipes objectAtIndex:indexPath.row] objectForKey:@"recipe_name"]];
-//    
-//    UILabel *recipeNameLabel = (UILabel *)[cell viewWithTag:8];
-//    UIButton *chefNameButton = (UIButton *)[cell viewWithTag:9];
-//    UITextView *missingIngredientsView = (UITextView *)[cell viewWithTag:10];
-//    recipeNameLabel.text = [NSString stringWithFormat:@"%@",[[self.recipes objectAtIndex:indexPath.row] objectForKey:@"recipe_name"]];
-//    NSArray *missingIngredients = [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"missing_ingredients"];
-//    NSDictionary *user = [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"user"];
-//    
-//    [chefNameButton setTitle:[NSString stringWithFormat:@"%@ %@", [user objectForKey:@"first_name"], [user objectForKey:@"last_name"]] forState:UIControlStateNormal];
-//    
-//    NSMutableArray *missingIngredientsStringArray = [[NSMutableArray alloc] init];
-//    for (NSDictionary *missIng in missingIngredients) {
-//        [missingIngredientsStringArray addObject:[missIng objectForKey:@"name"]];
-//    }
-//    NSString *missingIngredientsString = [missingIngredientsStringArray componentsJoinedByString:@", "];
-//    missingIngredientsView.text = [NSString stringWithFormat:@"%u Missing Ingredients: %@", missingIngredients.count, missingIngredientsString];
-//    return cell;
-//}
+    UITextView *recipeNameView = (UITextView *)[cell viewWithTag:8];
+    recipeNameView.text = [NSString stringWithFormat:@"%@",[[self.recipes objectAtIndex:indexPath.row] objectForKey:@"recipe_name"]];
+    
+    UILabel *recipeNameLabel = (UILabel *)[cell viewWithTag:2];
+    UIButton *chefNameButton = (UIButton *)[cell viewWithTag:3];
+    UITextView *missingIngredientsView = (UITextView *)[cell viewWithTag:4];
+    recipeNameLabel.text = [NSString stringWithFormat:@"%@",[[self.recipes objectAtIndex:indexPath.row] objectForKey:@"recipe_name"]];
+    NSArray *missingIngredients = [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"missing_ingredients"];
+    NSDictionary *user = [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"user"];
+    
+    [chefNameButton setTitle:[NSString stringWithFormat:@"%@ %@", [user objectForKey:@"first_name"], [user objectForKey:@"last_name"]] forState:UIControlStateNormal];
+    
+    NSMutableArray *missingIngredientsStringArray = [[NSMutableArray alloc] init];
+    for (NSDictionary *missIng in missingIngredients) {
+        [missingIngredientsStringArray addObject:[missIng objectForKey:@"name"]];
+    }
+    NSString *missingIngredientsString = [missingIngredientsStringArray componentsJoinedByString:@", "];
+    missingIngredientsView.text = [NSString stringWithFormat:@"%u Missing Ingredients: %@", missingIngredients.count, missingIngredientsString];
+    return cell;
+}
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     self.selectedRecipe = [self.recipes objectAtIndex:indexPath.row];

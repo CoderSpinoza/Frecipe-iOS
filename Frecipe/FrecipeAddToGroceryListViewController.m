@@ -9,7 +9,10 @@
 #import "FrecipeAddToGroceryListViewController.h"
 #import "FrecipeAPIClient.h"
 
-@interface FrecipeAddToGroceryListViewController () <UITextFieldDelegate, UITableViewDataSource, UITableViewDelegate>
+@interface FrecipeAddToGroceryListViewController () <UITextFieldDelegate, UITableViewDataSource, UITableViewDelegate> {
+    CGFloat originalHeight;
+
+}
 
 @property (strong, nonatomic) NSMutableArray *groceryList;
 
@@ -43,6 +46,7 @@
     self.groceryListTableView.delegate = self;
     self.groceryListTableView.dataSource = self;
     [self addGestureRecognizers];
+    [self registerForKeyboardNotification];
 }
 
 - (void)didReceiveMemoryWarning
@@ -55,7 +59,7 @@
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
-- (IBAction)addButtonPressed {
+- (IBAction)addButtonPressed:(UIBarButtonItem *)sender {
     NSString *path = @"/groceries";
     
     [[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];
@@ -110,10 +114,13 @@
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
     if ([textField isEqual:self.groceryField]) {
         
-        if (![self.groceryList containsObject:textField.text]) {
+        if (![self.groceryList containsObject:textField.text] && ![textField.text isEqualToString:@""]) {
             [self.groceryList addObject:[textField.text capitalizedString]];
             textField.text = @"";
             [self.groceryListTableView reloadData];
+            if (self.groceryList.count > 0) {
+                [self.groceryListTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.groceryList.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+            }
         }
     }
     return YES;
@@ -147,5 +154,29 @@
     NSString *grocery = [self.groceryList objectAtIndex:indexPath.row];
     cell.textLabel.text = [NSString stringWithFormat:@"%u. %@", indexPath.row + 1, grocery];
     return cell;
+}
+
+- (void)registerForKeyboardNotification {
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
+}
+
+- (void)keyboardWillShow:(NSNotification *)notification {
+    originalHeight = self.groceryListTableView.frame.size.height;
+    NSDictionary *info = [notification userInfo];
+    CGSize keyboardSize = [[info objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
+    [UIView animateWithDuration:0.3 animations:^{
+        self.groceryListTableView.frame = CGRectMake(self.groceryListTableView.frame.origin.x, self.groceryListTableView.frame.origin.y, self.groceryListTableView.frame.size.width, self.groceryListTableView.frame.size.height - (keyboardSize.height - self.view.frame.size.height + self.groceryListTableView.frame.origin.y + self.groceryListTableView.frame.size.height));
+        
+        
+        if (self.groceryList.count > 0) {
+            [self.groceryListTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.groceryList.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+        }
+    }];
+}
+
+- (void)keyboardWillHide:(NSNotification *)notification {
+    self.groceryListTableView.frame = CGRectMake(self.groceryListTableView.frame.origin.x, self.groceryListTableView.frame.origin.y, self.groceryListTableView.frame.size.width, originalHeight);
 }
 @end

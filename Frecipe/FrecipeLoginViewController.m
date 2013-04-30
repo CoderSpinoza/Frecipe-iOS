@@ -81,6 +81,16 @@
             [defaults setObject:[[JSON objectForKey:@"user"] objectForKey:@"uid"] forKey:@"uid"];
         }
         
+        [defaults setObject:[NSString stringWithFormat:@"%@ %@", [[JSON objectForKey:@"user"] objectForKey:@"first_name"], [[JSON objectForKey:@"user"] objectForKey:@"last_name"]] forKey:@"name"];
+        
+        NSString *profilePictureUrl;
+        if (PRODUCTION) {
+            profilePictureUrl = [NSString stringWithFormat:@"%@",[JSON objectForKey:@"profile_picture"]];
+        } else {
+            profilePictureUrl = [NSString stringWithFormat:@"http://localhost:5000/%@", [JSON objectForKey:@"profile_picture"]];
+        }
+        [defaults setObject:profilePictureUrl forKey:@"profile_picture"];
+        
         [defaults synchronize];
         
         [self performSegueWithIdentifier:@"Login" sender:self];
@@ -142,11 +152,19 @@
             
         } else {
             NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-            NSLog(@"%@", JSON);
             [defaults setObject:[JSON objectForKey:@"token"] forKey:@"authentication_token"];
             
             [defaults setObject:[[JSON objectForKey:@"user"] objectForKey:@"id"] forKey:@"id"];
             [defaults setObject:[[JSON objectForKey:@"user"] objectForKey:@"provider"] forKey:@"provider"];
+            [defaults setObject:[NSString stringWithFormat:@"%@ %@", [[JSON objectForKey:@"user"] objectForKey:@"first_name"], [[JSON objectForKey:@"user"] objectForKey:@"last_name"]] forKey:@"name"];
+            
+            NSString *profilePictureUrl;
+            if (PRODUCTION) {
+                profilePictureUrl = [NSString stringWithFormat:@"%@",[JSON objectForKey:@"profile_picture"]];
+            } else {
+                profilePictureUrl = [NSString stringWithFormat:@"http://localhost:5000/%@", [JSON objectForKey:@"profile_picture"]];
+            }
+            [defaults setObject:profilePictureUrl forKey:@"profile_picture"];
             [defaults setObject:uid forKey:@"uid"];
             [defaults synchronize];
             
@@ -164,28 +182,15 @@
     if ([segue.identifier isEqualToString:@"Signup"]) {
         FrecipeSignupViewController *signupViewController = (FrecipeSignupViewController *)segue.destinationViewController;
         if (signupViewController.view) {
-            if (self.email) {
-                //                signupViewController.emailField.text = self.email;
-                //                signupViewController.firstNameField.text = self.firstName;
-                //                signupViewController.secondNameField.text = self.lastName;
-                //                signupViewController.uid = self.uid;
-                //                signupViewController.emailField.enabled = NO;
-                //                signupViewController.firstNameField.enabled = NO;
-                //                signupViewController.secondNameField.enabled = NO;
-                //                signupViewController.emailField.backgroundColor = [UIColor lightGrayColor];
-                //                signupViewController.firstNameField.backgroundColor = [UIColor lightGrayColor];
-                //                signupViewController.secondNameField.backgroundColor = [UIColor lightGrayColor];
+            if (self.email) {                
+                signupViewController.emailField.text = self.email;
+                signupViewController.firstNameField.text = self.firstName;
+                signupViewController.lastNameField.text = self.lastName;
+                signupViewController.uid = self.uid;
                 
                 self.email = nil;
                 self.firstName = nil;
                 self.lastName = nil;
-            } else {
-                //                signupViewController.emailField.enabled = YES;
-                //                signupViewController.firstNameField.enabled = YES;
-                //                signupViewController.secondNameField.enabled = YES;
-                //                signupViewController.emailField.backgroundColor = [UIColor whiteColor];
-                //                signupViewController.firstNameField.backgroundColor = [UIColor whiteColor];
-                //                signupViewController.secondNameField.backgroundColor = [UIColor whiteColor];
             }
         }
     }

@@ -10,4 +10,10 @@
 
 @interface FrecipeSignupViewController : UIViewController
 
+@property (weak, nonatomic) IBOutlet UITextField *emailField;
+@property (weak, nonatomic) IBOutlet UITextField *firstNameField;
+@property (weak, nonatomic) IBOutlet UITextField *lastNameField;
+@property (weak, nonatomic) IBOutlet UITextField *passwordField;
+@property (weak, nonatomic) IBOutlet UITextField *confirmationField;
+@property (strong, nonatomic) NSString *uid;
 @end

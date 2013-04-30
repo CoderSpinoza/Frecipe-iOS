@@ -15,7 +15,7 @@
 #import "FrecipeFunctions.h"
 #import <SDWebImage/UIImageView+WebCache.h>
 
-@interface FrecipeViewController () <UICollectionViewDelegateFlowLayout, UICollectionViewDataSource>
+@interface FrecipeViewController () <UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, UISearchBarDelegate, UISearchDisplayDelegate>
 
 @property (strong, nonatomic) NSMutableArray *recipes;
 @property (strong, nonatomic) UIRefreshControl *refreshControl;
@@ -39,6 +39,7 @@
     self.recipesCollectionView.dataSource = self;
     self.recipesCollectionView.delegate = self;
     
+    self.searchBar.delegate = self;
     [self addRefreshControl];
 }
 
@@ -197,6 +198,19 @@
             [self fetchRecipes];
         }
     }
+}
+
+// search bar delegate methods
+
+- (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar {
+    self.searchBar.alpha = 1;
+}
+
+//- (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar {
+//    self.searchBar.alpha = 0.5;
+//}
+- (void)searchBarTextDidEndEditing:(UISearchBar *)searchBar {
+    self.searchBar.alpha = 0.5;
 }
 
 // collection view delegate methods
