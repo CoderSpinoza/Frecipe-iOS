@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "FrecipeRatingView.h"
 
 @interface FrecipeRecipeDetailViewController : UIViewController
 
@@ -20,4 +21,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *directionsLabel;
 @property (weak, nonatomic) IBOutlet UITableView *ingredientsTableView;
 @property (weak, nonatomic) IBOutlet UITableView *directionsTableView;
+@property (weak, nonatomic) IBOutlet UIView *ratingBorderView;
+@property (weak, nonatomic) IBOutlet FrecipeRatingView *ratingView;
+@property (weak, nonatomic) IBOutlet FrecipeRatingView *averageRatingView;
 @end

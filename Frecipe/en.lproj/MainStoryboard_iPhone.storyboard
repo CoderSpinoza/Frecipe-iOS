@@ -508,14 +508,14 @@
                                         </state>
                                     </button>
                                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Ingredients" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="A5k-fS-3mu">
-                                        <rect key="frame" x="20" y="334" width="91" height="21"/>
+                                        <rect key="frame" x="20" y="364" width="91" height="21"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="XJl-ba-nT0">
-                                        <rect key="frame" x="20" y="363" width="280" height="280"/>
+                                        <rect key="frame" x="20" y="393" width="280" height="280"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <prototypes>
@@ -531,14 +531,14 @@
                                         </prototypes>
                                     </tableView>
                                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Directions" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="NCs-PS-cEe">
-                                        <rect key="frame" x="20" y="650" width="84" height="21"/>
+                                        <rect key="frame" x="20" y="680" width="84" height="21"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="YA6-iV-Gbc">
-                                        <rect key="frame" x="20" y="670" width="280" height="280"/>
+                                        <rect key="frame" x="20" y="700" width="280" height="280"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <prototypes>
@@ -553,6 +553,23 @@
                                             </tableViewCell>
                                         </prototypes>
                                     </tableView>
+                                    <view contentMode="scaleToFill" id="DRy-7F-miV" customClass="FrecipeRatingView">
+                                        <rect key="frame" x="80" y="333" width="160" height="30"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                                    </view>
+                                    <view alpha="0.0" contentMode="scaleToFill" id="vcO-OO-YXz">
+                                        <rect key="frame" x="70" y="370" width="180" height="40"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <subviews>
+                                            <view contentMode="scaleToFill" id="s0b-Ur-YVq" customClass="FrecipeRatingView">
+                                                <rect key="frame" x="10" y="5" width="160" height="30"/>
+                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                                            </view>
+                                        </subviews>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                                    </view>
                                 </subviews>
                             </scrollView>
                         </subviews>
@@ -560,6 +577,7 @@
                     </view>
                     <navigationItem key="navigationItem" id="q0I-dF-jjb"/>
                     <connections>
+                        <outlet property="averageRatingView" destination="DRy-7F-miV" id="hmu-uy-SiV"/>
                         <outlet property="commentButton" destination="qwe-q2-huW" id="i5v-r9-4fw"/>
                         <outlet property="directionsLabel" destination="NCs-PS-cEe" id="yVt-BY-9A2"/>
                         <outlet property="directionsTableView" destination="YA6-iV-Gbc" id="Bdh-tq-e6y"/>
@@ -567,6 +585,8 @@
                         <outlet property="ingredientsTableView" destination="XJl-ba-nT0" id="xxT-8v-jc8"/>
                         <outlet property="likesButton" destination="e7K-2y-eJF" id="t9o-d6-Ru4"/>
                         <outlet property="nameButton" destination="nhL-Qf-p6w" id="bCN-VY-f6z"/>
+                        <outlet property="ratingBorderView" destination="vcO-OO-YXz" id="zQV-F1-aTj"/>
+                        <outlet property="ratingView" destination="s0b-Ur-YVq" id="Tnx-lu-mcL"/>
                         <outlet property="recipeImageView" destination="1an-3G-1o1" id="UOq-Vu-Z7c"/>
                         <outlet property="scrollView" destination="u1I-BJ-kRh" id="HGJ-DP-nIk"/>
                         <segue destination="WPi-EU-Det" kind="modal" identifier="EditRecipe" modalTransitionStyle="coverVertical" id="TkR-fi-IFc"/>
@@ -574,7 +594,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="mbi-GY-NYq" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2407" y="656"/>
+            <point key="canvasLocation" x="2322" y="672"/>
         </scene>
         <!--Frecipe Add Ingredients View Controller-->
         <scene sceneID="LaM-wJ-3aP">
@@ -820,7 +840,7 @@
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                                     </view>
                                     <collectionView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" minimumZoomScale="0.0" maximumZoomScale="0.0" dataMode="prototypes" id="OQb-Bg-KeQ">
-                                        <rect key="frame" x="0.0" y="342" width="320" height="162"/>
+                                        <rect key="frame" x="0.0" y="345" width="320" height="162"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                         <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="0.0" minimumInteritemSpacing="0.0" id="kd7-YU-MI3">
@@ -1474,9 +1494,13 @@
                 <relationship kind="outlet" name="scrollView" candidateClass="UIScrollView"/>
             </relationships>
         </class>
+        <class className="FrecipeRatingView" superclassName="UIView">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeRatingView.h"/>
+        </class>
         <class className="FrecipeRecipeDetailViewController" superclassName="UIViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeRecipeDetailViewController.h"/>
             <relationships>
+                <relationship kind="outlet" name="averageRatingView" candidateClass="FrecipeRatingView"/>
                 <relationship kind="outlet" name="commentButton" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="directionsLabel" candidateClass="UILabel"/>
                 <relationship kind="outlet" name="directionsTableView" candidateClass="UITableView"/>
@@ -1484,6 +1508,8 @@
                 <relationship kind="outlet" name="ingredientsTableView" candidateClass="UITableView"/>
                 <relationship kind="outlet" name="likesButton" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="nameButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="ratingBorderView" candidateClass="UIView"/>
+                <relationship kind="outlet" name="ratingView" candidateClass="FrecipeRatingView"/>
                 <relationship kind="outlet" name="recipeImageView" candidateClass="UIImageView"/>
                 <relationship kind="outlet" name="scrollView" candidateClass="UIScrollView"/>
             </relationships>
@@ -1524,8 +1550,8 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="sIr-9w-LZ8"/>
-        <segue reference="1EU-6L-PD4"/>
-        <segue reference="UTp-eQ-C0H"/>
+        <segue reference="TkR-fi-IFc"/>
+        <segue reference="FWi-4a-gi8"/>
+        <segue reference="gQH-mx-TWG"/>
     </inferredMetricsTieBreakers>
 </document>

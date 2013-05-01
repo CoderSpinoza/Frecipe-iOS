@@ -92,6 +92,7 @@
         self.profilePictureView.hidden = YES;
         self.fbProfilePictureView.profileID = [defaults stringForKey:@"uid"];
     } else {
+        NSLog(@"%@", [NSString stringWithFormat:@"%@", [defaults stringForKey:@"profile_picture"]]);
         self.fbProfilePictureView.hidden = YES;
         [self.profilePictureView setImageWithURL:[NSString stringWithFormat:@"%@", [defaults stringForKey:@"profile_picture"]]];
     }

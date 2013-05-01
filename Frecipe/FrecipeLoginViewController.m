@@ -89,6 +89,7 @@
         } else {
             profilePictureUrl = [NSString stringWithFormat:@"http://localhost:5000/%@", [JSON objectForKey:@"profile_picture"]];
         }
+        NSLog(@"%@", profilePictureUrl);
         [defaults setObject:profilePictureUrl forKey:@"profile_picture"];
         
         [defaults synchronize];

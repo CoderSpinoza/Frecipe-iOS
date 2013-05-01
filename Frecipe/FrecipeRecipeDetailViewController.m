@@ -12,8 +12,9 @@
 #import "FrecipeProfileViewController.h"
 #import "FrecipeAddRecipeViewController.h"
 #import <SDWebImage/UIImageView+WebCache.h>
+#import <QuartzCore/QuartzCore.h>
 
-@interface FrecipeRecipeDetailViewController () <UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate>
+@interface FrecipeRecipeDetailViewController () <UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate, FrecipeRatingViewDelegate, UIAlertViewDelegate>
 @property (strong, nonatomic) NSMutableArray *ingredients;
 @property (strong, nonatomic) NSMutableArray *directions;
 @property (strong, nonatomic) NSDictionary *user;
@@ -40,7 +41,17 @@
     self.ingredientsTableView.delegate = self;
     self.directionsTableView.delegate = self;
     
+    self.ratingView.delegate = self;
+    self.averageRatingView.delegate = self;
+    self.averageRatingView.editable = NO;
+    
+    self.ratingBorderView.layer.cornerRadius = 5.0f;
+    self.ratingBorderView.layer.borderColor = [[UIColor blackColor] CGColor];
+    self.ratingBorderView.layer.borderWidth = 2.0f;
+    
     self.scrollView.contentSize = CGSizeMake(self.view.frame.size.width, 900);
+    
+    
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -102,6 +113,11 @@
         
         self.missingIngredients = [JSON objectForKey:@"missing_ingredients"];
         
+        
+        
+        // rating view
+        self.averageRatingView.rating = [[NSString stringWithFormat:@"%@", [JSON objectForKey:@"rating"]] integerValue];
+        self.ratingView.rating = [[NSString stringWithFormat:@"%@", [JSON objectForKey:@"user_rating"]] integerValue];
         // adjust table view heights
         self.ingredientsTableView.frame = CGRectMake(self.ingredientsTableView.frame.origin.x, self.ingredientsTableView.frame.origin.y, self.ingredientsTableView.frame.size.width, 44 * self.ingredients.count);
         
@@ -111,6 +127,7 @@
         
         self.scrollView.contentSize = CGSizeMake(self.view.frame.size.width, self.directionsTableView.frame.origin.y + self.directionsTableView.frame.size.height + 20);
         [spinner removeFromSuperview];
+//        NSLog(@"%f %f", self.ratingView.frame.origin.y, self);
         [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         if (error.code == -1011) {
@@ -119,6 +136,7 @@
         }
         
         [spinner removeFromSuperview];
+        
         [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
     }];
     [operation start];
@@ -144,6 +162,33 @@
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         NSLog(@"%@", error);
         [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
+    }];
+    [operation start];
+}
+
+- (void)rate {
+    NSString *path = @"recipes/rate";
+    
+    [[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];
+    [[AFNetworkActivityIndicatorManager sharedManager] incrementActivityCount];
+    
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSString *authentication_token = [defaults stringForKey:@"authentication_token"];
+    NSArray *keys = [NSArray arrayWithObjects:@"authentication_token", @"id", @"rating", nil];
+//    NSLog(@"%@ %@ %", authentication_token);
+    NSArray *values = [NSArray arrayWithObjects:authentication_token, self.recipeId, [@(self.ratingView.rating) stringValue], nil];
+    NSDictionary *parameters = [NSDictionary dictionaryWithObjects:values forKeys:keys];
+    
+    FrecipeAPIClient *client = [FrecipeAPIClient client];
+    NSURLRequest *request = [client requestWithMethod:@"POST" path:path parameters:parameters];
+    
+    AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
+        NSInteger rating = [[NSString stringWithFormat:@"%@", [JSON objectForKey:@"rating"]] integerValue];
+        
+        self.averageRatingView.rating = rating;
+    } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
+        NSLog(@"%@", error);
     }];
     [operation start];
 }
@@ -178,9 +223,40 @@
             destinationController.navigationBar.topItem.title = self.title;
             destinationController.recipeNameField.text = self.title;
             [destinationController.recipeImageButton setImage:self.recipeImageView.image forState:UIControlStateNormal];
-            
-//            destinationController.navigationBar.topItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Delete" style:UIBarButtonItemStyleBordered target:destinationController action:@selector(deleteButtonPressed)];
         }
+    }
+}
+
+// rating view delegate methods
+- (void)ratingViewDidRate:(FrecipeRatingView *)ratingView rating:(NSInteger)rating {
+    if ([ratingView isEqual:self.averageRatingView]) {
+        
+        if (self.ratingBorderView.alpha == 0) {
+            [UIView animateWithDuration:0.5 animations:^{
+                self.ratingBorderView.alpha = 1;
+            }];
+        } else {
+            [UIView animateWithDuration:0.5 animations:^{
+                self.ratingBorderView.alpha = 0;
+            }];
+        }
+    } else {
+        [self rate];
+        
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Rating" message:[NSString stringWithFormat:@"You gave a rating of %d", rating] delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: nil];
+        [alertView show];
+    }
+    
+}
+
+// alert view delegate methods
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    if ([alertView.title isEqualToString:@"Rating"]) {
+        [UIView animateWithDuration:0.5 animations:^{
+//            self.ratingBorderView.frame = CGRectMake(self.ratingBorderView.frame.origin.x, self.ratingBorderView.frame.origin.y, self.ratingBorderView.frame.size.width, 0);
+            self.ratingBorderView.alpha = 0;
+        }];
     }
 }
 

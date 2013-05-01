@@ -83,7 +83,7 @@
     
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
         
-        self.groceryList = [[NSMutableArray alloc] initWithArray:JSON];
+        self.groceryList = JSON;
         
         if (userIsInTheMiddleOfEditingGroceryList) {
             NSDictionary *addRow = [NSDictionary dictionaryWithObject:@"Add To Grocery List" forKey:@"name"];
