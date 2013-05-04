@@ -8,7 +8,6 @@
 
 #import "FrecipeNavigationViewController.h"
 #import "ECSlidingViewController.h"
-#import <FacebookSDK/FacebookSDK.h>
 #import <SDWebImage/UIImageView+WebCache.h>
 
 @interface FrecipeNavigationViewController () <UICollectionViewDataSource, UICollectionViewDelegateFlowLayout>
@@ -32,7 +31,7 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
-    self.menu = [NSArray arrayWithObjects:@"frecipe.jpg", @"my_fridge.jpg", @"my_restaurant.jpg", @"grocery_list.jpg", @"settings.png", @"logout.jpg", nil];
+    self.menu = [NSArray arrayWithObjects:@"frecipe.jpg", @"my_fridge.jpg", @"my_restaurant.jpg", @"grocery_list.jpg", @"settings.jpg", @"logout.jpg", nil];
     [self.slidingViewController setAnchorRightRevealAmount:200.0f];
     self.slidingViewController.underLeftWidthLayout = ECFullWidth;
     
@@ -40,6 +39,11 @@
     self.menuCollectionView.dataSource = self;
     
     [self fetchUserInfo];
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    NSLog(@"appeared");
 }
 
 - (void)didReceiveMemoryWarning
@@ -92,7 +96,6 @@
         self.profilePictureView.hidden = YES;
         self.fbProfilePictureView.profileID = [defaults stringForKey:@"uid"];
     } else {
-        NSLog(@"%@", [NSString stringWithFormat:@"%@", [defaults stringForKey:@"profile_picture"]]);
         self.fbProfilePictureView.hidden = YES;
         [self.profilePictureView setImageWithURL:[NSString stringWithFormat:@"%@", [defaults stringForKey:@"profile_picture"]]];
     }

@@ -21,7 +21,44 @@
     self = [super initWithFrame:frame];
     if (self) {
         // Initialization code
-        NSLog(@"frame");
+        
+        self.backgroundColor = [UIColor clearColor];
+        _oneStarButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        _twoStarButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        _threeStarButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        _fourStarButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        _fiveStarButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        
+        _oneStarButton.tag = 1;
+        _twoStarButton.tag = 2;
+        _threeStarButton.tag = 3;
+        _fourStarButton.tag = 4;
+        _fiveStarButton.tag = 5;
+        
+        [_oneStarButton setImage:[UIImage imageNamed:@"star_empty.png"] forState:UIControlStateNormal];
+        [_oneStarButton setImage:[UIImage imageNamed:@"star_full.png"] forState:UIControlStateSelected];
+        [_twoStarButton setImage:[UIImage imageNamed:@"star_empty.png"] forState:UIControlStateNormal];
+        [_twoStarButton setImage:[UIImage imageNamed:@"star_full.png"] forState:UIControlStateSelected];
+        [_threeStarButton setImage:[UIImage imageNamed:@"star_empty.png"] forState:UIControlStateNormal];
+        [_threeStarButton setImage:[UIImage imageNamed:@"star_full.png"] forState:UIControlStateSelected];
+        [_fourStarButton setImage:[UIImage imageNamed:@"star_empty.png"] forState:UIControlStateNormal];
+        [_fourStarButton setImage:[UIImage imageNamed:@"star_full.png"] forState:UIControlStateSelected];
+        [_fiveStarButton setImage:[UIImage imageNamed:@"star_empty.png"] forState:UIControlStateNormal];
+        [_fiveStarButton setImage:[UIImage imageNamed:@"star_full.png"] forState:UIControlStateSelected];
+        
+        [_oneStarButton addTarget:self action:@selector(tapStarButton:) forControlEvents:UIControlEventTouchUpInside];
+        [_twoStarButton addTarget:self action:@selector(tapStarButton:) forControlEvents:UIControlEventTouchUpInside];
+        [_threeStarButton addTarget:self action:@selector(tapStarButton:) forControlEvents:UIControlEventTouchUpInside];
+        [_fourStarButton addTarget:self action:@selector(tapStarButton:) forControlEvents:UIControlEventTouchUpInside];
+        [_fiveStarButton addTarget:self action:@selector(tapStarButton:) forControlEvents:UIControlEventTouchUpInside];
+        
+        [self addSubview:_oneStarButton];
+        [self addSubview:_twoStarButton];
+        [self addSubview:_threeStarButton];
+        [self addSubview:_fourStarButton];
+        [self addSubview:_fiveStarButton];
+        
+        self.editable = YES;        
     }
     return self;
 }

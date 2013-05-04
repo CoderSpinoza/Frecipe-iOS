@@ -347,46 +347,37 @@
     CGSize keyboardSize = [[info objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
     
     [UIView animateWithDuration:0.3 delay:0 options:UIViewAnimationOptionTransitionFlipFromBottom animations:^{
-        if (self.recipeNameField.hidden == NO) {
-            
-            CGFloat difference = self.view.frame.size.height - self.recipeImageButton.frame.origin.y - self.recipeImageButton.frame.size.height - 44;
-            
-            self.recipeImageButton.frame = CGRectMake(self.recipeImageButton.frame.origin.x + difference / 2, self.recipeImageButton.frame.origin.y, self.recipeImageButton.frame.size.width - difference, self.recipeImageButton.frame.size.height - difference);
-        } else if (self.ingredientField.hidden == NO) {
-            self.ingredientsTableView.frame = CGRectMake(self.ingredientsTableView.frame.origin.x, self.ingredientsTableView.frame.origin.y, self.ingredientsTableView.frame.size.width, self.ingredientsTableView.frame.size.height - (keyboardSize.height - self.view.frame.size.height + self.ingredientsTableView.frame.origin.y + self.ingredientsTableView.frame.size.height));
-            
-            if (self.ingredients.count > 0) {
-                [self.ingredientsTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.ingredients.count - 1  inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
-            }
-            
+        CGFloat difference;
+        if (self.view.frame.size.height == 460) {
+            difference = 180;
         } else {
-            self.directionsTableView.frame = CGRectMake(self.directionsTableView.frame.origin.x, self.directionsTableView.frame.origin.y, self.directionsTableView.frame.size.width, self.directionsTableView.frame.size.height - (keyboardSize.height - self.view.frame.size.height + self.ingredientsTableView.frame.origin.y + self.ingredientsTableView.frame.size.height));
-            
-            if (self.directions.count > 0) {
-                [self.directionsTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.directions.count - 1  inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
-            }
-            
+            difference = self.view.frame.size.height - self.recipeImageButton.frame.origin.y - self.recipeImageButton.frame.size.height - 44;
         }
         
+        self.recipeImageButton.frame = CGRectMake(self.recipeImageButton.frame.origin.x + difference / 2, self.recipeImageButton.frame.origin.y, self.recipeImageButton.frame.size.width - difference, self.recipeImageButton.frame.size.height - difference);
+        
+        self.ingredientsTableView.frame = CGRectMake(self.ingredientsTableView.frame.origin.x, self.ingredientsTableView.frame.origin.y, self.ingredientsTableView.frame.size.width, self.ingredientsTableView.frame.size.height - (keyboardSize.height - self.view.frame.size.height + self.ingredientsTableView.frame.origin.y + self.ingredientsTableView.frame.size.height));
+        
+        if (self.ingredients.count > 0) {
+            [self.ingredientsTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.ingredients.count - 1  inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+        }
+        
+        self.directionsTableView.frame = CGRectMake(self.directionsTableView.frame.origin.x, self.directionsTableView.frame.origin.y, self.directionsTableView.frame.size.width, self.directionsTableView.frame.size.height - (keyboardSize.height - self.view.frame.size.height + self.directionsTableView.frame.origin.y + self.directionsTableView.frame.size.height));
+        
+        if (self.directions.count > 0) {
+            [self.directionsTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.directions.count - 1  inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+        }
     } completion:nil];
-    
-    
-    
 }
 
-- (void)keyboardWillBeHidden:(NSNotification *)notification {
-    if (self.recipeNameField.hidden == NO) {
-        [UIView animateWithDuration:0.3 delay:0.0 options:UIViewAnimationOptionCurveEaseOut animations:^{
-            self.recipeImageButton.frame = CGRectMake(20, 135, 280, 280);
-        } completion:^(BOOL finished) {
-        }];
-        
-    } else if (self.ingredientField.hidden == NO) {
-        self.ingredientsTableView.frame = CGRectMake(self.ingredientsTableView.frame.origin.x, self.ingredientsTableView.frame.origin.y, self.ingredientsTableView.frame.size.width, 280);
-    } else {
-        self.directionsTableView.frame = CGRectMake(self.directionsTableView.frame.origin.x, self.directionsTableView.frame.origin.y, self.directionsTableView.frame.size.width, 280);
-    }
-    
+- (void)keyboardWillBeHidden:(NSNotification *)notification {    
+    [UIView animateWithDuration:0.3 delay:0.0 options:UIViewAnimationOptionCurveEaseOut animations:^{
+        self.recipeImageButton.frame = CGRectMake(20, 135, 280, 280);
+    } completion:^(BOOL finished) {
+    }];
+    self.ingredientsTableView.frame = CGRectMake(self.ingredientsTableView.frame.origin.x, self.ingredientsTableView.frame.origin.y, self.ingredientsTableView.frame.size.width, 280);
+    self.directionsTableView.frame = CGRectMake(self.directionsTableView.frame.origin.x, self.directionsTableView.frame.origin.y, self.directionsTableView.frame.size.width, 280);
+
 }
 
 @end

@@ -142,6 +142,18 @@
     
     NSURLRequest *request = [client requestWithMethod:@"POST" path:path parameters:parameters];
     
+    UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    
+    UIView *spinnerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
+    spinner.center = spinnerView.center;
+    spinnerView.center = self.view.center;
+    spinnerView.backgroundColor = [UIColor blackColor];
+    
+    [spinner startAnimating];
+    [spinnerView addSubview:spinner];
+    [self.view addSubview:spinnerView];
+    
+    
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
         NSString *message = [JSON objectForKey:@"message"];
         if ([message isEqualToString:@"needs signup"]) {
@@ -169,11 +181,13 @@
             [defaults setObject:uid forKey:@"uid"];
             [defaults synchronize];
             
+            [spinnerView removeFromSuperview];
             [self performSegueWithIdentifier:@"Login" sender:self];
         }
         [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         NSLog(@"%@", error);
+        [spinnerView removeFromSuperview];
         [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
     }];
     [operation start];

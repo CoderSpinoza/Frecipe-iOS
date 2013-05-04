@@ -83,7 +83,7 @@
     
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
         
-        self.groceryList = JSON;
+        self.groceryList = [NSMutableArray arrayWithArray:JSON];
         
         if (userIsInTheMiddleOfEditingGroceryList) {
             NSDictionary *addRow = [NSDictionary dictionaryWithObject:@"Add To Grocery List" forKey:@"name"];
@@ -99,6 +99,49 @@
         
     }];
     [operation start];
+}
+
+- (IBAction)addToFridgeButtonPressed:(UIBarButtonItem *)sender {
+    NSString *path = @"groceries/fridge";
+    
+    [[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];
+    [[AFNetworkActivityIndicatorManager sharedManager] incrementActivityCount];
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    
+    NSString *authentication_token = [defaults stringForKey:@"authentication_token"];
+    NSMutableArray *ids = [[NSMutableArray alloc] initWithCapacity:self.selectedGroceryList.count];
+    for (NSDictionary *ingredient in self.selectedGroceryList) {
+        NSString *ingredientId = [NSString stringWithFormat:@"%@", [ingredient objectForKey:@"id"]];
+        [ids addObject:ingredientId];
+    }
+    
+    NSArray *keys = [NSArray arrayWithObjects:@"authentication_token", @"ids", nil];
+    NSArray *values = [NSArray arrayWithObjects:authentication_token, ids, nil];
+    
+    NSDictionary *parameters = [NSDictionary dictionaryWithObjects:values forKeys:keys];
+    
+    FrecipeAPIClient *client = [FrecipeAPIClient client];
+    NSURLRequest *request = [client requestWithMethod:@"POST" path:path parameters:parameters];
+    
+    NSLog(@"%@", parameters);
+    AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
+        NSMutableArray *deletedGroceries = [NSArray arrayWithArray:[JSON objectForKey:@"fridge"]];
+        
+        for (NSDictionary *deletedGrocery in deletedGroceries) {
+            if ([self.groceryList containsObject:deletedGrocery]) {
+            
+                NSInteger rowIndex = [self.groceryList indexOfObject:deletedGrocery];
+                 [self.groceryList removeObject:deletedGrocery];
+                [self.groceryListTableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:rowIndex inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
+            }
+        }
+        [self.selectedGroceryList removeAllObjects];
+    } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
+        NSLog(@"%@", error);
+    }];
+    [operation start];
+    
 }
 
 - (IBAction)deleteButtonPressed:(UIBarButtonItem *)sender {

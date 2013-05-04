@@ -24,4 +24,8 @@
 @property (weak, nonatomic) IBOutlet UIView *ratingBorderView;
 @property (weak, nonatomic) IBOutlet FrecipeRatingView *ratingView;
 @property (weak, nonatomic) IBOutlet FrecipeRatingView *averageRatingView;
+
+@property (weak, nonatomic) IBOutlet UIView *editMenuView;
+@property (weak, nonatomic) IBOutlet UITableView *editMenuTableView;
+
 @end

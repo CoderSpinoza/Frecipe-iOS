@@ -11,13 +11,15 @@
 #import "FrecipeAPIClient.h"
 #import "FrecipeAppDelegate.h"
 #import "FrecipeRecipeDetailViewController.h"
+#import "FrecipeRatingView.h"
 #import <QuartzCore/QuartzCore.h>
 #import <SDWebImage/UIImageView+WebCache.h>
 
-@interface FrecipeProfileViewController () <UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UIActionSheetDelegate, UIAlertViewDelegate>
+@interface FrecipeProfileViewController () <UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UIActionSheetDelegate, UIAlertViewDelegate, FrecipeRatingViewDelegate>
 
 @property (strong, nonatomic) NSMutableArray *recipes;
 @property (strong, nonatomic) NSDictionary *selectedRecipe;
+//@property (strong, nonatomic) FrecipeRatingView *averageRatingView;
 
 @end
 
@@ -39,6 +41,9 @@
     
     self.recipesCollectionView.dataSource = self;
     self.recipesCollectionView.delegate = self;
+    
+    FrecipeRatingView *ratingView = (FrecipeRatingView *)[self.view viewWithTag:1];
+    ratingView.delegate = self;
     [self fetchUserInfo];
 }
 
@@ -58,7 +63,7 @@
     
     UIView *view1;
     UIView *view2;
-    if (tapGestureRecognizer.view.tag == 8) {
+    if (tapGestureRecognizer.view.tag == 7) {
         cell = (UITableViewCell *)tapGestureRecognizer.view.superview.superview.superview;
         
         view1 = [cell viewWithTag:1];
@@ -76,6 +81,12 @@
     } completion:^(BOOL finished) {
     }];
 }
+
+//- (void)addAverageRatingView {
+//    self.averageRatingView = [[FrecipeRatingView alloc] initWithFrame:CGRectMake(79, 50, 140, 16)];
+//    self.averageRatingView.delegate = self;
+//    [self.view addSubview:self.averageRatingView];
+//}
 
 - (void)fetchUserInfo {
     NSString *path = @"tokens/profile";
@@ -107,8 +118,6 @@
         NSDictionary *user = [JSON objectForKey:@"user"];
         self.title = [NSString stringWithFormat:@"%@ %@", [user objectForKey:@"first_name"], [user objectForKey:@"last_name"]];
         
-//        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-//        NSString *provider = [defaults objectForKey:@"provider"];
         NSString *provider = [NSString stringWithFormat:@"%@", [[JSON objectForKey:@"user"] objectForKey:@"provider"]];
         if ([provider isEqualToString:@"facebook"]) {
             self.profilePictureView.hidden = YES;
@@ -125,11 +134,16 @@
         
         self.nameLabel.text = [NSString stringWithFormat:@"%@ %@", [user objectForKey:@"first_name"], [user objectForKey:@"last_name"]];
         
+        FrecipeRatingView *ratingView = (FrecipeRatingView *)[self.view viewWithTag:1];
+        ratingView.rating = [[NSString stringWithFormat:@"%@", [JSON objectForKey:@"rating"]] integerValue];
+        ratingView.editable = NO;
+        
         self.recipes = [JSON objectForKey:@"recipes"];
         
         
         if ([[NSString stringWithFormat:@"%@", [JSON objectForKey:@"following"]] isEqualToString:@"You"]) {
             self.followButton.enabled = NO;
+            self.followButton.hidden = YES;
         }
         [self.followButton setTitle:[NSString stringWithFormat:@"%@", [JSON objectForKey:@"following"]] forState:UIControlStateNormal];
         
@@ -155,22 +169,12 @@
             
         }
         
-//        self.numOfRecipesView.layer.borderColor = [[UIColor lightGrayColor] CGColor];
-//        self.numOfRecipesView.layer.borderWidth = 1;
-//        self.numOfFollowersView.layer.borderColor = [[UIColor lightGrayColor] CGColor];
-//        self.numOfFollowersView.layer.borderWidth = 1;
-//        self.numOfLikesView.layer.borderColor = [[UIColor lightGrayColor] CGColor];
-//        self.numOfLikesView.layer.borderWidth = 1;
-//        self.mostPopularRecipeView.layer.borderColor = [[UIColor lightGrayColor] CGColor];
-//        self.mostPopularRecipeView.layer.borderWidth = 1;
-        
         [self.recipesCollectionView reloadData];
         
         
         if (self.recipes.count > 0) {
-//            self.scrollView.contentSize = CGSizeMake(self.view.frame.size.width, self.topView.frame.size.height + self.collectionView.frame.size.height * ceil((float) self.recipes.count / 2) + 524 - self.view.frame.size.height);
-            
-//            self.collectionView.frame = CGRectMake(self.collectionView.frame.origin.x, self.collectionView.frame.origin.y, self.collectionView.frame.size.width, self.collectionView.frame.size.height * ceil((float)self.recipes.count / 2));
+            self.recipesCollectionView.frame = CGRectMake(self.recipesCollectionView.frame.origin.x, self.recipesCollectionView.frame.origin.y, self.recipesCollectionView.frame.size.width, 160 * ceil((float)self.recipes.count / 2));
+            self.scrollView.contentSize = CGSizeMake(self.scrollView.contentSize.width, self.recipesCollectionView.frame.origin.y + self.recipesCollectionView.frame.size.height);
         }
         
         [spinner stopAnimating];
@@ -228,6 +232,13 @@
     [self.navigationController popViewControllerAnimated:YES];
 }
 
+// rating view delegate methods
+
+- (void)ratingViewDidRate:(FrecipeRatingView *)ratingView rating:(NSInteger)rating {
+    
+}
+
+
 // action sheet delegate methods
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
@@ -240,6 +251,18 @@
             UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Facebook Invite" message:@"This feature is coming soon!" delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: nil];
             [alertView show];
         }
+    }
+}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    if ([segue.identifier isEqualToString:@"RecipeDetail"]) {
+        FrecipeRecipeDetailViewController *recipeDetailViewController = (FrecipeRecipeDetailViewController *) segue.destinationViewController;
+        recipeDetailViewController.recipeId = [self.selectedRecipe objectForKey:@"id"];
+    } else if ([segue.identifier isEqualToString:@"Profile"]) {
+        FrecipeProfileViewController *profileViewController = (FrecipeProfileViewController *)segue.destinationViewController;
+        
+        NSDictionary *user = [self.selectedRecipe objectForKey:@"user"];
+        profileViewController.userId  = [NSString stringWithFormat:@"%@", [user objectForKey:@"id"]];        
     }
 }
 
@@ -275,17 +298,10 @@
     UITapGestureRecognizer *flipGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(flipCell:)];
     [flipView addGestureRecognizer:flipGestureRecognizer];
     //
-    UIView *flipView2 = [cell viewWithTag:8];
+    UIView *flipView2 = [cell viewWithTag:7];
     UITapGestureRecognizer *flipGestureRecognizer2 = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(flipCell:)];
     [flipView2 addGestureRecognizer:flipGestureRecognizer2];
     
-//    UIView *frontView = [cell viewWithTag:4];
-//    UIView *backView = [cell viewWithTag:6];
-//    
-//    [UIView animateWithDuration:0.5 animations:^{
-//        frontView.alpha = 1.0;
-//        recipeImageView.alpha = 1.0;
-//    }];
     UITextView *recipeNameView = (UITextView *)[cell viewWithTag:8];
     recipeNameView.text = [NSString stringWithFormat:@"%@",[[self.recipes objectAtIndex:indexPath.row] objectForKey:@"recipe_name"]];
     
@@ -304,6 +320,19 @@
     }
     NSString *missingIngredientsString = [missingIngredientsStringArray componentsJoinedByString:@", "];
     missingIngredientsView.text = [NSString stringWithFormat:@"%u Missing Ingredients: %@", missingIngredients.count, missingIngredientsString];
+    
+    // chef name button, missing ingredients, and likes on front view
+    
+    UIButton *frontNameButton = (UIButton *)[cell viewWithTag:11];
+    [frontNameButton setTitle:[NSString stringWithFormat:@"%@ %@", [user objectForKey:@"first_name"], [user objectForKey:@"last_name"]] forState:UIControlStateNormal];
+    [frontNameButton sizeToFit];
+    frontNameButton.frame = CGRectMake(160 - [frontNameButton.titleLabel.text sizeWithFont:[UIFont boldSystemFontOfSize:13]].width - 7, frontNameButton.frame.origin.y, frontNameButton.frame.size.width, frontNameButton.frame.size.height);
+    
+    UILabel *likesLabel = (UILabel *)[cell viewWithTag:9];
+    likesLabel.text = [NSString stringWithFormat:@"%@ likes", [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"likes"]];
+    
+    UIButton *missingIngredientsButton = (UIButton *)[cell viewWithTag:12];
+    [missingIngredientsButton setTitle:[NSString stringWithFormat:@"%u", missingIngredients.count] forState:UIControlStateNormal];
     return cell;
 }
 
@@ -311,13 +340,5 @@
     self.selectedRecipe = [self.recipes objectAtIndex:indexPath.row];
     [self performSegueWithIdentifier:@"RecipeDetail" sender:self];
 }
-
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    if ([segue.identifier isEqualToString:@"RecipeDetail"]) {
-        FrecipeRecipeDetailViewController *recipeDetailViewController = (FrecipeRecipeDetailViewController *) segue.destinationViewController;
-        recipeDetailViewController.recipeId = [self.selectedRecipe objectForKey:@"id"];
-    }
-}
-
 
 @end

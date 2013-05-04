@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "FrecipeRatingView.h"
 #import <FacebookSDK/FacebookSDK.h>
 
 @interface FrecipeProfileViewController : UIViewController
@@ -15,6 +16,7 @@
 @property (weak, nonatomic) IBOutlet UIImageView *profilePictureView;
 @property (weak, nonatomic) IBOutlet FBProfilePictureView *fbProfilePictureView;
 @property (weak, nonatomic) IBOutlet UIButton *followButton;
+
 @property (weak, nonatomic) IBOutlet UILabel *nameLabel;
 @property (weak, nonatomic) IBOutlet UIView *detailInfoView;
 @property (weak, nonatomic) IBOutlet UILabel *numOfRecipesTitleLabel;

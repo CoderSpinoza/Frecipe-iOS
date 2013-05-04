@@ -87,6 +87,8 @@
     
     [self.view addSubview:blockingView];
     [spinner startAnimating];
+    
+    NSLog(@"%@", parameters);
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
         [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
         [self dismissViewControllerAnimated:YES completion:nil];
@@ -155,6 +157,18 @@
     cell.textLabel.text = [NSString stringWithFormat:@"%u. %@", indexPath.row + 1, grocery];
     return cell;
 }
+
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    if (editingStyle == UITableViewCellEditingStyleDelete) {
+        if ([tableView isEqual:self.groceryListTableView]) {
+            [self.groceryList removeObjectAtIndex:indexPath.row];
+            [self.groceryListTableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+        }
+    }
+}
+
+// keyboard notification methods
 
 - (void)registerForKeyboardNotification {
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];

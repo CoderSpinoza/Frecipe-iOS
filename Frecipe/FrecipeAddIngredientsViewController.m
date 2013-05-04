@@ -154,7 +154,7 @@
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         if ([tableView isEqual:self.ingredientsTableView]) {
             [self.ingredients removeObjectAtIndex:indexPath.row];
-            [self.ingredientsTableView reloadData];
+            [self.ingredientsTableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
         }
     }
 }

@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		BC272C53E9E9495BB99A3C98 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CC3902FF59D545519B935676 /* libPods.a */; };
+		C294412E1733246800FDD542 /* badge.png in Resources */ = {isa = PBXBuildFile; fileRef = C294412D1733246800FDD542 /* badge.png */; };
+		C294413117332BC800FDD542 /* UIViewController+Frecipe.m in Sources */ = {isa = PBXBuildFile; fileRef = C294413017332BC800FDD542 /* UIViewController+Frecipe.m */; };
+		C294413817349AE000FDD542 /* FrecipeBadgeView.m in Sources */ = {isa = PBXBuildFile; fileRef = C294413717349ADF00FDD542 /* FrecipeBadgeView.m */; };
 		C2A327D7172DFAAD00EBB23B /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C2A327D6172DFAAD00EBB23B /* UIKit.framework */; };
 		C2A327D9172DFAAD00EBB23B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C2A327D8172DFAAD00EBB23B /* Foundation.framework */; };
 		C2A327DB172DFAAD00EBB23B /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C2A327DA172DFAAD00EBB23B /* CoreGraphics.framework */; };
@@ -26,14 +29,9 @@
 		C2A32822172DFB9900EBB23B /* bar_red.png in Resources */ = {isa = PBXBuildFile; fileRef = C2A32816172DFB9900EBB23B /* bar_red.png */; };
 		C2A32823172DFB9900EBB23B /* facebook_login_button.png in Resources */ = {isa = PBXBuildFile; fileRef = C2A32817172DFB9900EBB23B /* facebook_login_button.png */; };
 		C2A32824172DFB9900EBB23B /* frecipe_name.png in Resources */ = {isa = PBXBuildFile; fileRef = C2A32818172DFB9900EBB23B /* frecipe_name.png */; };
-		C2A32825172DFB9900EBB23B /* frecipe.jpg in Resources */ = {isa = PBXBuildFile; fileRef = C2A32819172DFB9900EBB23B /* frecipe.jpg */; };
-		C2A32826172DFB9900EBB23B /* grocery_list.jpg in Resources */ = {isa = PBXBuildFile; fileRef = C2A3281A172DFB9900EBB23B /* grocery_list.jpg */; };
 		C2A32827172DFB9900EBB23B /* loginpage_320*480.png in Resources */ = {isa = PBXBuildFile; fileRef = C2A3281B172DFB9900EBB23B /* loginpage_320*480.png */; };
 		C2A32828172DFB9900EBB23B /* loginpage_640*960.png in Resources */ = {isa = PBXBuildFile; fileRef = C2A3281C172DFB9900EBB23B /* loginpage_640*960.png */; };
 		C2A32829172DFB9900EBB23B /* loginpage_640*1136.png in Resources */ = {isa = PBXBuildFile; fileRef = C2A3281D172DFB9900EBB23B /* loginpage_640*1136.png */; };
-		C2A3282A172DFB9900EBB23B /* logout.jpg in Resources */ = {isa = PBXBuildFile; fileRef = C2A3281E172DFB9900EBB23B /* logout.jpg */; };
-		C2A3282B172DFB9900EBB23B /* my_fridge.jpg in Resources */ = {isa = PBXBuildFile; fileRef = C2A3281F172DFB9900EBB23B /* my_fridge.jpg */; };
-		C2A3282C172DFB9900EBB23B /* my_restaurant.jpg in Resources */ = {isa = PBXBuildFile; fileRef = C2A32820172DFB9900EBB23B /* my_restaurant.jpg */; };
 		C2A3282D172DFB9900EBB23B /* comment.png in Resources */ = {isa = PBXBuildFile; fileRef = C2A32821172DFB9900EBB23B /* comment.png */; };
 		C2A32839172DFFBC00EBB23B /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C2A3282E172DFFBC00EBB23B /* Accounts.framework */; };
 		C2A3283A172DFFBC00EBB23B /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C2A3282F172DFFBC00EBB23B /* AdSupport.framework */; };
@@ -74,7 +72,12 @@
 		C2A3288E172E4A4700EBB23B /* like.jpg in Resources */ = {isa = PBXBuildFile; fileRef = C2A3288C172E4A4700EBB23B /* like.jpg */; };
 		C2A32890172E4F6C00EBB23B /* iTunesArtwork.png in Resources */ = {isa = PBXBuildFile; fileRef = C2A3288F172E4F6C00EBB23B /* iTunesArtwork.png */; };
 		C2A32893172E988D00EBB23B /* FrecipeFacebookInviteViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C2A32892172E988C00EBB23B /* FrecipeFacebookInviteViewController.m */; };
-		C2E47719172F7CCE00EC3660 /* settings.png in Resources */ = {isa = PBXBuildFile; fileRef = C2E47718172F7CCE00EC3660 /* settings.png */; };
+		C2E0E663173258EF00E97624 /* grocery_list.jpg in Resources */ = {isa = PBXBuildFile; fileRef = C2E0E65D173258EF00E97624 /* grocery_list.jpg */; };
+		C2E0E664173258EF00E97624 /* logout.jpg in Resources */ = {isa = PBXBuildFile; fileRef = C2E0E65E173258EF00E97624 /* logout.jpg */; };
+		C2E0E665173258EF00E97624 /* my_restaurant.jpg in Resources */ = {isa = PBXBuildFile; fileRef = C2E0E65F173258EF00E97624 /* my_restaurant.jpg */; };
+		C2E0E666173258EF00E97624 /* frecipe.jpg in Resources */ = {isa = PBXBuildFile; fileRef = C2E0E660173258EF00E97624 /* frecipe.jpg */; };
+		C2E0E667173258EF00E97624 /* settings.jpg in Resources */ = {isa = PBXBuildFile; fileRef = C2E0E661173258EF00E97624 /* settings.jpg */; };
+		C2E0E668173258EF00E97624 /* my_fridge.jpg in Resources */ = {isa = PBXBuildFile; fileRef = C2E0E662173258EF00E97624 /* my_fridge.jpg */; };
 		C2E4771C172F7E0000EC3660 /* FrecipeSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C2E4771B172F7E0000EC3660 /* FrecipeSettingsViewController.m */; };
 		C2E4771F172F94D000EC3660 /* FrecipeRatingView.m in Sources */ = {isa = PBXBuildFile; fileRef = C2E4771E172F94D000EC3660 /* FrecipeRatingView.m */; };
 		C2E47724172F94E700EC3660 /* star_empty.png in Resources */ = {isa = PBXBuildFile; fileRef = C2E47720172F94E600EC3660 /* star_empty.png */; };
@@ -95,6 +98,11 @@
 
 /* Begin PBXFileReference section */
 		B229DB6A887849DC88A926C2 /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = SOURCE_ROOT; };
+		C294412D1733246800FDD542 /* badge.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = badge.png; sourceTree = "<group>"; };
+		C294412F17332BC800FDD542 /* UIViewController+Frecipe.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+Frecipe.h"; sourceTree = "<group>"; };
+		C294413017332BC800FDD542 /* UIViewController+Frecipe.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+Frecipe.m"; sourceTree = "<group>"; };
+		C294413617349ADF00FDD542 /* FrecipeBadgeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrecipeBadgeView.h; sourceTree = "<group>"; };
+		C294413717349ADF00FDD542 /* FrecipeBadgeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FrecipeBadgeView.m; sourceTree = "<group>"; };
 		C2A327D3172DFAAD00EBB23B /* Frecipe.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Frecipe.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C2A327D6172DFAAD00EBB23B /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		C2A327D8172DFAAD00EBB23B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -119,14 +127,9 @@
 		C2A32816172DFB9900EBB23B /* bar_red.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bar_red.png; sourceTree = "<group>"; };
 		C2A32817172DFB9900EBB23B /* facebook_login_button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = facebook_login_button.png; sourceTree = "<group>"; };
 		C2A32818172DFB9900EBB23B /* frecipe_name.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = frecipe_name.png; sourceTree = "<group>"; };
-		C2A32819172DFB9900EBB23B /* frecipe.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = frecipe.jpg; sourceTree = "<group>"; };
-		C2A3281A172DFB9900EBB23B /* grocery_list.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = grocery_list.jpg; sourceTree = "<group>"; };
 		C2A3281B172DFB9900EBB23B /* loginpage_320*480.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "loginpage_320*480.png"; sourceTree = "<group>"; };
 		C2A3281C172DFB9900EBB23B /* loginpage_640*960.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "loginpage_640*960.png"; sourceTree = "<group>"; };
 		C2A3281D172DFB9900EBB23B /* loginpage_640*1136.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "loginpage_640*1136.png"; sourceTree = "<group>"; };
-		C2A3281E172DFB9900EBB23B /* logout.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = logout.jpg; sourceTree = "<group>"; };
-		C2A3281F172DFB9900EBB23B /* my_fridge.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = my_fridge.jpg; sourceTree = "<group>"; };
-		C2A32820172DFB9900EBB23B /* my_restaurant.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = my_restaurant.jpg; sourceTree = "<group>"; };
 		C2A32821172DFB9900EBB23B /* comment.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = comment.png; sourceTree = "<group>"; };
 		C2A3282E172DFFBC00EBB23B /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
 		C2A3282F172DFFBC00EBB23B /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
@@ -184,7 +187,12 @@
 		C2A3288F172E4F6C00EBB23B /* iTunesArtwork.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iTunesArtwork.png; sourceTree = "<group>"; };
 		C2A32891172E988C00EBB23B /* FrecipeFacebookInviteViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrecipeFacebookInviteViewController.h; sourceTree = "<group>"; };
 		C2A32892172E988C00EBB23B /* FrecipeFacebookInviteViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FrecipeFacebookInviteViewController.m; sourceTree = "<group>"; };
-		C2E47718172F7CCE00EC3660 /* settings.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = settings.png; sourceTree = "<group>"; };
+		C2E0E65D173258EF00E97624 /* grocery_list.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = grocery_list.jpg; sourceTree = "<group>"; };
+		C2E0E65E173258EF00E97624 /* logout.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = logout.jpg; sourceTree = "<group>"; };
+		C2E0E65F173258EF00E97624 /* my_restaurant.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = my_restaurant.jpg; sourceTree = "<group>"; };
+		C2E0E660173258EF00E97624 /* frecipe.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = frecipe.jpg; sourceTree = "<group>"; };
+		C2E0E661173258EF00E97624 /* settings.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = settings.jpg; sourceTree = "<group>"; };
+		C2E0E662173258EF00E97624 /* my_fridge.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = my_fridge.jpg; sourceTree = "<group>"; };
 		C2E4771A172F7E0000EC3660 /* FrecipeSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrecipeSettingsViewController.h; sourceTree = "<group>"; };
 		C2E4771B172F7E0000EC3660 /* FrecipeSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FrecipeSettingsViewController.m; sourceTree = "<group>"; };
 		C2E4771D172F94CF00EC3660 /* FrecipeRatingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrecipeRatingView.h; sourceTree = "<group>"; };
@@ -330,6 +338,10 @@
 				C2A32889172E04C500EBB23B /* FrecipeFunctions.m */,
 				C2E4771D172F94CF00EC3660 /* FrecipeRatingView.h */,
 				C2E4771E172F94D000EC3660 /* FrecipeRatingView.m */,
+				C294413617349ADF00FDD542 /* FrecipeBadgeView.h */,
+				C294413717349ADF00FDD542 /* FrecipeBadgeView.m */,
+				C294412F17332BC800FDD542 /* UIViewController+Frecipe.h */,
+				C294413017332BC800FDD542 /* UIViewController+Frecipe.m */,
 				C2A327DD172DFAAD00EBB23B /* Supporting Files */,
 			);
 			path = Frecipe;
@@ -338,21 +350,22 @@
 		C2A327DD172DFAAD00EBB23B /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				C2E0E65D173258EF00E97624 /* grocery_list.jpg */,
+				C2E0E65E173258EF00E97624 /* logout.jpg */,
+				C2E0E65F173258EF00E97624 /* my_restaurant.jpg */,
+				C2E0E660173258EF00E97624 /* frecipe.jpg */,
+				C2E0E661173258EF00E97624 /* settings.jpg */,
+				C2E0E662173258EF00E97624 /* my_fridge.jpg */,
 				C2A3288F172E4F6C00EBB23B /* iTunesArtwork.png */,
 				C2A3288B172E4A4700EBB23B /* like_pressed.jpg */,
 				C2A3288C172E4A4700EBB23B /* like.jpg */,
 				C2A32816172DFB9900EBB23B /* bar_red.png */,
+				C294412D1733246800FDD542 /* badge.png */,
 				C2A32817172DFB9900EBB23B /* facebook_login_button.png */,
 				C2A32818172DFB9900EBB23B /* frecipe_name.png */,
-				C2A32819172DFB9900EBB23B /* frecipe.jpg */,
-				C2A3281A172DFB9900EBB23B /* grocery_list.jpg */,
 				C2A3281B172DFB9900EBB23B /* loginpage_320*480.png */,
 				C2A3281C172DFB9900EBB23B /* loginpage_640*960.png */,
 				C2A3281D172DFB9900EBB23B /* loginpage_640*1136.png */,
-				C2A3281E172DFB9900EBB23B /* logout.jpg */,
-				C2A3281F172DFB9900EBB23B /* my_fridge.jpg */,
-				C2A32820172DFB9900EBB23B /* my_restaurant.jpg */,
-				C2E47718172F7CCE00EC3660 /* settings.png */,
 				C2A32821172DFB9900EBB23B /* comment.png */,
 				C2A32814172DFB9000EBB23B /* menu_icon.png */,
 				C2E47720172F94E600EC3660 /* star_empty.png */,
@@ -477,14 +490,9 @@
 				C2A32822172DFB9900EBB23B /* bar_red.png in Resources */,
 				C2A32823172DFB9900EBB23B /* facebook_login_button.png in Resources */,
 				C2A32824172DFB9900EBB23B /* frecipe_name.png in Resources */,
-				C2A32825172DFB9900EBB23B /* frecipe.jpg in Resources */,
-				C2A32826172DFB9900EBB23B /* grocery_list.jpg in Resources */,
 				C2A32827172DFB9900EBB23B /* loginpage_320*480.png in Resources */,
 				C2A32828172DFB9900EBB23B /* loginpage_640*960.png in Resources */,
 				C2A32829172DFB9900EBB23B /* loginpage_640*1136.png in Resources */,
-				C2A3282A172DFB9900EBB23B /* logout.jpg in Resources */,
-				C2A3282B172DFB9900EBB23B /* my_fridge.jpg in Resources */,
-				C2A3282C172DFB9900EBB23B /* my_restaurant.jpg in Resources */,
 				C2A3282D172DFB9900EBB23B /* comment.png in Resources */,
 				C2A32852172E02A600EBB23B /* favicon_57*57.png in Resources */,
 				C2A32854172E02A800EBB23B /* favicon_114*114.png in Resources */,
@@ -494,11 +502,17 @@
 				C2A3288D172E4A4700EBB23B /* like_pressed.jpg in Resources */,
 				C2A3288E172E4A4700EBB23B /* like.jpg in Resources */,
 				C2A32890172E4F6C00EBB23B /* iTunesArtwork.png in Resources */,
-				C2E47719172F7CCE00EC3660 /* settings.png in Resources */,
 				C2E47724172F94E700EC3660 /* star_empty.png in Resources */,
 				C2E47725172F94E700EC3660 /* star_empty@2x.png in Resources */,
 				C2E47726172F94E700EC3660 /* star_full.png in Resources */,
 				C2E47727172F94E700EC3660 /* star_full@2x.png in Resources */,
+				C2E0E663173258EF00E97624 /* grocery_list.jpg in Resources */,
+				C2E0E664173258EF00E97624 /* logout.jpg in Resources */,
+				C2E0E665173258EF00E97624 /* my_restaurant.jpg in Resources */,
+				C2E0E666173258EF00E97624 /* frecipe.jpg in Resources */,
+				C2E0E667173258EF00E97624 /* settings.jpg in Resources */,
+				C2E0E668173258EF00E97624 /* my_fridge.jpg in Resources */,
+				C294412E1733246800FDD542 /* badge.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -569,6 +583,8 @@
 				C2A32893172E988D00EBB23B /* FrecipeFacebookInviteViewController.m in Sources */,
 				C2E4771C172F7E0000EC3660 /* FrecipeSettingsViewController.m in Sources */,
 				C2E4771F172F94D000EC3660 /* FrecipeRatingView.m in Sources */,
+				C294413117332BC800FDD542 /* UIViewController+Frecipe.m in Sources */,
+				C294413817349AE000FDD542 /* FrecipeBadgeView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
