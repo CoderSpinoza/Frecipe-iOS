@@ -38,12 +38,12 @@
     self.menuCollectionView.delegate = self;
     self.menuCollectionView.dataSource = self;
     
+    [self.notificationButton setBackgroundImage:[UIImage imageNamed:@"bar_red.png"] forState:UIControlStateHighlighted  ];
     [self fetchUserInfo];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    NSLog(@"appeared");
 }
 
 - (void)didReceiveMemoryWarning

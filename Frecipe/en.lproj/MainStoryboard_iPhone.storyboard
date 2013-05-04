@@ -100,6 +100,11 @@
                                     <action selector="notificationButtonPressed" destination="mCy-ZT-XYY" eventType="touchUpInside" id="BhS-RG-icm"/>
                                 </connections>
                             </button>
+                            <view userInteractionEnabled="NO" contentMode="scaleToFill" id="m67-Uu-X4W" customClass="FrecipeBadgeView">
+                                <rect key="frame" x="174" y="0.0" width="25" height="25"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
@@ -107,6 +112,7 @@
                         <outlet property="fbProfilePictureView" destination="nId-1Z-spe" id="JmD-kc-m3b"/>
                         <outlet property="menuCollectionView" destination="GqY-nD-LRY" id="bIu-c9-TmA"/>
                         <outlet property="nameButton" destination="0BB-jg-HFK" id="Dhw-bM-w90"/>
+                        <outlet property="notificationButton" destination="Kro-eB-9TS" id="uwh-FX-fuM"/>
                         <outlet property="profilePictureView" destination="exD-K7-C8e" id="md9-z5-Nzh"/>
                     </connections>
                 </viewController>
@@ -1042,6 +1048,7 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="averageRatingView" destination="wCG-da-9OB" id="ud1-0o-uHD"/>
                         <outlet property="detailInfoView" destination="rMz-LN-qgy" id="mlX-tD-VXo"/>
                         <outlet property="fbProfilePictureView" destination="QHj-vJ-Dbh" id="hdF-9C-AyK"/>
                         <outlet property="followButton" destination="0m5-0F-f63" id="ikx-dU-akk"/>
@@ -1550,6 +1557,9 @@
                 <relationship kind="outlet" name="groceryListTableView" candidateClass="UITableView"/>
             </relationships>
         </class>
+        <class className="FrecipeBadgeView" superclassName="UIView">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeBadgeView.h"/>
+        </class>
         <class className="FrecipeFacebookInviteViewController" superclassName="UIViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeFacebookInviteViewController.h"/>
             <relationships>
@@ -1590,12 +1600,14 @@
                 <relationship kind="outlet" name="fbProfilePictureView" candidateClass="FBProfilePictureView"/>
                 <relationship kind="outlet" name="menuCollectionView" candidateClass="UICollectionView"/>
                 <relationship kind="outlet" name="nameButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="notificationButton" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="profilePictureView" candidateClass="UIImageView"/>
             </relationships>
         </class>
         <class className="FrecipeProfileViewController" superclassName="UIViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeProfileViewController.h"/>
             <relationships>
+                <relationship kind="outlet" name="averageRatingView" candidateClass="FrecipeRatingView"/>
                 <relationship kind="outlet" name="detailInfoView" candidateClass="UIView"/>
                 <relationship kind="outlet" name="fbProfilePictureView" candidateClass="FBProfilePictureView"/>
                 <relationship kind="outlet" name="followButton" candidateClass="UIButton"/>

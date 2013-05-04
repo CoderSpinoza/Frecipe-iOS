@@ -28,5 +28,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *popularRecipeTitleLabel;
 @property (weak, nonatomic) IBOutlet UIButton *popularRecipeButton;
 @property (weak, nonatomic) IBOutlet UICollectionView *recipesCollectionView;
+@property (weak, nonatomic) IBOutlet FrecipeRatingView *averageRatingView;
+
 
 @end

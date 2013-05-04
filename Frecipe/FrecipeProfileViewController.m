@@ -42,8 +42,9 @@
     self.recipesCollectionView.dataSource = self;
     self.recipesCollectionView.delegate = self;
     
-    FrecipeRatingView *ratingView = (FrecipeRatingView *)[self.view viewWithTag:1];
-    ratingView.delegate = self;
+//    FrecipeRatingView *ratingView = (FrecipeRatingView *)[self.view viewWithTag:1];
+//    ratingView.delegate = self;
+    self.averageRatingView.delegate = self;
     [self fetchUserInfo];
 }
 
@@ -134,9 +135,8 @@
         
         self.nameLabel.text = [NSString stringWithFormat:@"%@ %@", [user objectForKey:@"first_name"], [user objectForKey:@"last_name"]];
         
-        FrecipeRatingView *ratingView = (FrecipeRatingView *)[self.view viewWithTag:1];
-        ratingView.rating = [[NSString stringWithFormat:@"%@", [JSON objectForKey:@"rating"]] integerValue];
-        ratingView.editable = NO;
+        self.averageRatingView.rating = [[NSString stringWithFormat:@"%@", [JSON objectForKey:@"rating"]] integerValue];
+        self.averageRatingView.editable = NO;
         
         self.recipes = [JSON objectForKey:@"recipes"];
         
@@ -174,7 +174,15 @@
         
         if (self.recipes.count > 0) {
             self.recipesCollectionView.frame = CGRectMake(self.recipesCollectionView.frame.origin.x, self.recipesCollectionView.frame.origin.y, self.recipesCollectionView.frame.size.width, 160 * ceil((float)self.recipes.count / 2));
-            self.scrollView.contentSize = CGSizeMake(self.scrollView.contentSize.width, self.recipesCollectionView.frame.origin.y + self.recipesCollectionView.frame.size.height);
+            
+            if ([UIScreen mainScreen].bounds.size.height == 480) {
+                NSLog(@"3.5");
+                self.scrollView.contentSize = CGSizeMake(self.scrollView.contentSize.width, self.recipesCollectionView.frame.origin.y + self.recipesCollectionView.frame.size.height + 108);
+            } else {
+                NSLog(@"4.0");
+                self.scrollView.contentSize = CGSizeMake(self.scrollView.contentSize.width, self.recipesCollectionView.frame.origin.y + self.recipesCollectionView.frame.size.height);
+            }
+            
         }
         
         [spinner stopAnimating];
