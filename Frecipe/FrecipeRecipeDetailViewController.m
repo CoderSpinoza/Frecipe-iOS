@@ -20,6 +20,7 @@
 }
 @property (strong, nonatomic) NSMutableArray *ingredients;
 @property (strong, nonatomic) NSMutableArray *directions;
+@property (strong, nonatomic) NSMutableArray *comments;
 @property (strong, nonatomic) NSDictionary *user;
 @property (strong, nonatomic) NSMutableArray *missingIngredients;
 @property (strong, nonatomic) NSMutableArray *selectedIngredients;
@@ -160,6 +161,10 @@
         
         self.directionsTableView.frame = CGRectMake(self.directionsTableView.frame.origin.x, self.directionsLabel.frame.origin.y + self.directionsLabel.frame.size.height + 20, self.directionsTableView.frame.size.width, self.directions.count * 44);
         
+        // comments
+        
+        self.comments = [NSMutableArray arrayWithArray:[JSON objectForKey:@"comments"]];
+        NSLog(@"%@", self.comments);
         self.scrollView.contentSize = CGSizeMake(self.view.frame.size.width, self.directionsTableView.frame.origin.y + self.directionsTableView.frame.size.height + 20);
         
         if ([self isTall] == NO) {
@@ -324,6 +329,7 @@
         FrecipeProfileViewController *destinationViewController = segue.destinationViewController;
         destinationViewController.userId = [NSString stringWithFormat:@"%@", [self.user objectForKey:@"id"]];
         destinationViewController.navigationItem.leftBarButtonItem = nil;
+        destinationViewController.fromSegue = YES;
         self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:self.title style:UIBarButtonItemStyleBordered target:destinationViewController action:@selector(popViewControllerFromStack)];
     } else if ([segue.identifier isEqualToString:@"EditRecipe"]) {
         FrecipeAddRecipeViewController *destinationController = segue.destinationViewController;

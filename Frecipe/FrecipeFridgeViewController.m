@@ -8,6 +8,7 @@
 
 #import "FrecipeFridgeViewController.h"
 #import "FrecipeNavigationController.h"
+#import "FrecipeBadgeView.h"
 #import "FrecipeAPIClient.h"
 
 @interface FrecipeFridgeViewController () <UIActionSheetDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITableViewDataSource, UITableViewDelegate> {
@@ -16,6 +17,7 @@
 
 @property (strong, nonatomic) NSMutableArray *ingredients;
 @property (strong, nonatomic) NSMutableArray *selectedIngredients;
+@property (strong, nonatomic) FrecipeBadgeView *notificationBadge;
 
 @end
 
@@ -46,6 +48,7 @@
     self.navigationItem.rightBarButtonItem = self.editButtonItem;
     self.ingredientsTableView.delegate = self;
     self.ingredientsTableView.dataSource = self;
+    self.notificationBadge = [self addNotificationBadge];
 }
 
 - (void)viewWillAppear:(BOOL)animated {

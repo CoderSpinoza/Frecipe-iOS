@@ -18,4 +18,12 @@
         return NO;
     }
 }
+
+- (FrecipeBadgeView *)addNotificationBadge {
+        FrecipeBadgeView *badgeView = [FrecipeBadgeView customBadgeWithString:@"15"];
+        badgeView.frame = CGRectMake(30, badgeView.frame.origin.y, badgeView.frame.size.width, badgeView.frame.size.height);
+        [self.navigationController.navigationBar addSubview:badgeView];
+    return badgeView;
+}
+
 @end

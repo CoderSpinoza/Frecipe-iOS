@@ -11,7 +11,7 @@
 #import "FrecipeAPIClient.h"
 #import "FrecipeAppDelegate.h"
 #import "FrecipeRecipeDetailViewController.h"
-#import "FrecipeRatingView.h"
+#import "FrecipeBadgeView.h"
 #import <QuartzCore/QuartzCore.h>
 #import <SDWebImage/UIImageView+WebCache.h>
 
@@ -20,6 +20,7 @@
 @property (strong, nonatomic) NSMutableArray *recipes;
 @property (strong, nonatomic) NSDictionary *selectedRecipe;
 //@property (strong, nonatomic) FrecipeRatingView *averageRatingView;
+@property (strong, nonatomic) FrecipeBadgeView *notificationBadge;
 
 @end
 
@@ -46,6 +47,21 @@
 //    ratingView.delegate = self;
     self.averageRatingView.delegate = self;
     [self fetchUserInfo];
+    
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    
+    if (self.fromSegue == NO) {
+        self.notificationBadge = [self addNotificationBadge];
+    }
+    
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    [self.notificationBadge removeFromSuperview];
 }
 
 - (void)didReceiveMemoryWarning

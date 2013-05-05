@@ -7,8 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
-
+#import "FrecipeBadgeView.h"
 @interface UIViewController (Frecipe)
 
 - (BOOL)isTall;
+- (FrecipeBadgeView *)addNotificationBadge;
 @end

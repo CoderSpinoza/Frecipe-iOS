@@ -12,6 +12,7 @@
 #import "FrecipeAppDelegate.h"
 #import "FrecipeRecipeDetailViewController.h"
 #import "FrecipeProfileViewController.h"
+#import "FrecipeBadgeView.h"
 #import "FrecipeFunctions.h"
 #import <SDWebImage/UIImageView+WebCache.h>
 
@@ -25,6 +26,7 @@
 @property (strong, nonatomic) NSMutableArray *facebookFriends;
 @property (nonatomic, assign) BOOL alreadyLoaded;
 
+@property (strong, nonatomic) FrecipeBadgeView *notificationBadge;
 @end
 
 @implementation FrecipeViewController
@@ -48,6 +50,17 @@
     [super viewWillAppear:animated];
     [self fetchRecipes];
     [self fetchFacebookFriends];
+    
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    self.notificationBadge = [self addNotificationBadge];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    [self.notificationBadge removeFromSuperview];
 }
 
 - (void)didReceiveMemoryWarning
@@ -130,20 +143,6 @@
     }];
 }
 
-- (void)reloadRecipesTable {
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    
-    NSString *provider = [defaults stringForKey:@"provider"];
-    
-    if ([provider isEqualToString:@"facebook"]) {
-        if (self.facebookFriends != nil && self.recipes != nil) {
-            [self.recipesCollectionView reloadData];
-        }
-    } else {
-        [self.recipesCollectionView reloadData];
-    }
-}
-
 - (void)flipCell:(UITapGestureRecognizer *)tapGestureRecognizer {
     UITableViewCell *cell;
 
@@ -192,6 +191,8 @@
         NSDictionary *user = [[self.recipes objectAtIndex:[self.recipesCollectionView indexPathForCell:cell].row] objectForKey:@"user"];
         
         destinationViewController.userId = [NSString stringWithFormat:@"%@", [user objectForKey:@"id"]];
+        
+        destinationViewController.fromSegue = YES;
         
         destinationViewController.navigationItem.leftBarButtonItem = nil;
         self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Frecipe" style:UIBarButtonItemStyleBordered target:destinationViewController action:@selector(popViewControllerFromStack)];

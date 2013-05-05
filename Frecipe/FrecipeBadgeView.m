@@ -52,6 +52,8 @@
         self.badgeInsetColor = [UIColor redColor];
         self.badgeFrameColor = [UIColor whiteColor];
         self.cornerRadius = 0.4;
+        self.backgroundColor = [UIColor clearColor];
+        self.userInteractionEnabled = NO;
     }
     return self;
 }

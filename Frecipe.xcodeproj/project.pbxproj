@@ -72,12 +72,13 @@
 		C2A3288E172E4A4700EBB23B /* like.jpg in Resources */ = {isa = PBXBuildFile; fileRef = C2A3288C172E4A4700EBB23B /* like.jpg */; };
 		C2A32890172E4F6C00EBB23B /* iTunesArtwork.png in Resources */ = {isa = PBXBuildFile; fileRef = C2A3288F172E4F6C00EBB23B /* iTunesArtwork.png */; };
 		C2A32893172E988D00EBB23B /* FrecipeFacebookInviteViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C2A32892172E988C00EBB23B /* FrecipeFacebookInviteViewController.m */; };
-		C2E0E663173258EF00E97624 /* grocery_list.jpg in Resources */ = {isa = PBXBuildFile; fileRef = C2E0E65D173258EF00E97624 /* grocery_list.jpg */; };
-		C2E0E664173258EF00E97624 /* logout.jpg in Resources */ = {isa = PBXBuildFile; fileRef = C2E0E65E173258EF00E97624 /* logout.jpg */; };
-		C2E0E665173258EF00E97624 /* my_restaurant.jpg in Resources */ = {isa = PBXBuildFile; fileRef = C2E0E65F173258EF00E97624 /* my_restaurant.jpg */; };
-		C2E0E666173258EF00E97624 /* frecipe.jpg in Resources */ = {isa = PBXBuildFile; fileRef = C2E0E660173258EF00E97624 /* frecipe.jpg */; };
-		C2E0E667173258EF00E97624 /* settings.jpg in Resources */ = {isa = PBXBuildFile; fileRef = C2E0E661173258EF00E97624 /* settings.jpg */; };
-		C2E0E668173258EF00E97624 /* my_fridge.jpg in Resources */ = {isa = PBXBuildFile; fileRef = C2E0E662173258EF00E97624 /* my_fridge.jpg */; };
+		C2E08EDF1735E51100C1C705 /* button_background_image.png in Resources */ = {isa = PBXBuildFile; fileRef = C2E08EDE1735E51100C1C705 /* button_background_image.png */; };
+		C2E08EF21735E5B600C1C705 /* frecipe.png in Resources */ = {isa = PBXBuildFile; fileRef = C2E08EEC1735E5B600C1C705 /* frecipe.png */; };
+		C2E08EF31735E5B600C1C705 /* grocery_list.png in Resources */ = {isa = PBXBuildFile; fileRef = C2E08EED1735E5B600C1C705 /* grocery_list.png */; };
+		C2E08EF41735E5B600C1C705 /* logout.png in Resources */ = {isa = PBXBuildFile; fileRef = C2E08EEE1735E5B600C1C705 /* logout.png */; };
+		C2E08EF51735E5B600C1C705 /* my_fridge.png in Resources */ = {isa = PBXBuildFile; fileRef = C2E08EEF1735E5B600C1C705 /* my_fridge.png */; };
+		C2E08EF61735E5B600C1C705 /* my_restaurant.png in Resources */ = {isa = PBXBuildFile; fileRef = C2E08EF01735E5B600C1C705 /* my_restaurant.png */; };
+		C2E08EF71735E5B600C1C705 /* settings.png in Resources */ = {isa = PBXBuildFile; fileRef = C2E08EF11735E5B600C1C705 /* settings.png */; };
 		C2E4771C172F7E0000EC3660 /* FrecipeSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C2E4771B172F7E0000EC3660 /* FrecipeSettingsViewController.m */; };
 		C2E4771F172F94D000EC3660 /* FrecipeRatingView.m in Sources */ = {isa = PBXBuildFile; fileRef = C2E4771E172F94D000EC3660 /* FrecipeRatingView.m */; };
 		C2E47724172F94E700EC3660 /* star_empty.png in Resources */ = {isa = PBXBuildFile; fileRef = C2E47720172F94E600EC3660 /* star_empty.png */; };
@@ -187,12 +188,13 @@
 		C2A3288F172E4F6C00EBB23B /* iTunesArtwork.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iTunesArtwork.png; sourceTree = "<group>"; };
 		C2A32891172E988C00EBB23B /* FrecipeFacebookInviteViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrecipeFacebookInviteViewController.h; sourceTree = "<group>"; };
 		C2A32892172E988C00EBB23B /* FrecipeFacebookInviteViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FrecipeFacebookInviteViewController.m; sourceTree = "<group>"; };
-		C2E0E65D173258EF00E97624 /* grocery_list.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = grocery_list.jpg; sourceTree = "<group>"; };
-		C2E0E65E173258EF00E97624 /* logout.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = logout.jpg; sourceTree = "<group>"; };
-		C2E0E65F173258EF00E97624 /* my_restaurant.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = my_restaurant.jpg; sourceTree = "<group>"; };
-		C2E0E660173258EF00E97624 /* frecipe.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = frecipe.jpg; sourceTree = "<group>"; };
-		C2E0E661173258EF00E97624 /* settings.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = settings.jpg; sourceTree = "<group>"; };
-		C2E0E662173258EF00E97624 /* my_fridge.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = my_fridge.jpg; sourceTree = "<group>"; };
+		C2E08EDE1735E51100C1C705 /* button_background_image.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = button_background_image.png; sourceTree = "<group>"; };
+		C2E08EEC1735E5B600C1C705 /* frecipe.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = frecipe.png; sourceTree = "<group>"; };
+		C2E08EED1735E5B600C1C705 /* grocery_list.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = grocery_list.png; sourceTree = "<group>"; };
+		C2E08EEE1735E5B600C1C705 /* logout.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = logout.png; sourceTree = "<group>"; };
+		C2E08EEF1735E5B600C1C705 /* my_fridge.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = my_fridge.png; sourceTree = "<group>"; };
+		C2E08EF01735E5B600C1C705 /* my_restaurant.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = my_restaurant.png; sourceTree = "<group>"; };
+		C2E08EF11735E5B600C1C705 /* settings.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = settings.png; sourceTree = "<group>"; };
 		C2E4771A172F7E0000EC3660 /* FrecipeSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrecipeSettingsViewController.h; sourceTree = "<group>"; };
 		C2E4771B172F7E0000EC3660 /* FrecipeSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FrecipeSettingsViewController.m; sourceTree = "<group>"; };
 		C2E4771D172F94CF00EC3660 /* FrecipeRatingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrecipeRatingView.h; sourceTree = "<group>"; };
@@ -350,12 +352,13 @@
 		C2A327DD172DFAAD00EBB23B /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				C2E0E65D173258EF00E97624 /* grocery_list.jpg */,
-				C2E0E65E173258EF00E97624 /* logout.jpg */,
-				C2E0E65F173258EF00E97624 /* my_restaurant.jpg */,
-				C2E0E660173258EF00E97624 /* frecipe.jpg */,
-				C2E0E661173258EF00E97624 /* settings.jpg */,
-				C2E0E662173258EF00E97624 /* my_fridge.jpg */,
+				C2E08EEC1735E5B600C1C705 /* frecipe.png */,
+				C2E08EED1735E5B600C1C705 /* grocery_list.png */,
+				C2E08EEE1735E5B600C1C705 /* logout.png */,
+				C2E08EEF1735E5B600C1C705 /* my_fridge.png */,
+				C2E08EF01735E5B600C1C705 /* my_restaurant.png */,
+				C2E08EF11735E5B600C1C705 /* settings.png */,
+				C2E08EDE1735E51100C1C705 /* button_background_image.png */,
 				C2A3288F172E4F6C00EBB23B /* iTunesArtwork.png */,
 				C2A3288B172E4A4700EBB23B /* like_pressed.jpg */,
 				C2A3288C172E4A4700EBB23B /* like.jpg */,
@@ -506,13 +509,14 @@
 				C2E47725172F94E700EC3660 /* star_empty@2x.png in Resources */,
 				C2E47726172F94E700EC3660 /* star_full.png in Resources */,
 				C2E47727172F94E700EC3660 /* star_full@2x.png in Resources */,
-				C2E0E663173258EF00E97624 /* grocery_list.jpg in Resources */,
-				C2E0E664173258EF00E97624 /* logout.jpg in Resources */,
-				C2E0E665173258EF00E97624 /* my_restaurant.jpg in Resources */,
-				C2E0E666173258EF00E97624 /* frecipe.jpg in Resources */,
-				C2E0E667173258EF00E97624 /* settings.jpg in Resources */,
-				C2E0E668173258EF00E97624 /* my_fridge.jpg in Resources */,
 				C294412E1733246800FDD542 /* badge.png in Resources */,
+				C2E08EDF1735E51100C1C705 /* button_background_image.png in Resources */,
+				C2E08EF21735E5B600C1C705 /* frecipe.png in Resources */,
+				C2E08EF31735E5B600C1C705 /* grocery_list.png in Resources */,
+				C2E08EF41735E5B600C1C705 /* logout.png in Resources */,
+				C2E08EF51735E5B600C1C705 /* my_fridge.png in Resources */,
+				C2E08EF61735E5B600C1C705 /* my_restaurant.png in Resources */,
+				C2E08EF71735E5B600C1C705 /* settings.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

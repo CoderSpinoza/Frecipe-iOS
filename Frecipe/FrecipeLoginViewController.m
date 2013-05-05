@@ -83,13 +83,8 @@
         
         [defaults setObject:[NSString stringWithFormat:@"%@ %@", [[JSON objectForKey:@"user"] objectForKey:@"first_name"], [[JSON objectForKey:@"user"] objectForKey:@"last_name"]] forKey:@"name"];
         
-        NSString *profilePictureUrl;
-        if (PRODUCTION) {
-            profilePictureUrl = [NSString stringWithFormat:@"%@",[JSON objectForKey:@"profile_picture"]];
-        } else {
-            profilePictureUrl = [NSString stringWithFormat:@"http://localhost:5000/%@", [JSON objectForKey:@"profile_picture"]];
-        }
-        NSLog(@"%@", profilePictureUrl);
+        NSString *profilePictureUrl = [NSString stringWithFormat:@"%@",[JSON objectForKey:@"profile_picture"]];
+        
         [defaults setObject:profilePictureUrl forKey:@"profile_picture"];
         
         [defaults synchronize];
@@ -172,12 +167,10 @@
             [defaults setObject:[NSString stringWithFormat:@"%@ %@", [[JSON objectForKey:@"user"] objectForKey:@"first_name"], [[JSON objectForKey:@"user"] objectForKey:@"last_name"]] forKey:@"name"];
             
             NSString *profilePictureUrl;
-            if (PRODUCTION) {
-                profilePictureUrl = [NSString stringWithFormat:@"%@",[JSON objectForKey:@"profile_picture"]];
-            } else {
-                profilePictureUrl = [NSString stringWithFormat:@"http://localhost:5000/%@", [JSON objectForKey:@"profile_picture"]];
-            }
+            profilePictureUrl = [NSString stringWithFormat:@"%@",[JSON objectForKey:@"profile_picture"]];
+            
             [defaults setObject:profilePictureUrl forKey:@"profile_picture"];
+            
             [defaults setObject:uid forKey:@"uid"];
             [defaults synchronize];
             

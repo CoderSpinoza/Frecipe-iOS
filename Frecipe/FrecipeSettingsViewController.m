@@ -8,9 +8,10 @@
 
 #import "FrecipeSettingsViewController.h"
 #import "FrecipeNavigationController.h"
+#import "FrecipeBadgeView.h"
 
 @interface FrecipeSettingsViewController ()
-
+@property (strong, nonatomic) FrecipeBadgeView *notificationBadge;
 @end
 
 @implementation FrecipeSettingsViewController
@@ -28,6 +29,8 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
+    self.notificationBadge = [self addNotificationBadge];
+    
 }
 
 - (void)didReceiveMemoryWarning

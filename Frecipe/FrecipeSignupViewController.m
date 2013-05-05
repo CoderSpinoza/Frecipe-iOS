@@ -31,6 +31,14 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
+    self.emailField.delegate = self;
+    self.firstNameField.delegate = self;
+    self.lastNameField.delegate = self;
+    self.passwordField.delegate = self;
+    self.confirmationField.delegate = self;
+    
+    [self addGestureRecognizer];
+    
 }
 
 - (void)didReceiveMemoryWarning
@@ -117,11 +125,9 @@
             [defaults setObject:[NSString stringWithFormat:@"%@ %@", [[JSON objectAtIndex:1] objectForKey:@"first_name"], [[JSON objectAtIndex:1] objectForKey:@"last_name"]] forKey:@"name"];
             
             NSString *profilePictureUrl;
-            if (PRODUCTION) {
-                profilePictureUrl = [JSON objectAtIndex:3];
-            } else {
-                profilePictureUrl = [NSString stringWithFormat:@"http://localhost:5000/%@", [JSON objectAtIndex:3]];
-            }
+        
+            profilePictureUrl = [NSString stringWithFormat:@"%@", [JSON objectAtIndex:3]];
+
             [defaults setObject:profilePictureUrl forKey:@"profile_picture"];
             [defaults synchronize];
         } else {
@@ -134,7 +140,7 @@
         NSLog(@"%@", JSON);
         FrecipeAppDelegate *delegate = [[UIApplication sharedApplication] delegate];
         [UIView transitionWithView:delegate.window duration:0.7 options:UIViewAnimationOptionTransitionFlipFromLeft animations:^{
-            delegate.window.rootViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"InitialViewController"];
+            delegate.window.rootViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"Initial"];
         } completion:nil];
         
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
@@ -142,6 +148,26 @@
         [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
     }];
     [operation start];
+}
+
+- (void)addGestureRecognizer {
+    UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissKeyboard)];
+    [self.view addGestureRecognizer:tapGestureRecognizer];
+}
+
+- (void)dismissKeyboard {
+    [self.currentField resignFirstResponder];
+}
+
+// text field delegate methods
+
+- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField {
+    self.currentField = textField;
+    return YES;
+}
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+    [textField resignFirstResponder];
+    return YES;
 }
 
 

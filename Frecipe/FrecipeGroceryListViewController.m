@@ -9,6 +9,7 @@
 #import "FrecipeGroceryListViewController.h"
 #import "FrecipeNavigationController.h"
 #import "FrecipeAPIClient.h"
+#import "FrecipeBadgeView.h"
 
 @interface FrecipeGroceryListViewController () <UITableViewDelegate, UITableViewDataSource> {
     BOOL userIsInTheMiddleOfEditingGroceryList;
@@ -16,7 +17,7 @@
 
 @property (strong, nonatomic) NSMutableArray *groceryList;
 @property (strong, nonatomic) NSMutableArray *selectedGroceryList;
-
+@property (strong, nonatomic) FrecipeBadgeView *notificationBadge;
 @end
 
 @implementation FrecipeGroceryListViewController
@@ -47,6 +48,8 @@
     self.groceryListTableView.delegate = self;
     
     self.navigationItem.rightBarButtonItem = self.editButtonItem;
+    
+    self.notificationBadge = [self addNotificationBadge];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
