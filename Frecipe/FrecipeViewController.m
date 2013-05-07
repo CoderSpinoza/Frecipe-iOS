@@ -26,7 +26,7 @@
 @property (strong, nonatomic) NSMutableArray *facebookFriends;
 @property (nonatomic, assign) BOOL alreadyLoaded;
 
-@property (strong, nonatomic) FrecipeBadgeView *notificationBadge;
+
 @end
 
 @implementation FrecipeViewController

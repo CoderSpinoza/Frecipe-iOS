@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "FrecipeMainViewController.h"
 
-@interface FrecipeSettingsViewController : UIViewController
-
+@interface FrecipeSettingsViewController : FrecipeMainViewController
 @end

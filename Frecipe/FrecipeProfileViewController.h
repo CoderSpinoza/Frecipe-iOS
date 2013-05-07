@@ -8,9 +8,10 @@
 
 #import <UIKit/UIKit.h>
 #import "FrecipeRatingView.h"
+#import "FrecipeMainViewController.h"
 #import <FacebookSDK/FacebookSDK.h>
 
-@interface FrecipeProfileViewController : UIViewController
+@interface FrecipeProfileViewController : FrecipeMainViewController
 @property (strong, nonatomic) NSString *userId;
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
 @property (weak, nonatomic) IBOutlet UIImageView *profilePictureView;
@@ -31,6 +32,5 @@
 @property (weak, nonatomic) IBOutlet FrecipeRatingView *averageRatingView;
 
 @property (nonatomic, assign) BOOL fromSegue;
-
 
 @end

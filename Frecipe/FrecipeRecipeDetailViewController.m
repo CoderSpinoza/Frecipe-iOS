@@ -77,7 +77,7 @@
     self.editMenuTableView.layer.cornerRadius = 5.0f;
     self.editMenuView.layer.cornerRadius = 5.0f;
     self.editMenuView.layer.borderWidth = 3.0f;
-    self.editMenuView.layer.borderColor = [[UIColor blackColor] CGColor];
+    self.editMenuView.layer.borderColor = [UIColor colorWithRed:0.9 green:0.4 blue:0.4 alpha:0.9].CGColor;
     self.editMenuView.layer.shadowColor = [[UIColor blackColor] CGColor];
     self.editMenuView.layer.shadowOpacity = 0.75f;
     self.editMenuView.layer.shadowRadius = 5.0f;

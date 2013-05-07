@@ -7,8 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "FrecipeMainViewController.h"
 
-@interface FrecipeGroceryListViewController : UIViewController
+@interface FrecipeGroceryListViewController : FrecipeMainViewController
 
 @property (weak, nonatomic) IBOutlet UITableView *groceryListTableView;
 @end

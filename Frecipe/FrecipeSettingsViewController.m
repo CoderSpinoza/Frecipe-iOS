@@ -11,7 +11,7 @@
 #import "FrecipeBadgeView.h"
 
 @interface FrecipeSettingsViewController ()
-@property (strong, nonatomic) FrecipeBadgeView *notificationBadge;
+
 @end
 
 @implementation FrecipeSettingsViewController

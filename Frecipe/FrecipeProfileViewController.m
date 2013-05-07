@@ -20,7 +20,7 @@
 @property (strong, nonatomic) NSMutableArray *recipes;
 @property (strong, nonatomic) NSDictionary *selectedRecipe;
 //@property (strong, nonatomic) FrecipeRatingView *averageRatingView;
-@property (strong, nonatomic) FrecipeBadgeView *notificationBadge;
+
 
 @end
 

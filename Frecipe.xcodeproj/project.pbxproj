@@ -79,6 +79,7 @@
 		C2E08EF51735E5B600C1C705 /* my_fridge.png in Resources */ = {isa = PBXBuildFile; fileRef = C2E08EEF1735E5B600C1C705 /* my_fridge.png */; };
 		C2E08EF61735E5B600C1C705 /* my_restaurant.png in Resources */ = {isa = PBXBuildFile; fileRef = C2E08EF01735E5B600C1C705 /* my_restaurant.png */; };
 		C2E08EF71735E5B600C1C705 /* settings.png in Resources */ = {isa = PBXBuildFile; fileRef = C2E08EF11735E5B600C1C705 /* settings.png */; };
+		C2E08EFA17389DAA00C1C705 /* FrecipeMainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C2E08EF917389DA900C1C705 /* FrecipeMainViewController.m */; };
 		C2E4771C172F7E0000EC3660 /* FrecipeSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C2E4771B172F7E0000EC3660 /* FrecipeSettingsViewController.m */; };
 		C2E4771F172F94D000EC3660 /* FrecipeRatingView.m in Sources */ = {isa = PBXBuildFile; fileRef = C2E4771E172F94D000EC3660 /* FrecipeRatingView.m */; };
 		C2E47724172F94E700EC3660 /* star_empty.png in Resources */ = {isa = PBXBuildFile; fileRef = C2E47720172F94E600EC3660 /* star_empty.png */; };
@@ -195,6 +196,8 @@
 		C2E08EEF1735E5B600C1C705 /* my_fridge.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = my_fridge.png; sourceTree = "<group>"; };
 		C2E08EF01735E5B600C1C705 /* my_restaurant.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = my_restaurant.png; sourceTree = "<group>"; };
 		C2E08EF11735E5B600C1C705 /* settings.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = settings.png; sourceTree = "<group>"; };
+		C2E08EF817389DA900C1C705 /* FrecipeMainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrecipeMainViewController.h; sourceTree = "<group>"; };
+		C2E08EF917389DA900C1C705 /* FrecipeMainViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FrecipeMainViewController.m; sourceTree = "<group>"; };
 		C2E4771A172F7E0000EC3660 /* FrecipeSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrecipeSettingsViewController.h; sourceTree = "<group>"; };
 		C2E4771B172F7E0000EC3660 /* FrecipeSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FrecipeSettingsViewController.m; sourceTree = "<group>"; };
 		C2E4771D172F94CF00EC3660 /* FrecipeRatingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrecipeRatingView.h; sourceTree = "<group>"; };
@@ -344,6 +347,8 @@
 				C294413717349ADF00FDD542 /* FrecipeBadgeView.m */,
 				C294412F17332BC800FDD542 /* UIViewController+Frecipe.h */,
 				C294413017332BC800FDD542 /* UIViewController+Frecipe.m */,
+				C2E08EF817389DA900C1C705 /* FrecipeMainViewController.h */,
+				C2E08EF917389DA900C1C705 /* FrecipeMainViewController.m */,
 				C2A327DD172DFAAD00EBB23B /* Supporting Files */,
 			);
 			path = Frecipe;
@@ -589,6 +594,7 @@
 				C2E4771F172F94D000EC3660 /* FrecipeRatingView.m in Sources */,
 				C294413117332BC800FDD542 /* UIViewController+Frecipe.m in Sources */,
 				C294413817349AE000FDD542 /* FrecipeBadgeView.m in Sources */,
+				C2E08EFA17389DAA00C1C705 /* FrecipeMainViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

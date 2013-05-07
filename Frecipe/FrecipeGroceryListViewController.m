@@ -17,7 +17,7 @@
 
 @property (strong, nonatomic) NSMutableArray *groceryList;
 @property (strong, nonatomic) NSMutableArray *selectedGroceryList;
-@property (strong, nonatomic) FrecipeBadgeView *notificationBadge;
+
 @end
 
 @implementation FrecipeGroceryListViewController

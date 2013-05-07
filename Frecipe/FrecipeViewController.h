@@ -7,8 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
-
-@interface FrecipeViewController : UIViewController
+#import "FrecipeMainViewController.h"
+@interface FrecipeViewController : FrecipeMainViewController
 
 @property (weak, nonatomic) IBOutlet UICollectionView *recipesCollectionView;
 @property (weak, nonatomic) IBOutlet UISearchBar *searchBar;

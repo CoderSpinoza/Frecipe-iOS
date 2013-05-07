@@ -18,4 +18,5 @@
 @property (weak, nonatomic) IBOutlet UICollectionView *menuCollectionView;
 @property (weak, nonatomic) IBOutlet UITableView *notificationsTableView;
 @property (weak, nonatomic) IBOutlet UIView *notificationsContainerView;
+@property (weak, nonatomic) IBOutlet FrecipeBadgeView *notificationsBadgeView;
 @end

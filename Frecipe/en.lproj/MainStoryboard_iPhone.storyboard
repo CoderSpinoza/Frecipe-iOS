@@ -68,7 +68,6 @@
                                 <rect key="frame" x="0.0" y="0.0" width="200" height="50"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                                <color key="tintColor" red="1" green="0.40000000600000002" blue="0.40000000600000002" alpha="1" colorSpace="calibratedRGB"/>
                                 <state key="normal">
                                     <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -90,7 +89,7 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
                             <view userInteractionEnabled="NO" contentMode="scaleToFill" id="m67-Uu-X4W" customClass="FrecipeBadgeView">
-                                <rect key="frame" x="168" y="12" width="25" height="25"/>
+                                <rect key="frame" x="160" y="12" width="25" height="25"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                             </view>
@@ -131,6 +130,7 @@
                         <outlet property="fbProfilePictureView" destination="nId-1Z-spe" id="JmD-kc-m3b"/>
                         <outlet property="menuCollectionView" destination="GqY-nD-LRY" id="bIu-c9-TmA"/>
                         <outlet property="nameButton" destination="0BB-jg-HFK" id="Dhw-bM-w90"/>
+                        <outlet property="notificationsBadgeView" destination="m67-Uu-X4W" id="vSS-qG-er7"/>
                         <outlet property="notificationsContainerView" destination="76L-Hd-him" id="otq-sG-IiZ"/>
                         <outlet property="notificationsTableView" destination="1DN-7S-Rc4" id="DVB-Kj-DFE"/>
                         <outlet property="profilePictureView" destination="exD-K7-C8e" id="md9-z5-Nzh"/>
@@ -1587,13 +1587,13 @@
                 <relationship kind="outlet" name="searchBar" candidateClass="UISearchBar"/>
             </relationships>
         </class>
-        <class className="FrecipeFridgeViewController" superclassName="UIViewController">
+        <class className="FrecipeFridgeViewController" superclassName="FrecipeMainViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeFridgeViewController.h"/>
             <relationships>
                 <relationship kind="outlet" name="ingredientsTableView" candidateClass="UITableView"/>
             </relationships>
         </class>
-        <class className="FrecipeGroceryListViewController" superclassName="UIViewController">
+        <class className="FrecipeGroceryListViewController" superclassName="FrecipeMainViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeGroceryListViewController.h"/>
             <relationships>
                 <relationship kind="outlet" name="groceryListTableView" candidateClass="UITableView"/>
@@ -1611,6 +1611,9 @@
                 <relationship kind="outlet" name="scrollView" candidateClass="UIScrollView"/>
             </relationships>
         </class>
+        <class className="FrecipeMainViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeMainViewController.h"/>
+        </class>
         <class className="FrecipeNavigationController" superclassName="UINavigationController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeNavigationController.h"/>
         </class>
@@ -1621,12 +1624,13 @@
                 <relationship kind="outlet" name="menuCollectionView" candidateClass="UICollectionView"/>
                 <relationship kind="outlet" name="nameButton" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="notificationButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="notificationsBadgeView" candidateClass="FrecipeBadgeView"/>
                 <relationship kind="outlet" name="notificationsContainerView" candidateClass="UIView"/>
                 <relationship kind="outlet" name="notificationsTableView" candidateClass="UITableView"/>
                 <relationship kind="outlet" name="profilePictureView" candidateClass="UIImageView"/>
             </relationships>
         </class>
-        <class className="FrecipeProfileViewController" superclassName="UIViewController">
+        <class className="FrecipeProfileViewController" superclassName="FrecipeMainViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeProfileViewController.h"/>
             <relationships>
                 <relationship kind="outlet" name="averageRatingView" candidateClass="FrecipeRatingView"/>
@@ -1669,7 +1673,7 @@
                 <relationship kind="outlet" name="scrollView" candidateClass="UIScrollView"/>
             </relationships>
         </class>
-        <class className="FrecipeSettingsViewController" superclassName="UIViewController">
+        <class className="FrecipeSettingsViewController" superclassName="FrecipeMainViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeSettingsViewController.h"/>
         </class>
         <class className="FrecipeSignupViewController" superclassName="UIViewController">
@@ -1682,7 +1686,7 @@
                 <relationship kind="outlet" name="passwordField" candidateClass="UITextField"/>
             </relationships>
         </class>
-        <class className="FrecipeViewController" superclassName="UIViewController">
+        <class className="FrecipeViewController" superclassName="FrecipeMainViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeViewController.h"/>
             <relationships>
                 <relationship kind="outlet" name="recipesCollectionView" candidateClass="UICollectionView"/>

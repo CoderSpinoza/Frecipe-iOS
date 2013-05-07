@@ -11,5 +11,7 @@
 @interface UIViewController (Frecipe)
 
 - (BOOL)isTall;
-- (FrecipeBadgeView *)addNotificationBadge;
+
+
+
 @end

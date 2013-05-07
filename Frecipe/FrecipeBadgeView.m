@@ -20,6 +20,11 @@
     if (text.length > 0) {
         [self resizeWithString:text];
     }
+    if ([text isEqualToString:@"0"]) {
+        self.hidden = YES;
+    } else {
+        self.hidden = NO;
+    }
 }
 - (id)initWithFrame:(CGRect)frame
 {
@@ -33,7 +38,7 @@
 - (id)initWithCoder:(NSCoder *)aDecoder {
     self = [super initWithCoder:aDecoder];
     if (self) {
-        self.text = @"15";
+        self.text = @"0";
         self.badgeTextColor = [UIColor whiteColor];
         self.badgeInsetColor = [UIColor redColor];
         self.badgeFrameColor = [UIColor whiteColor];
@@ -176,7 +181,7 @@
 	} else {
 		retValue = CGSizeMake(25, 25);
 	}
-	self.frame = CGRectMake(self.frame.origin.x - stringSize.width + 10, self.frame.origin.y, retValue.width, retValue.height);
+	self.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, retValue.width, retValue.height);
 	_text = text;
 	[self setNeedsDisplay];
 }

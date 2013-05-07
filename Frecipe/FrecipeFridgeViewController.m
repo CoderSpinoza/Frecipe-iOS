@@ -17,7 +17,7 @@
 
 @property (strong, nonatomic) NSMutableArray *ingredients;
 @property (strong, nonatomic) NSMutableArray *selectedIngredients;
-@property (strong, nonatomic) FrecipeBadgeView *notificationBadge;
+
 
 @end
 
