@@ -156,7 +156,7 @@
     }
 }
 
-// table view delegate methods
+// table view delegate and dataSource methods
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
     // Return NO if you do not want the specified item to be editable.
@@ -218,14 +218,10 @@
 }
 
 - (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath {
-    
     if (userIsInTheMiddleOfEditingIngredientsList) {
         if (indexPath.row != 0) {
             [self.selectedIngredients removeObject:[self.ingredients objectAtIndex:indexPath.row]];
         }
     }
-    
 }
-
-
 @end

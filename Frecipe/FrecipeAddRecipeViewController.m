@@ -138,14 +138,11 @@
         // add a spinning view
         UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
         spinner.center = CGPointMake(self.view.frame.size.width / 2, self.view.frame.size.height / 2);
-        
         UIView *blockingView = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y - 20, self.view.frame.size.width, self.view.frame.size.height)];
         blockingView.backgroundColor = [UIColor blackColor];
         blockingView.alpha = 0.5;
         [blockingView addSubview:spinner];
-        
         [self.view addSubview:blockingView];
-        
         [spinner startAnimating];
         
         AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
@@ -348,7 +345,7 @@
     
     [UIView animateWithDuration:0.3 delay:0 options:UIViewAnimationOptionTransitionFlipFromBottom animations:^{
         CGFloat difference;
-        if (self.view.frame.size.height == 460) {
+        if (![self isTall]) {
             difference = 180;
         } else {
             difference = self.view.frame.size.height - self.recipeImageButton.frame.origin.y - self.recipeImageButton.frame.size.height - 44;

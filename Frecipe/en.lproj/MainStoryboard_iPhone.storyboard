@@ -106,7 +106,7 @@
                                                 <rect key="frame" x="0.0" y="22" width="184" height="44"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                                    <rect key="frame" x="0.0" y="0.0" width="184" height="43"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                                 </view>
@@ -278,11 +278,6 @@
                                     </collectionViewCell>
                                 </cells>
                             </collectionView>
-                            <searchBar alpha="0.5" contentMode="redraw" id="muj-tL-7Ai">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                                <textInputTraits key="textInputTraits"/>
-                            </searchBar>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
@@ -300,7 +295,6 @@
                     </navigationItem>
                     <connections>
                         <outlet property="recipesCollectionView" destination="3p6-ZM-pJO" id="S5m-gF-LKu"/>
-                        <outlet property="searchBar" destination="muj-tL-7Ai" id="ayN-Yb-XWT"/>
                         <outlet property="searchDisplayController" destination="uLm-qb-Pju" id="e38-Uy-0IO"/>
                         <segue destination="UIY-aZ-p57" kind="push" identifier="RecipeDetail" id="sIr-9w-LZ8"/>
                     </connections>
@@ -501,11 +495,13 @@
                     <connections>
                         <outlet property="ingredientsTableView" destination="sO1-4x-hS4" id="YNL-q9-UMa"/>
                         <segue destination="Lg2-Ge-Dvc" kind="modal" identifier="AddIngredients" modalTransitionStyle="coverVertical" id="0Of-c5-MYL"/>
+                        <segue destination="UIY-aZ-p57" kind="push" identifier="RecipeDetail" id="pUm-dt-NRF"/>
+                        <segue destination="jLj-s0-Acp" kind="push" identifier="Profile" id="ls3-hz-VdW"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Trj-pH-aU9" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1786" y="850"/>
+            <point key="canvasLocation" x="1597" y="724"/>
         </scene>
         <!--Frecipe Recipe Detail View Controller-->
         <scene sceneID="KTv-bG-ugk">
@@ -564,6 +560,9 @@
                                         <state key="highlighted">
                                             <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
+                                        <connections>
+                                            <action selector="commentButtonPressed" destination="UIY-aZ-p57" eventType="touchUpInside" id="KH8-QI-BlX"/>
+                                        </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="e7K-2y-eJF">
                                         <rect key="frame" x="163" y="18" width="79" height="25"/>
@@ -664,6 +663,123 @@
                                         </subviews>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                                     </view>
+                                    <view alpha="0.0" contentMode="scaleToFill" id="1HE-6S-0GV">
+                                        <rect key="frame" x="0.0" y="46" width="320" height="0.0"/>
+                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                        <subviews>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="NQz-wG-9Eg">
+                                                <rect key="frame" x="253" y="6" width="58" height="29"/>
+                                                <autoresizingMask key="autoresizingMask" flexibleMaxY="YES"/>
+                                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                                <state key="normal" title="Close">
+                                                    <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                                </state>
+                                                <state key="highlighted">
+                                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                </state>
+                                                <connections>
+                                                    <action selector="commentCloseButtonPressed" destination="UIY-aZ-p57" eventType="touchUpInside" id="9ak-Ok-xol"/>
+                                                </connections>
+                                            </button>
+                                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Comments" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Hf2-5g-Ooj">
+                                                <rect key="frame" x="115" y="9" width="90" height="21"/>
+                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
+                                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" allowsSelection="NO" rowHeight="75" sectionHeaderHeight="22" sectionFooterHeight="22" id="x77-Ys-Lfb">
+                                                <rect key="frame" x="15" y="42" width="290" height="0.0"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                <prototypes>
+                                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" indentationWidth="10" reuseIdentifier="CommentCell" id="tNb-AA-G4a">
+                                                        <rect key="frame" x="0.0" y="22" width="290" height="75"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                                            <rect key="frame" x="0.0" y="0.0" width="290" height="74"/>
+                                                            <autoresizingMask key="autoresizingMask"/>
+                                                            <subviews>
+                                                                <view tag="1" contentMode="scaleToFill" id="gze-I4-UK0" customClass="FBProfilePictureView">
+                                                                    <rect key="frame" x="5" y="5" width="40" height="40"/>
+                                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                                                                </view>
+                                                                <imageView userInteractionEnabled="NO" tag="2" contentMode="scaleToFill" id="JkB-0G-RtS">
+                                                                    <rect key="frame" x="5" y="5" width="40" height="40"/>
+                                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                                </imageView>
+                                                                <button opaque="NO" tag="3" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="84P-mf-TEw">
+                                                                    <rect key="frame" x="53" y="5" width="189" height="24"/>
+                                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                                                    <state key="normal">
+                                                                        <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
+                                                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                                                    </state>
+                                                                    <state key="highlighted">
+                                                                        <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                                    </state>
+                                                                </button>
+                                                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" tag="4" contentMode="scaleToFill" editable="NO" id="POE-Ry-Tpx">
+                                                                    <rect key="frame" x="46" y="16" width="244" height="29"/>
+                                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                                                </textView>
+                                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="5" contentMode="left" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="OKV-RK-rPm">
+                                                                    <rect key="frame" x="53" y="53" width="111" height="21"/>
+                                                                    <autoresizingMask key="autoresizingMask" flexibleMinY="YES"/>
+                                                                    <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                                                    <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                                                    <color key="highlightedColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                                </label>
+                                                                <button opaque="NO" tag="6" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="KLv-kL-CEV">
+                                                                    <rect key="frame" x="169" y="52" width="73" height="20"/>
+                                                                    <autoresizingMask key="autoresizingMask" flexibleMinY="YES"/>
+                                                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="12"/>
+                                                                    <state key="normal" title="Delete">
+                                                                        <color key="titleColor" red="0.36995835110000003" green="0.58896097089999999" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                                                    </state>
+                                                                    <state key="highlighted">
+                                                                        <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                                    </state>
+                                                                    <connections>
+                                                                        <action selector="commentDeleteButtonPressed:" destination="UIY-aZ-p57" eventType="touchUpInside" id="QBy-h5-Fa6"/>
+                                                                    </connections>
+                                                                </button>
+                                                            </subviews>
+                                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                                        </view>
+                                                    </tableViewCell>
+                                                </prototypes>
+                                            </tableView>
+                                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Comment on this recipe!" minimumFontSize="17" id="Jwh-o7-8ZR">
+                                                <rect key="frame" x="20" y="-45" width="225" height="30"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                <textInputTraits key="textInputTraits"/>
+                                            </textField>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="aTn-Gr-IIp">
+                                                <rect key="frame" x="252" y="-45" width="61" height="31"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                                                <fontDescription key="fontDescription" type="boldSystem" pointSize="13"/>
+                                                <state key="normal" title="Send">
+                                                    <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                                </state>
+                                                <state key="highlighted">
+                                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                </state>
+                                                <connections>
+                                                    <action selector="commentSubmitButtonPressed" destination="UIY-aZ-p57" eventType="touchUpInside" id="8LE-1L-xKd"/>
+                                                </connections>
+                                            </button>
+                                        </subviews>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    </view>
                                 </subviews>
                             </scrollView>
                         </subviews>
@@ -673,6 +789,10 @@
                     <connections>
                         <outlet property="averageRatingView" destination="DRy-7F-miV" id="hmu-uy-SiV"/>
                         <outlet property="commentButton" destination="qwe-q2-huW" id="i5v-r9-4fw"/>
+                        <outlet property="commentField" destination="Jwh-o7-8ZR" id="cH4-sl-qbJ"/>
+                        <outlet property="commentSubmitButton" destination="aTn-Gr-IIp" id="NGW-f4-o4h"/>
+                        <outlet property="commentsTableView" destination="x77-Ys-Lfb" id="6sH-nf-GRL"/>
+                        <outlet property="commentsView" destination="1HE-6S-0GV" id="bGx-v2-OS7"/>
                         <outlet property="directionsLabel" destination="NCs-PS-cEe" id="yVt-BY-9A2"/>
                         <outlet property="directionsTableView" destination="YA6-iV-Gbc" id="Bdh-tq-e6y"/>
                         <outlet property="editMenuTableView" destination="wMy-gg-AX7" id="2Vb-8I-u6i"/>
@@ -690,7 +810,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="mbi-GY-NYq" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2490" y="770"/>
+            <point key="canvasLocation" x="3755" y="1000"/>
         </scene>
         <!--Frecipe Add Ingredients View Controller-->
         <scene sceneID="LaM-wJ-3aP">
@@ -750,7 +870,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="FEh-B7-nBH" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2146" y="770"/>
+            <point key="canvasLocation" x="3215" y="616"/>
         </scene>
         <!--Frecipe Navigation Controller-->
         <scene sceneID="rd7-52-zMW">
@@ -830,12 +950,12 @@
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <subviews>
                                             <view contentMode="scaleToFill" id="OMJ-y3-Gqf">
-                                                <rect key="frame" x="0.0" y="0.0" width="150" height="90"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="75" height="90"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="BRf-Ta-oiO">
-                                                        <rect key="frame" x="0.0" y="0.0" width="150" height="30"/>
-                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="75" height="30"/>
+                                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                                                         <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                                         <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                         <nil key="highlightedColor"/>
@@ -856,7 +976,7 @@
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                                             </view>
                                             <view contentMode="scaleToFill" id="v9a-sf-3TA">
-                                                <rect key="frame" x="150" y="0.0" width="150" height="90"/>
+                                                <rect key="frame" x="75" y="0.0" width="75" height="90"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <subviews>
                                                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="vkb-KO-Hye">
@@ -882,7 +1002,7 @@
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                                             </view>
                                             <view contentMode="scaleToFill" id="dlX-50-9VD">
-                                                <rect key="frame" x="0.0" y="90" width="150" height="90"/>
+                                                <rect key="frame" x="150" y="0.0" width="75" height="90"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <subviews>
                                                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="wEf-sc-eR6">
@@ -905,6 +1025,11 @@
                                                         </state>
                                                     </button>
                                                 </subviews>
+                                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                                            </view>
+                                            <view contentMode="scaleToFill" id="HMa-7G-NQ0">
+                                                <rect key="frame" x="225" y="0.0" width="75" height="90"/>
+                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                                             </view>
                                             <view contentMode="scaleToFill" id="tcw-kl-KR0">
@@ -1090,7 +1215,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="bn6-TZ-w8m" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1870" y="1515"/>
+            <point key="canvasLocation" x="2980" y="1491"/>
         </scene>
         <!--Frecipe Facebook Invite View Controller-->
         <scene sceneID="V2a-cN-XJY">
@@ -1176,7 +1301,7 @@
                     </connections>
                 </searchDisplayController>
             </objects>
-            <point key="canvasLocation" x="2233" y="1508"/>
+            <point key="canvasLocation" x="3755" y="1660"/>
         </scene>
         <!--Frecipe Navigation Controller-->
         <scene sceneID="1He-IC-G9U">
@@ -1224,10 +1349,14 @@
                             </connections>
                         </barButtonItem>
                     </navigationItem>
+                    <connections>
+                        <segue destination="jLj-s0-Acp" kind="push" identifier="Profile" id="mvN-Bk-uj5"/>
+                        <segue destination="UIY-aZ-p57" kind="push" identifier="RecipeDetail" id="JE6-sc-Nr9"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="aK9-gP-Mhx" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1560" y="2742"/>
+            <point key="canvasLocation" x="2404" y="2110"/>
         </scene>
         <!--Frecipe Grocery List View Controller - Grocery List-->
         <scene sceneID="klR-OK-Reg">
@@ -1281,11 +1410,13 @@
                     <connections>
                         <outlet property="groceryListTableView" destination="eFL-Cd-LjT" id="LgN-Qy-QuM"/>
                         <segue destination="psT-Pj-8kp" kind="modal" identifier="AddToGroceryList" modalTransitionStyle="coverVertical" id="DIv-3u-9Ma"/>
+                        <segue destination="jLj-s0-Acp" kind="push" identifier="Profile" id="WnA-X5-8uH"/>
+                        <segue destination="UIY-aZ-p57" kind="push" identifier="RecipeDetail" id="ev4-tv-MfP"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="52q-9n-rZW" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1559" y="2064"/>
+            <point key="canvasLocation" x="1560" y="2030"/>
         </scene>
         <!--Frecipe Add To Grocery List View Controller-->
         <scene sceneID="xE3-mw-aqr">
@@ -1357,6 +1488,7 @@
                         <subviews>
                             <navigationBar contentMode="scaleToFill" id="BEC-cM-vvs">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxY="YES"/>
                                 <items>
                                     <navigationItem title="Sign up" id="A4F-CE-QWj">
                                         <barButtonItem key="leftBarButtonItem" title="Cancel" id="R9Y-8y-WI4">
@@ -1623,7 +1755,6 @@
                 <relationship kind="outlet" name="fbProfilePictureView" candidateClass="FBProfilePictureView"/>
                 <relationship kind="outlet" name="menuCollectionView" candidateClass="UICollectionView"/>
                 <relationship kind="outlet" name="nameButton" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="notificationButton" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="notificationsBadgeView" candidateClass="FrecipeBadgeView"/>
                 <relationship kind="outlet" name="notificationsContainerView" candidateClass="UIView"/>
                 <relationship kind="outlet" name="notificationsTableView" candidateClass="UITableView"/>
@@ -1659,6 +1790,10 @@
             <relationships>
                 <relationship kind="outlet" name="averageRatingView" candidateClass="FrecipeRatingView"/>
                 <relationship kind="outlet" name="commentButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="commentField" candidateClass="UITextField"/>
+                <relationship kind="outlet" name="commentSubmitButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="commentsTableView" candidateClass="UITableView"/>
+                <relationship kind="outlet" name="commentsView" candidateClass="UIView"/>
                 <relationship kind="outlet" name="directionsLabel" candidateClass="UILabel"/>
                 <relationship kind="outlet" name="directionsTableView" candidateClass="UITableView"/>
                 <relationship kind="outlet" name="editMenuTableView" candidateClass="UITableView"/>
@@ -1690,7 +1825,6 @@
             <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeViewController.h"/>
             <relationships>
                 <relationship kind="outlet" name="recipesCollectionView" candidateClass="UICollectionView"/>
-                <relationship kind="outlet" name="searchBar" candidateClass="UISearchBar"/>
             </relationships>
         </class>
         <class className="UICollectionReusableView" superclassName="UIView">
@@ -1709,8 +1843,8 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="FWi-4a-gi8"/>
-        <segue reference="Z82-nb-p4V"/>
-        <segue reference="UTp-eQ-C0H"/>
+        <segue reference="JE6-sc-Nr9"/>
+        <segue reference="TkR-fi-IFc"/>
+        <segue reference="gQH-mx-TWG"/>
     </inferredMetricsTieBreakers>
 </document>

@@ -27,5 +27,9 @@
 
 @property (weak, nonatomic) IBOutlet UIView *editMenuView;
 @property (weak, nonatomic) IBOutlet UITableView *editMenuTableView;
+@property (weak, nonatomic) IBOutlet UIView *commentsView;
+@property (weak, nonatomic) IBOutlet UITableView *commentsTableView;
+@property (weak, nonatomic) IBOutlet UITextField *commentField;
+@property (weak, nonatomic) IBOutlet UIButton *commentSubmitButton;
 
 @end

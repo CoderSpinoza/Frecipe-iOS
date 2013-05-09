@@ -39,17 +39,21 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
+    
+    // menu setup
     self.menu = [NSArray arrayWithObjects:@"frecipe.png", @"my_fridge.png", @"my_restaurant.png", @"grocery_list.png", @"settings.png", @"logout.png", nil];
     [self.slidingViewController setAnchorRightRevealAmount:200.0f];
     self.slidingViewController.underLeftWidthLayout = ECFullWidth;
     
+    // setting delegates
     self.menuCollectionView.delegate = self;
     self.menuCollectionView.dataSource = self;
-    
-    [self.nameButton setBackgroundImage:[UIImage imageNamed:@"button_background_image.png"] forState:UIControlStateHighlighted];
-    
     self.notificationsTableView.delegate = self;
     self.notificationsTableView.dataSource = self;
+    
+    
+    // button and shadow setup
+    [self.nameButton setBackgroundImage:[UIImage imageNamed:@"button_background_image.png"] forState:UIControlStateHighlighted];
     self.notificationsContainerView.layer.borderColor = [UIColor colorWithRed:0.9 green:0.4 blue:0.4 alpha:0.9].CGColor;
     self.notificationsContainerView.layer.borderWidth = 3;
     self.notificationsContainerView.layer.cornerRadius = 5;
@@ -57,9 +61,16 @@
     [self fetchUserInfo];
 }
 
+// fetch notifications every time this view appears
 - (void)viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];    
+    [super viewWillAppear:animated];
+    self.notificationsContainerView.frame = CGRectMake(self.notificationsContainerView.frame.origin.x, self.notificationsContainerView.frame.origin.y, self.notificationsContainerView.frame.size.width, 0);
+    self.notificationsContainerView.alpha = 0;
     [self fetchNotifications];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
     
 }
 
@@ -71,9 +82,7 @@
 
 - (IBAction)menuButtonPressed:(UIButton *)sender {
     UICollectionViewCell *cell = (UICollectionViewCell *)sender.superview.superview;
-    
     NSIndexPath *indexPath = [self.menuCollectionView indexPathForCell:cell];
-    
     NSString *identifier = [NSString stringWithFormat:@"%@", [self.menu objectAtIndex:indexPath.row]];
     
     if ([identifier isEqualToString:@"logout.png"]) {
@@ -94,7 +103,6 @@
         }];
     } else {
         UIViewController *newTopViewController = [self.storyboard instantiateViewControllerWithIdentifier:identifier];
-        
         [self.slidingViewController anchorTopViewOffScreenTo:ECRight animations:nil onComplete:^{
             self.slidingViewController.topViewController = newTopViewController;
             [self.slidingViewController resetTopView];
@@ -104,7 +112,6 @@
 }
 
 - (IBAction)notificationButtonPressed {
-    
     if (self.notificationsContainerView.frame.size.height == 0) {
         [UIView animateWithDuration:0.5 animations:^{
             self.notificationsContainerView.frame = CGRectMake(self.notificationsContainerView.frame.origin.x, self.notificationsContainerView.frame.origin.y, self.notificationsContainerView.frame.size.width, self.view.frame.size.height - self.notificationsContainerView.frame.origin.y - 30);
@@ -123,7 +130,6 @@
 
 - (void)fetchUserInfo {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    
     NSString *provider = [defaults stringForKey:@"provider"];
     if ([provider isEqualToString:@"facebook"]) {
         self.profilePictureView.hidden = YES;
@@ -133,7 +139,6 @@
         self.profilePictureView.hidden = NO;
         [self.profilePictureView setImageWithURL:[NSString stringWithFormat:@"%@", [defaults stringForKey:@"profile_picture"]]];
     }
-    
 [self.nameButton setTitle:[defaults stringForKey:@"name"] forState:UIControlStateNormal];
 }
 
@@ -144,7 +149,6 @@
     [[AFNetworkActivityIndicatorManager sharedManager] incrementActivityCount];
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    
     NSString *authentication_token = [defaults stringForKey:@"authentication_token"];
     
     NSDictionary *parameters = [NSDictionary dictionaryWithObject:authentication_token forKey:@"authentication_token"];
@@ -158,13 +162,10 @@
         NSString *unseen = [NSString stringWithFormat:@"%@", [JSON objectForKey:@"unseen_count"]];
         
         self.notificationsBadgeView.text = unseen;
-        
-        
         FrecipeNavigationController *navigationController = (FrecipeNavigationController *)self.slidingViewController.topViewController;
-        
         FrecipeMainViewController *viewController = [navigationController.childViewControllers objectAtIndex:0];
         viewController.notificationBadge.text = unseen;
-        
+
         [self.notificationsTableView reloadData];
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         NSLog(@"%@", error);
@@ -173,12 +174,44 @@
 }
 
 - (void)checkNotifications {
-    FrecipeNavigationController *navigationController = (FrecipeNavigationController *)self.slidingViewController.topViewController;
     
-    FrecipeMainViewController *viewController = [navigationController.childViewControllers objectAtIndex:0];
     
-    self.notificationsBadgeView.text = @"0";
-    viewController.notificationBadge.text = @"0";
+    NSString *path = @"notifications/check";
+    
+    [[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];
+    [[AFNetworkActivityIndicatorManager sharedManager] incrementActivityCount];
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSString *authentication_token = [defaults stringForKey:@"authentication_token"];
+    
+    NSMutableArray *ids = [[NSMutableArray alloc] init];
+    
+    for (NSDictionary *notification in self.notifications) {
+        if ([[NSString stringWithFormat:@"%@", [notification objectForKey:@"seen"]] isEqualToString:@"0"]) {
+            [ids addObject:[NSString stringWithFormat:@"%@", [notification objectForKey:@"id"]]];
+        }
+    }
+    
+    NSArray *keys = [NSArray arrayWithObjects:@"authentication_token", @"ids", nil];
+    NSArray *values = [NSArray arrayWithObjects:authentication_token, ids, nil];
+    
+    NSDictionary *parameters = [NSDictionary dictionaryWithObjects:values forKeys:keys];
+    
+    FrecipeAPIClient *client = [FrecipeAPIClient client];
+    
+    NSURLRequest *request = [client requestWithMethod:@"POST" path:path parameters:parameters];
+    
+    AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
+        FrecipeNavigationController *navigationController = (FrecipeNavigationController *)self.slidingViewController.topViewController;
+        FrecipeMainViewController *viewController = [navigationController.childViewControllers objectAtIndex:0];
+        self.notificationsBadgeView.text = @"0";
+        viewController.notificationBadge.text = @"0";
+    } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
+        NSLog(@"%@", error);
+    }];
+    [operation start];
+    
+    
 }
 
 // collection view delegate and dataSource methods
@@ -196,59 +229,22 @@
     UICollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:CellIdentifier forIndexPath:indexPath];
     
     UIButton *button = (UIButton *)[cell viewWithTag:1];
-    
     [button setImage:[UIImage imageNamed:[self.menu objectAtIndex:indexPath.row]] forState:UIControlStateNormal];
     [button setBackgroundImage:[UIImage imageNamed:@"button_background_image.png"] forState:UIControlStateHighlighted];
     
     return cell;
 }
 
-- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
-    
-    NSString *identifier = [NSString stringWithFormat:@"%@", [self.menu objectAtIndex:indexPath.row]];
-    
-    if ([identifier isEqualToString:@"logout.png"]) {
-        UIViewController *newTopViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"Login"];
-        
-        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-        [defaults setObject:nil forKey:@"authentication_token"];
-        [defaults setObject:nil forKey:@"provider"];
-        [defaults setObject: nil forKey:@"uid"];
-        [defaults setObject:nil forKey:@"id"];
-        [defaults synchronize];
-        
-        [FBSession.activeSession closeAndClearTokenInformation];
-        [self.slidingViewController anchorTopViewOffScreenTo:ECRight animations:nil onComplete:^{
-            self.slidingViewController.topViewController = newTopViewController;
-            [self.slidingViewController resetTopView];
-            
-        }];
-        
-    } else {
-        UIViewController *newTopViewController = [self.storyboard instantiateViewControllerWithIdentifier:identifier];
-        
-        [self.slidingViewController anchorTopViewOffScreenTo:ECRight animations:nil onComplete:^{
-            self.slidingViewController.topViewController = newTopViewController;
-            [self.slidingViewController resetTopView];
-            
-        }];
-        
-    }
-}
-
-// table view delegate and dataSource methods
+// table view delegate and dataSource methods for notification
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     CGFloat fontSize = 13;
     UIFont *boldFont = [UIFont boldSystemFontOfSize:fontSize];
-    UIFont *regularFont = [UIFont systemFontOfSize:fontSize];
     
     NSDictionary *notification = [self.notifications objectAtIndex:indexPath.row];
     NSDictionary *source = [notification objectForKey:@"source"];
     NSDictionary *recipe = [notification objectForKey:@"recipe"];
-    
     NSString *category = [NSString stringWithFormat:@"%@", [notification objectForKey:@"category"]];
-    
     
     NSString *sourceName = [NSString stringWithFormat:@"%@ %@", [source objectForKey:@"first_name"], [source objectForKey:@"last_name"]];
     NSString *originalText;
@@ -264,9 +260,7 @@
     
     CGSize constraintSize = CGSizeMake(184, MAXFLOAT);
     CGSize labelSize = [originalText sizeWithFont:boldFont constrainedToSize:constraintSize lineBreakMode:NSLineBreakByWordWrapping];
-    
     return labelSize.height + 20;
-
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
@@ -281,7 +275,6 @@
     static NSString *CellIdentifier = @"NotificationCell";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
     
-    
     // setting attributes
     CGFloat fontSize = 13;
     UIFont *boldFont = [UIFont boldSystemFontOfSize:fontSize];
@@ -293,43 +286,62 @@
     NSDictionary *notification = [self.notifications objectAtIndex:indexPath.row];
     NSDictionary *source = [notification objectForKey:@"source"];
     NSDictionary *recipe = [notification objectForKey:@"recipe"];
-
     NSString *category = [NSString stringWithFormat:@"%@", [notification objectForKey:@"category"]];
     
-    
     NSString *sourceName = [NSString stringWithFormat:@"%@ %@", [source objectForKey:@"first_name"], [source objectForKey:@"last_name"]];
-    NSString *recipeName = [NSString stringWithFormat:@"%@", [recipe objectForKey:@"name"]];
+    NSString *recipeName;
     NSRange sourceRange = NSMakeRange(0, sourceName.length);
     NSString *originalText;
     if ([category isEqualToString:@"like"]) {
-               originalText = [NSString stringWithFormat:@"%@ liked your recipe %@.", sourceName, recipeName];
+        recipeName = [NSString stringWithFormat:@"%@", [recipe objectForKey:@"name"]];
+        originalText = [NSString stringWithFormat:@"%@ liked your recipe %@.", sourceName, recipeName];
     } else if ([category isEqualToString:@"comment"]) {
+        recipeName = [NSString stringWithFormat:@"%@", [recipe objectForKey:@"name"]];
         originalText = [NSString stringWithFormat:@"%@ commented on your recipe %@.", sourceName, recipeName];
     } else if ([category isEqualToString:@"follow"]) {
         originalText = [NSString stringWithFormat:@"%@ is now following you!", sourceName];
     } else {
+        recipeName = [NSString stringWithFormat:@"%@", [recipe objectForKey:@"name"]];
         originalText = [NSString stringWithFormat:@"%@ uploaded a new recipe %@.", sourceName, recipeName];
     }
     
     
     NSMutableAttributedString *attributedText = [[NSMutableAttributedString alloc] initWithString:originalText attributes:subAttributes];
-    
     [attributedText setAttributes:attributes range:sourceRange];
     
     if (![category isEqualToString:@"follow"]) {
-//        NSLog(@"%u %u",originalText.length - recipeName.length, originalText.length - 1);
         NSRange recipeRange = NSMakeRange(originalText.length - recipeName.length - 1, recipeName.length);
-        NSLog(@"%u", recipeRange.length);
         [attributedText setAttributes:attributes range:recipeRange];
     }
     
     cell.textLabel.attributedText = attributedText;
     cell.textLabel.numberOfLines = 0;
+    cell.textLabel.backgroundColor = [UIColor clearColor];
+    if ([[NSString stringWithFormat:@"%@", [notification objectForKey:@"seen"]] isEqualToString:@"0"]) {
+        UIView *backgroudView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 1, 1)];
+        backgroudView.opaque = YES;
+        backgroudView.backgroundColor = [UIColor colorWithRed:0.9 green:0.9 blue:0.95 alpha:0.7];
+        cell.backgroundView = backgroudView;
+    }
     return cell;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    
+    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+    cell.selected = NO;
+    NSDictionary *notification = [self.notifications objectAtIndex:indexPath.row];
+    NSString *category = [NSString stringWithFormat:@"%@", [notification objectForKey:@"category"]];
+    if ([category isEqualToString:@"like"] || [category isEqualToString:@"comment"] || [category isEqualToString:@"upload"]) {
+        FrecipeNavigationController *navigationController = (FrecipeNavigationController *)self.slidingViewController.topViewController;
+        [self.slidingViewController resetTopViewWithAnimations:^{
+        } onComplete:^{
+        }];
+        FrecipeMainViewController *mainViewController = [navigationController.childViewControllers objectAtIndex:0];
+        
+        [mainViewController performSegueWithNotification:category Target:[notification objectForKey:@"recipe"]];
+    } else {
+        
+    }
 }
 
 @end

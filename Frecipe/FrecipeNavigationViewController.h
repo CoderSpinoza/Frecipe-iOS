@@ -13,8 +13,6 @@
 @property (weak, nonatomic) IBOutlet FBProfilePictureView *fbProfilePictureView;
 @property (weak, nonatomic) IBOutlet UIImageView *profilePictureView;
 @property (weak, nonatomic) IBOutlet UIButton *nameButton;
-@property (weak, nonatomic) IBOutlet UIButton *notificationButton;
-
 @property (weak, nonatomic) IBOutlet UICollectionView *menuCollectionView;
 @property (weak, nonatomic) IBOutlet UITableView *notificationsTableView;
 @property (weak, nonatomic) IBOutlet UIView *notificationsContainerView;

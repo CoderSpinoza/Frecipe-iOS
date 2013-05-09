@@ -11,5 +11,4 @@
 @interface FrecipeViewController : FrecipeMainViewController
 
 @property (weak, nonatomic) IBOutlet UICollectionView *recipesCollectionView;
-@property (weak, nonatomic) IBOutlet UISearchBar *searchBar;
 @end

@@ -11,7 +11,8 @@
 @interface FrecipeMainViewController : UIViewController
 
 @property (strong, nonatomic) FrecipeBadgeView *notificationBadge;
-
+@property (strong, nonatomic) NSDictionary *selectedRecipe;
+@property (strong, nonatomic) NSDictionary *selectedUser;
 - (FrecipeBadgeView *)addNotificationBadge;
-
+- (void)performSegueWithNotification:(NSString *)category Target:(NSDictionary *)target;
 @end

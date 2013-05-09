@@ -42,7 +42,6 @@
     self.recipesCollectionView.dataSource = self;
     self.recipesCollectionView.delegate = self;
     
-    self.searchBar.delegate = self;
     [self addRefreshControl];
 }
 
@@ -179,6 +178,8 @@
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    self.navigationItem.backBarButtonItem = nil;
+    self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"back_arrow.png"] style:UIBarButtonItemStyleBordered target:segue.destinationViewController action:@selector(popViewControllerAnimated:)];
     if ([segue.identifier isEqualToString:@"RecipeDetail"]) {
         FrecipeRecipeDetailViewController *recipeDetailViewController = (FrecipeRecipeDetailViewController *) segue.destinationViewController;
         recipeDetailViewController.recipeId = [self.selectedRecipe objectForKey:@"id"];
@@ -187,16 +188,12 @@
         FrecipeProfileViewController *destinationViewController = (FrecipeProfileViewController *)segue.destinationViewController;
         UIButton *button = (UIButton *)sender;
         UICollectionViewCell *cell = (UICollectionViewCell *)button.superview.superview.superview;
-        
         NSDictionary *user = [[self.recipes objectAtIndex:[self.recipesCollectionView indexPathForCell:cell].row] objectForKey:@"user"];
-        
         destinationViewController.userId = [NSString stringWithFormat:@"%@", [user objectForKey:@"id"]];
-        
         destinationViewController.fromSegue = YES;
         
         destinationViewController.navigationItem.leftBarButtonItem = nil;
         self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Frecipe" style:UIBarButtonItemStyleBordered target:destinationViewController action:@selector(popViewControllerFromStack)];
-//        destinationViewController.navigationItem.leftBarButtonItem = self.navigationItem.backBarButtonItem;
     }
 }
 
@@ -208,19 +205,6 @@
             [self fetchRecipes];
         }
     }
-}
-
-// search bar delegate methods
-
-- (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar {
-    self.searchBar.alpha = 1;
-}
-
-//- (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar {
-//    self.searchBar.alpha = 0.5;
-//}
-- (void)searchBarTextDidEndEditing:(UISearchBar *)searchBar {
-    self.searchBar.alpha = 0.5;
 }
 
 // collection view delegate methods

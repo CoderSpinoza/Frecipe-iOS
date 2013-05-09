@@ -142,6 +142,7 @@
     UIView *spinnerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
     spinner.center = spinnerView.center;
     spinnerView.center = self.view.center;
+    NSLog(@"%f %f", self.view.center.x, self.view.center.y);
     spinnerView.backgroundColor = [UIColor blackColor];
     
     [spinner startAnimating];

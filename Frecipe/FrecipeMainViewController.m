@@ -8,6 +8,8 @@
 
 #import "FrecipeMainViewController.h"
 #import "FrecipeAPIClient.h"
+#import "FrecipeRecipeDetailViewController.h"
+#import "FrecipeProfileViewController.h"
 
 @interface FrecipeMainViewController ()
 
@@ -69,6 +71,40 @@
         NSLog(@"%@", error);
     }];
     [operation start];
+}
+
+- (void)performSegueWithNotification:(NSString *)category Target:(NSDictionary *)target{
+    if ([category isEqualToString:@"like"]) {
+        self.selectedRecipe = target;
+        [self performSegueWithIdentifier:@"RecipeDetail" sender:self];
+    } else if ([category isEqualToString:@"comment"]) {
+        self.selectedRecipe = target;
+        [self performSegueWithIdentifier:@"RecipeDetail" sender:self];
+    } else if ([category isEqualToString:@"follow"]) {
+        self.selectedUser = target;
+        [self performSegueWithIdentifier:@"Profile" sender:self];
+    } else {
+        self.selectedRecipe = target;
+        [self performSegueWithIdentifier:@"RecipeDetail" sender:self];
+    }
+}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    NSLog(@"here");
+    self.navigationItem.backBarButtonItem = nil;
+    self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"back_arrow.png"] style:UIBarButtonItemStyleBordered target:segue.destinationViewController action:@selector(popViewControllerAnimated:)];
+    if ([segue.identifier isEqualToString:@"RecipeDetail"]) {
+        FrecipeRecipeDetailViewController *recipeDetailViewController = (FrecipeRecipeDetailViewController *) segue.destinationViewController;
+        recipeDetailViewController.recipeId = [self.selectedRecipe objectForKey:@"id"];
+        self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Frecipe" style:UIBarButtonItemStyleBordered target:segue.destinationViewController action:nil];
+    } else if ([segue.identifier isEqualToString:@"Profile"] || [segue.identifier isEqualToString:@"Profile2"]) {
+        FrecipeProfileViewController *destinationViewController = (FrecipeProfileViewController *)segue.destinationViewController;
+        destinationViewController.userId = [NSString stringWithFormat:@"%@", [self.selectedUser objectForKey:@"id"]];
+        destinationViewController.fromSegue = YES;
+        
+        destinationViewController.navigationItem.leftBarButtonItem = nil;
+        self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Frecipe" style:UIBarButtonItemStyleBordered target:destinationViewController action:@selector(popViewControllerFromStack)];
+    }
 }
 
 

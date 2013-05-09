@@ -137,12 +137,10 @@
     self.threeStarButton.selected = rating>= self.threeStarButton.tag;
     self.fourStarButton.selected = rating >= self.fourStarButton.tag;
     self.fiveStarButton.selected = rating >= self.fiveStarButton.tag;
-    
     _rating = rating;
 }
 
 - (void)tapStarButton:(UIButton *)button {
-    
     if (self.editable) {
         self.rating = button.tag;
     }    
