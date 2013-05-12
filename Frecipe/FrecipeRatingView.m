@@ -131,12 +131,44 @@
     self.rating = 0;
 }
 
-- (void)setRating:(NSInteger)rating {
+- (void)setRating:(CGFloat)rating {
+    
+    
     self.oneStarButton.selected = rating >= self.oneStarButton.tag;
     self.twoStarButton.selected = rating >= self.twoStarButton.tag;
     self.threeStarButton.selected = rating>= self.threeStarButton.tag;
     self.fourStarButton.selected = rating >= self.fourStarButton.tag;
     self.fiveStarButton.selected = rating >= self.fiveStarButton.tag;
+    
+    [_oneStarButton setImage:[UIImage imageNamed:@"star_full.png"] forState:UIControlStateSelected];
+    [_twoStarButton setImage:[UIImage imageNamed:@"star_full.png"] forState:UIControlStateSelected];
+    [_threeStarButton setImage:[UIImage imageNamed:@"star_full.png"] forState:UIControlStateSelected];
+    [_fourStarButton setImage:[UIImage imageNamed:@"star_full.png"] forState:UIControlStateSelected];
+    [_fiveStarButton setImage:[UIImage imageNamed:@"star_full.png"] forState:UIControlStateSelected];
+    
+    self.oneStarButton.selected = rating >= self.oneStarButton.tag;
+    self.twoStarButton.selected = rating >= self.twoStarButton.tag;
+    self.threeStarButton.selected = rating>= self.threeStarButton.tag;
+    self.fourStarButton.selected = rating >= self.fourStarButton.tag;
+    self.fiveStarButton.selected = rating >= self.fiveStarButton.tag;
+    
+    if (rating >= self.oneStarButton.tag - 0.5 && rating < self.oneStarButton.tag) {
+        [_oneStarButton setImage:[UIImage imageNamed:@"star_half.png"] forState:UIControlStateSelected];
+        self.oneStarButton.selected = YES;
+    } else if (rating >= self.twoStarButton.tag - 0.5 && rating < self.twoStarButton.tag) {
+        [_twoStarButton setImage:[UIImage imageNamed:@"star_half.png"] forState:UIControlStateSelected];
+        self.twoStarButton.selected = YES;
+    } else if (rating >= self.threeStarButton.tag - 0.5 && rating < self.threeStarButton.tag) {
+        [_threeStarButton setImage:[UIImage imageNamed:@"star_half.png"] forState:UIControlStateSelected];
+        self.threeStarButton.selected = YES;
+    } else if (rating >= self.fourStarButton.tag - 0.5 && rating < self.fourStarButton.tag) {
+        [_fourStarButton setImage:[UIImage imageNamed:@"star_half.png"] forState:UIControlStateSelected];
+        self.fourStarButton.selected = YES;
+    } else if (rating >= self.fiveStarButton.tag - 0.5 && rating < self.fiveStarButton.tag) {
+        [_fiveStarButton setImage:[UIImage imageNamed:@"star_half.png"] forState:UIControlStateSelected];
+        self.fiveStarButton.selected = YES;
+    }
+    
     _rating = rating;
 }
 

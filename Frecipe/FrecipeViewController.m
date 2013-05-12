@@ -54,13 +54,13 @@
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    self.notificationBadge = [self addNotificationBadge];
+//    self.notificationBadge = [self addNotificationBadge];
 }
 
-- (void)viewWillDisappear:(BOOL)animated {
-    [super viewWillDisappear:animated];
-    [self.notificationBadge removeFromSuperview];
-}
+//- (void)viewWillDisappear:(BOOL)animated {
+//    [super viewWillDisappear:animated];
+//    [self.notificationBadge removeFromSuperview];
+//}
 
 - (void)didReceiveMemoryWarning
 {
@@ -186,10 +186,15 @@
         self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Frecipe" style:UIBarButtonItemStyleBordered target:segue.destinationViewController action:nil];
     } else if ([segue.identifier isEqualToString:@"Profile"] || [segue.identifier isEqualToString:@"Profile2"]) {
         FrecipeProfileViewController *destinationViewController = (FrecipeProfileViewController *)segue.destinationViewController;
-        UIButton *button = (UIButton *)sender;
-        UICollectionViewCell *cell = (UICollectionViewCell *)button.superview.superview.superview;
-        NSDictionary *user = [[self.recipes objectAtIndex:[self.recipesCollectionView indexPathForCell:cell].row] objectForKey:@"user"];
-        destinationViewController.userId = [NSString stringWithFormat:@"%@", [user objectForKey:@"id"]];
+        
+        if (self.selectedUser == nil) {
+            UIButton *button = (UIButton *)sender;
+            UICollectionViewCell *cell = (UICollectionViewCell *)button.superview.superview.superview;
+            NSDictionary *user = [[self.recipes objectAtIndex:[self.recipesCollectionView indexPathForCell:cell].row] objectForKey:@"user"];
+            self.selectedUser = user;
+        }
+        
+        destinationViewController.userId = [NSString stringWithFormat:@"%@", [self.selectedUser objectForKey:@"id"]];
         destinationViewController.fromSegue = YES;
         
         destinationViewController.navigationItem.leftBarButtonItem = nil;

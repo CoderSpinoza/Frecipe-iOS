@@ -86,7 +86,6 @@
         NSString *profilePictureUrl = [NSString stringWithFormat:@"%@",[JSON objectForKey:@"profile_picture"]];
         
         [defaults setObject:profilePictureUrl forKey:@"profile_picture"];
-        
         [defaults synchronize];
         
         [self performSegueWithIdentifier:@"Login" sender:self];
@@ -142,7 +141,7 @@
     UIView *spinnerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
     spinner.center = spinnerView.center;
     spinnerView.center = self.view.center;
-    NSLog(@"%f %f", self.view.center.x, self.view.center.y);
+    NSLog(@"%f %f", self.view.center.x, self.view.center.y - 20);
     spinnerView.backgroundColor = [UIColor blackColor];
     
     [spinner startAnimating];

@@ -129,7 +129,7 @@
 }
 
 - (void)openAddIngredientsActionSheet {
-    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"How to add ingredients?" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Receipt", @"Manually", nil];
+    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"Add Ingredients" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"With Receipt", @"Manually", nil];
     [actionSheet showInView:[UIApplication sharedApplication].keyWindow];
 }
 

@@ -353,6 +353,8 @@
         
         self.recipeImageButton.frame = CGRectMake(self.recipeImageButton.frame.origin.x + difference / 2, self.recipeImageButton.frame.origin.y, self.recipeImageButton.frame.size.width - difference, self.recipeImageButton.frame.size.height - difference);
         
+        self.recipeImageButton.titleEdgeInsets = UIEdgeInsetsMake(10, 0, 0, 0);
+        
         self.ingredientsTableView.frame = CGRectMake(self.ingredientsTableView.frame.origin.x, self.ingredientsTableView.frame.origin.y, self.ingredientsTableView.frame.size.width, self.ingredientsTableView.frame.size.height - (keyboardSize.height - self.view.frame.size.height + self.ingredientsTableView.frame.origin.y + self.ingredientsTableView.frame.size.height));
         
         if (self.ingredients.count > 0) {
@@ -374,6 +376,7 @@
     }];
     self.ingredientsTableView.frame = CGRectMake(self.ingredientsTableView.frame.origin.x, self.ingredientsTableView.frame.origin.y, self.ingredientsTableView.frame.size.width, 280);
     self.directionsTableView.frame = CGRectMake(self.directionsTableView.frame.origin.x, self.directionsTableView.frame.origin.y, self.directionsTableView.frame.size.width, 280);
+    self.recipeImageButton.titleEdgeInsets = UIEdgeInsetsMake(40, 0, 0, 0);
 
 }
 

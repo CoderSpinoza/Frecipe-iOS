@@ -30,8 +30,18 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
-    [self addNotificationBadge];
+    
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    self.notificationBadge = [self addNotificationBadge];
     [self fetchNotifications];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    [self.notificationBadge removeFromSuperview];
 }
 
 - (void)didReceiveMemoryWarning
@@ -90,7 +100,6 @@
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    NSLog(@"here");
     self.navigationItem.backBarButtonItem = nil;
     self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"back_arrow.png"] style:UIBarButtonItemStyleBordered target:segue.destinationViewController action:@selector(popViewControllerAnimated:)];
     if ([segue.identifier isEqualToString:@"RecipeDetail"]) {

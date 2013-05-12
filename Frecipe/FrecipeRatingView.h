@@ -18,7 +18,7 @@
 @property (strong, nonatomic) UIButton *fourStarButton;
 @property (strong, nonatomic) UIButton *fiveStarButton;
 
-@property (nonatomic, assign) NSInteger rating;
+@property (nonatomic, assign) CGFloat rating;
 @property (nonatomic, assign) BOOL editable;
 - (void)reset;
 
@@ -26,6 +26,6 @@
 
 @protocol FrecipeRatingViewDelegate 
 
-- (void)ratingViewDidRate:(FrecipeRatingView *)ratingView rating:(NSInteger)rating;
+- (void)ratingViewDidRate:(FrecipeRatingView *)ratingView rating:(CGFloat)rating;
 
 @end

@@ -26,8 +26,16 @@
 @property (weak, nonatomic) IBOutlet UIButton *numOfFollowersButton;
 @property (weak, nonatomic) IBOutlet UILabel *numOfLikesTitleLabel;
 @property (weak, nonatomic) IBOutlet UIButton *numOfLikesButton;
+
+@property (weak, nonatomic) IBOutlet UIButton *numOfFollowingButton;
+@property (weak, nonatomic) IBOutlet UIButton *numOfLikedButton;
+
+
 @property (weak, nonatomic) IBOutlet UILabel *popularRecipeTitleLabel;
 @property (weak, nonatomic) IBOutlet UIButton *popularRecipeButton;
+
+@property (weak, nonatomic) IBOutlet UILabel *popularRecipeLikesButton;
+
 @property (weak, nonatomic) IBOutlet UICollectionView *recipesCollectionView;
 @property (weak, nonatomic) IBOutlet FrecipeRatingView *averageRatingView;
 

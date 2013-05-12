@@ -24,12 +24,10 @@
 @property (weak, nonatomic) IBOutlet UIView *ratingBorderView;
 @property (weak, nonatomic) IBOutlet FrecipeRatingView *ratingView;
 @property (weak, nonatomic) IBOutlet FrecipeRatingView *averageRatingView;
-
-@property (weak, nonatomic) IBOutlet UIView *editMenuView;
-@property (weak, nonatomic) IBOutlet UITableView *editMenuTableView;
 @property (weak, nonatomic) IBOutlet UIView *commentsView;
 @property (weak, nonatomic) IBOutlet UITableView *commentsTableView;
 @property (weak, nonatomic) IBOutlet UITextField *commentField;
 @property (weak, nonatomic) IBOutlet UIButton *commentSubmitButton;
+@property (weak, nonatomic) IBOutlet UIButton *likeButton;
 
 @end

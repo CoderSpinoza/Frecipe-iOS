@@ -15,16 +15,26 @@
 #import "FrecipeProfileViewController.h"
 #import "FrecipeGroceryListViewController.h"
 #import "FrecipeSettingsViewController.h"
+#import "FrecipeNotificationsViewController.h"
 #import <SDWebImage/UIImageView+WebCache.h>
 
-@interface FrecipeNavigationViewController () <UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UITableViewDataSource, UITableViewDelegate>
+@interface FrecipeNavigationViewController () <UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UITableViewDataSource, UITableViewDelegate, FPPopoverControllerDelegate>
 
 @property (strong, nonatomic) NSArray *menu;
 @property (strong, nonatomic) NSMutableArray *notifications;
+@property (strong, nonatomic) FrecipeNotificationsViewController *notificationsViewController;
 
 @end
 
 @implementation FrecipeNavigationViewController
+@synthesize notificationsViewController = _notificationsViewController;
+
+- (FrecipeNotificationsViewController *)notificationsViewController {
+    if (_notificationsViewController == nil) {
+        _notificationsViewController = [[FrecipeNotificationsViewController alloc] initWithStyle:UITableViewStylePlain];
+    }
+    return _notificationsViewController;
+}
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -47,27 +57,22 @@
     
     // setting delegates
     self.menuCollectionView.delegate = self;
-    self.menuCollectionView.dataSource = self;
-    self.notificationsTableView.delegate = self;
-    self.notificationsTableView.dataSource = self;
-    
+    self.menuCollectionView.dataSource = self;    
     
     // button and shadow setup
     [self.nameButton setBackgroundImage:[UIImage imageNamed:@"button_background_image.png"] forState:UIControlStateHighlighted];
-    self.notificationsContainerView.layer.borderColor = [UIColor colorWithRed:0.9 green:0.4 blue:0.4 alpha:0.9].CGColor;
-    self.notificationsContainerView.layer.borderWidth = 3;
-    self.notificationsContainerView.layer.cornerRadius = 5;
-    self.notificationsContainerView.layer.backgroundColor =  [UIColor colorWithRed:0.9 green:0.4 blue:0.4 alpha:0.9].CGColor;
     [self fetchUserInfo];
+    [self setupNotifications];
+    
 }
 
 // fetch notifications every time this view appears
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    self.notificationsContainerView.frame = CGRectMake(self.notificationsContainerView.frame.origin.x, self.notificationsContainerView.frame.origin.y, self.notificationsContainerView.frame.size.width, 0);
-    self.notificationsContainerView.alpha = 0;
     [self fetchNotifications];
+    
 }
+
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
@@ -112,20 +117,6 @@
 }
 
 - (IBAction)notificationButtonPressed {
-    if (self.notificationsContainerView.frame.size.height == 0) {
-        [UIView animateWithDuration:0.5 animations:^{
-            self.notificationsContainerView.frame = CGRectMake(self.notificationsContainerView.frame.origin.x, self.notificationsContainerView.frame.origin.y, self.notificationsContainerView.frame.size.width, self.view.frame.size.height - self.notificationsContainerView.frame.origin.y - 30);
-            self.notificationsContainerView.alpha = 1;
-            
-        }];
-        self.notificationsTableView.frame = CGRectMake(self.notificationsTableView.frame.origin.x, self.notificationsTableView.frame.origin.y, self.notificationsTableView.frame.size.width, self.notificationsContainerView.frame.origin.y + self.notificationsContainerView.frame.size.height - self.notificationsTableView.frame.origin.y - 55);
-        [self checkNotifications];
-    } else {
-        [UIView animateWithDuration:0.5 animations:^{
-            self.notificationsContainerView.frame = CGRectMake(self.notificationsContainerView.frame.origin.x, self.notificationsContainerView.frame.origin.y, self.notificationsContainerView.frame.size.width, 0);
-            self.notificationsContainerView.alpha = 0;
-        }];
-    }
 }
 
 - (void)fetchUserInfo {
@@ -142,7 +133,26 @@
 [self.nameButton setTitle:[defaults stringForKey:@"name"] forState:UIControlStateNormal];
 }
 
+- (void)setupNotifications {
+    self.notificationsViewController.tableView.delegate = self;
+    self.notificationsPopoverViewController = [[FPPopoverController alloc] initWithViewController:self.notificationsViewController];
+    
+    self.notificationsPopoverViewController.delegate = self;
+    self.notificationsPopoverViewController.arrowDirection = FPPopoverArrowDirectionAny;
+}
+
+- (IBAction)setupNotifications:(UIButton *)sender {
+    self.notificationsViewController.delegate = self;
+    self.notificationsPopoverViewController = [[FPPopoverController alloc] initWithViewController:self.notificationsViewController];
+    
+    self.notificationsPopoverViewController.arrowDirection = FPPopoverArrowDirectionAny;
+    self.notificationsPopoverViewController.contentSize = CGSizeMake(280, self.view.frame.size.height * 0.9);
+    [self.notificationsPopoverViewController presentPopoverFromView:self.notificationsBadgeView];
+}
+
+
 - (void)fetchNotifications {
+    
     NSString *path = @"notifications/user";
     
     [[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];
@@ -166,7 +176,8 @@
         FrecipeMainViewController *viewController = [navigationController.childViewControllers objectAtIndex:0];
         viewController.notificationBadge.text = unseen;
 
-        [self.notificationsTableView reloadData];
+        self.notificationsViewController.notifications = self.notifications;
+
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         NSLog(@"%@", error);
     }];
@@ -198,7 +209,6 @@
     NSDictionary *parameters = [NSDictionary dictionaryWithObjects:values forKeys:keys];
     
     FrecipeAPIClient *client = [FrecipeAPIClient client];
-    
     NSURLRequest *request = [client requestWithMethod:@"POST" path:path parameters:parameters];
     
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
@@ -209,9 +219,12 @@
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         NSLog(@"%@", error);
     }];
-    [operation start];
-    
-    
+//    [operation start];
+}
+
+// pop over delegate methods
+- (void)presentedNewPopoverController:(FPPopoverController *)newPopoverController shouldDismissVisiblePopover:(FPPopoverController *)visiblePopoverController {
+    [self checkNotifications];
 }
 
 // collection view delegate and dataSource methods
@@ -235,112 +248,32 @@
     return cell;
 }
 
-// table view delegate and dataSource methods for notification
-
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    CGFloat fontSize = 13;
-    UIFont *boldFont = [UIFont boldSystemFontOfSize:fontSize];
-    
-    NSDictionary *notification = [self.notifications objectAtIndex:indexPath.row];
-    NSDictionary *source = [notification objectForKey:@"source"];
-    NSDictionary *recipe = [notification objectForKey:@"recipe"];
-    NSString *category = [NSString stringWithFormat:@"%@", [notification objectForKey:@"category"]];
-    
-    NSString *sourceName = [NSString stringWithFormat:@"%@ %@", [source objectForKey:@"first_name"], [source objectForKey:@"last_name"]];
-    NSString *originalText;
-    if ([category isEqualToString:@"like"]) {
-        originalText = [NSString stringWithFormat:@"%@ liked your recipe %@.", sourceName, [recipe objectForKey:@"name"]];
-    } else if ([category isEqualToString:@"comment"]) {
-        originalText = [NSString stringWithFormat:@"%@ commented on your recipe %@.", sourceName, [recipe objectForKey:@"name"]];
-    } else if ([category isEqualToString:@"follow"]) {
-        originalText = [NSString stringWithFormat:@"%@ is now following you!", sourceName];
-    } else {
-        originalText = [NSString stringWithFormat:@"%@ uploaded a new recipe %@.", sourceName, [recipe objectForKey:@"name"]];
-    }
-    
-    CGSize constraintSize = CGSizeMake(184, MAXFLOAT);
-    CGSize labelSize = [originalText sizeWithFont:boldFont constrainedToSize:constraintSize lineBreakMode:NSLineBreakByWordWrapping];
-    return labelSize.height + 20;
-}
-
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 1;
-}
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return self.notifications.count;
-}
-
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    static NSString *CellIdentifier = @"NotificationCell";
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
-    
-    // setting attributes
-    CGFloat fontSize = 13;
-    UIFont *boldFont = [UIFont boldSystemFontOfSize:fontSize];
-    UIFont *regularFont = [UIFont systemFontOfSize:fontSize];
-    
-    NSDictionary *attributes = [NSDictionary dictionaryWithObjectsAndKeys:boldFont, NSFontAttributeName, nil];
-    NSDictionary *subAttributes = [NSDictionary dictionaryWithObjectsAndKeys:regularFont, NSFontAttributeName, nil];
-    
-    NSDictionary *notification = [self.notifications objectAtIndex:indexPath.row];
-    NSDictionary *source = [notification objectForKey:@"source"];
-    NSDictionary *recipe = [notification objectForKey:@"recipe"];
-    NSString *category = [NSString stringWithFormat:@"%@", [notification objectForKey:@"category"]];
-    
-    NSString *sourceName = [NSString stringWithFormat:@"%@ %@", [source objectForKey:@"first_name"], [source objectForKey:@"last_name"]];
-    NSString *recipeName;
-    NSRange sourceRange = NSMakeRange(0, sourceName.length);
-    NSString *originalText;
-    if ([category isEqualToString:@"like"]) {
-        recipeName = [NSString stringWithFormat:@"%@", [recipe objectForKey:@"name"]];
-        originalText = [NSString stringWithFormat:@"%@ liked your recipe %@.", sourceName, recipeName];
-    } else if ([category isEqualToString:@"comment"]) {
-        recipeName = [NSString stringWithFormat:@"%@", [recipe objectForKey:@"name"]];
-        originalText = [NSString stringWithFormat:@"%@ commented on your recipe %@.", sourceName, recipeName];
-    } else if ([category isEqualToString:@"follow"]) {
-        originalText = [NSString stringWithFormat:@"%@ is now following you!", sourceName];
-    } else {
-        recipeName = [NSString stringWithFormat:@"%@", [recipe objectForKey:@"name"]];
-        originalText = [NSString stringWithFormat:@"%@ uploaded a new recipe %@.", sourceName, recipeName];
-    }
-    
-    
-    NSMutableAttributedString *attributedText = [[NSMutableAttributedString alloc] initWithString:originalText attributes:subAttributes];
-    [attributedText setAttributes:attributes range:sourceRange];
-    
-    if (![category isEqualToString:@"follow"]) {
-        NSRange recipeRange = NSMakeRange(originalText.length - recipeName.length - 1, recipeName.length);
-        [attributedText setAttributes:attributes range:recipeRange];
-    }
-    
-    cell.textLabel.attributedText = attributedText;
-    cell.textLabel.numberOfLines = 0;
-    cell.textLabel.backgroundColor = [UIColor clearColor];
-    if ([[NSString stringWithFormat:@"%@", [notification objectForKey:@"seen"]] isEqualToString:@"0"]) {
-        UIView *backgroudView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 1, 1)];
-        backgroudView.opaque = YES;
-        backgroudView.backgroundColor = [UIColor colorWithRed:0.9 green:0.9 blue:0.95 alpha:0.7];
-        cell.backgroundView = backgroudView;
-    }
-    return cell;
-}
+// table view delegate methods
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
     cell.selected = NO;
-    NSDictionary *notification = [self.notifications objectAtIndex:indexPath.row];
+    NSDictionary *notification = [self.notificationsViewController.notifications objectAtIndex:indexPath.row];
     NSString *category = [NSString stringWithFormat:@"%@", [notification objectForKey:@"category"]];
+    
+    FrecipeNavigationController *navigationController = (FrecipeNavigationController *)self.slidingViewController.topViewController;
+    FrecipeMainViewController *mainViewController = [navigationController.childViewControllers objectAtIndex:0];
+    
+    [self.notificationsPopoverViewController dismissPopoverAnimated:YES];
     if ([category isEqualToString:@"like"] || [category isEqualToString:@"comment"] || [category isEqualToString:@"upload"]) {
-        FrecipeNavigationController *navigationController = (FrecipeNavigationController *)self.slidingViewController.topViewController;
         [self.slidingViewController resetTopViewWithAnimations:^{
         } onComplete:^{
         }];
-        FrecipeMainViewController *mainViewController = [navigationController.childViewControllers objectAtIndex:0];
+        
         
         [mainViewController performSegueWithNotification:category Target:[notification objectForKey:@"recipe"]];
     } else {
-        
+        [self.slidingViewController resetTopViewWithAnimations:^{
+            
+        } onComplete:^{
+            
+        }];
+        [mainViewController performSegueWithNotification:category Target:[notification objectForKey:@"source"]];
     }
 }
 

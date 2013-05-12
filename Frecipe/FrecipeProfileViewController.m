@@ -19,6 +19,7 @@
 
 @property (strong, nonatomic) NSMutableArray *recipes;
 @property (strong, nonatomic) NSDictionary *selectedRecipe;
+@property (strong, nonatomic) NSDictionary *mostPopularRecipe;
 //@property (strong, nonatomic) FrecipeRatingView *averageRatingView;
 
 
@@ -61,7 +62,7 @@
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-    [self.notificationBadge removeFromSuperview];
+//    [self.notificationBadge removeFromSuperview];
 }
 
 - (void)didReceiveMemoryWarning
@@ -157,48 +158,47 @@
         self.recipes = [JSON objectForKey:@"recipes"];
         
         
-        if ([[NSString stringWithFormat:@"%@", [JSON objectForKey:@"following"]] isEqualToString:@"You"]) {
+        if ([[NSString stringWithFormat:@"%@", [JSON objectForKey:@"follow"]] isEqualToString:@"You"]) {
             self.followButton.enabled = NO;
             self.followButton.hidden = YES;
         }
-        [self.followButton setTitle:[NSString stringWithFormat:@"%@", [JSON objectForKey:@"following"]] forState:UIControlStateNormal];
+        [self.followButton setTitle:[NSString stringWithFormat:@"%@", [JSON objectForKey:@"follow"]] forState:UIControlStateNormal];
         
         NSDictionary *followers = [JSON objectForKey:@"followers"];
         NSDictionary *mostPopularRecipe = [JSON objectForKey:@"most"];
-        self.numOfRecipesTitleLabel.text = [NSString stringWithFormat:@"%@'s RECIPES", [user objectForKey:@"first_name"]];
         
-        self.numOfFollowersTitleLabel.text = @"FOLLOWERS";
-        self.numOfLikesTitleLabel.text = @"TOTAL # of LIKES";
         self.popularRecipeTitleLabel.text = [NSString stringWithFormat:@"%@'s BEST", [user objectForKey:@"first_name"]];
         
         [self.numOfRecipesButton setTitle:[NSString stringWithFormat:@"%u", self.recipes.count] forState:UIControlStateNormal];
         [self.numOfFollowersButton setTitle:[NSString stringWithFormat:@"%u", followers.count] forState:UIControlStateNormal];
         [self.numOfLikesButton setTitle:[NSString stringWithFormat:@"%@", [JSON objectForKey:@"likes"]] forState:UIControlStateNormal];
         
+        NSDictionary *following = [JSON objectForKey:@"following"];
+        NSDictionary *liked = [JSON objectForKey:@"liked"];
+        NSLog(@"%@", following);
+        [self.numOfFollowingButton setTitle:[NSString stringWithFormat:@"%u", following.count] forState:UIControlStateNormal];
+        [self.numOfLikedButton setTitle:[NSString stringWithFormat:@"%u", liked.count] forState:UIControlStateNormal];
+        
         if ([mostPopularRecipe respondsToSelector:@selector(objectForKey:)]) {
-//            self.popularRecipeTitleLabel.text = [NSString stringWithFormat:@"%@", [mostPopularRecipe objectForKey:@"name"]];
+            [self.popularRecipeButton setTitle:[NSString stringWithFormat:@"%@", [mostPopularRecipe objectForKey:@"name"]] forState:UIControlStateNormal];
+            self.popularRecipeLikesButton.text = [NSString stringWithFormat:@"%@ likes", [JSON objectForKey:@"mostLikes"]];
             
-            [self.popularRecipeButton setTitle:[NSString stringWithFormat:@" %@ (%@ likes)", [mostPopularRecipe objectForKey:@"name"], [JSON objectForKey:@"mostLikes"]] forState:UIControlStateNormal];
-            
+            self.mostPopularRecipe = mostPopularRecipe;
+            [self.popularRecipeButton addTarget:self action:@selector(goToRecipeDetail) forControlEvents:UIControlEventTouchUpInside];
         } else {
             [self.popularRecipeButton setTitle:@"No recipes yet" forState:UIControlStateNormal];
-            
         }
-        
         [self.recipesCollectionView reloadData];
         
         
         if (self.recipes.count > 0) {
             self.recipesCollectionView.frame = CGRectMake(self.recipesCollectionView.frame.origin.x, self.recipesCollectionView.frame.origin.y, self.recipesCollectionView.frame.size.width, 160 * ceil((float)self.recipes.count / 2));
             
-            if ([UIScreen mainScreen].bounds.size.height == 480) {
-                NSLog(@"3.5");
-                self.scrollView.contentSize = CGSizeMake(self.scrollView.contentSize.width, self.recipesCollectionView.frame.origin.y + self.recipesCollectionView.frame.size.height + 108);
-            } else {
-                NSLog(@"4.0");
+            if ([self isTall]) {
                 self.scrollView.contentSize = CGSizeMake(self.scrollView.contentSize.width, self.recipesCollectionView.frame.origin.y + self.recipesCollectionView.frame.size.height);
+            } else {
+                self.scrollView.contentSize = CGSizeMake(self.scrollView.contentSize.width, self.recipesCollectionView.frame.origin.y + self.recipesCollectionView.frame.size.height + 108);
             }
-            
         }
         
         [spinner stopAnimating];
@@ -246,10 +246,17 @@
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
         [self.followButton setTitle:[NSString stringWithFormat:@"%@", [JSON objectForKey:@"message"]] forState:UIControlStateNormal];
         
+        
+        
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         NSLog(@"%@", error);
     }];
     [operation start];
+}
+
+- (void)goToRecipeDetail {
+    self.selectedRecipe = self.mostPopularRecipe;
+    [self performSegueWithIdentifier:@"RecipeDetail" sender:self];
 }
 
 - (void)popViewControllerFromStack {
@@ -258,7 +265,7 @@
 
 // rating view delegate methods
 
-- (void)ratingViewDidRate:(FrecipeRatingView *)ratingView rating:(NSInteger)rating {
+- (void)ratingViewDidRate:(FrecipeRatingView *)ratingView rating:(CGFloat)rating {
     
 }
 

@@ -12,10 +12,12 @@
 #import "FrecipeProfileViewController.h"
 #import "FrecipeAddRecipeViewController.h"
 #import "FrecipeFunctions.h"
+#import "FPPopoverController.h"
+#import "FrecipeEditDeleteViewController.h"
 #import <SDWebImage/UIImageView+WebCache.h>
 #import <QuartzCore/QuartzCore.h>
 
-@interface FrecipeRecipeDetailViewController () <UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate, FrecipeRatingViewDelegate, UIAlertViewDelegate, UITextFieldDelegate> {
+@interface FrecipeRecipeDetailViewController () <UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate, FrecipeRatingViewDelegate, UIAlertViewDelegate, UITextFieldDelegate, FPPopoverControllerDelegate> {
     BOOL userIsInTheMiddleOfEditingIngredientsList;
 }
 @property (strong, nonatomic) NSMutableArray *ingredients;
@@ -28,6 +30,9 @@
 
 @property (strong, nonatomic) UIView *blockingView;
 @property (nonatomic, assign) CGFloat originalHeight;
+
+@property (strong,nonatomic) FPPopoverController *editDeletePopoverViewController;
+@property (strong, nonatomic) FrecipeEditDeleteViewController *editDeleteViewController;
 @end
 
 @implementation FrecipeRecipeDetailViewController
@@ -76,8 +81,6 @@
     self.ingredientsTableView.delegate = self;
     self.directionsTableView.delegate = self;
     
-    self.editMenuTableView.delegate = self;
-    self.editMenuTableView.dataSource = self;
     
     self.ratingView.delegate = self;
     self.averageRatingView.delegate = self;
@@ -92,13 +95,6 @@
     self.ratingBorderView.layer.borderColor = [[UIColor blackColor] CGColor];
     self.ratingBorderView.layer.borderWidth = 2.0f;
     
-    self.editMenuTableView.layer.cornerRadius = 5.0f;
-    self.editMenuView.layer.cornerRadius = 5.0f;
-    self.editMenuView.layer.borderWidth = 3.0f;
-    self.editMenuView.layer.borderColor = [UIColor colorWithRed:0.9 green:0.4 blue:0.4 alpha:0.9].CGColor;
-    self.editMenuView.layer.shadowColor = [[UIColor blackColor] CGColor];
-    self.editMenuView.layer.shadowOpacity = 0.75f;
-    self.editMenuView.layer.shadowRadius = 5.0f;
     
     self.scrollView.contentSize = CGSizeMake(self.view.frame.size.width, 900);
     
@@ -107,9 +103,11 @@
     self.commentsView.layer.shadowOpacity = 0.75f;
     self.commentsView.layer.shadowRadius = 5.0f;
     
+    [self.commentButton setBackgroundImage:[UIImage imageNamed:@"button_background_image.png"] forState:UIControlStateHighlighted];
+    
     [self addGestureRecognizers];
     [self registerForKeyboardNotification];
-    
+    [self setupEditMenu];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -118,14 +116,21 @@
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
-    self.editMenuView.alpha = 0;
-    
+    [super viewWillDisappear:animated];
 }
 
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)setupEditMenu {
+    self.editDeleteViewController = [[FrecipeEditDeleteViewController alloc] initWithStyle:UITableViewStylePlain];
+    self.editDeletePopoverViewController = [[FPPopoverController alloc] initWithViewController:self.editDeleteViewController];
+    self.editDeleteViewController.tableView.delegate = self;
+    self.editDeletePopoverViewController.delegate = self;
+    self.editDeletePopoverViewController.contentSize = CGSizeMake(120, 128);
 }
 
 - (void)fetchRecipeDetail {
@@ -163,6 +168,12 @@
         [self.nameButton setTitle:[NSString stringWithFormat:@"%@ %@", [user objectForKey:@"first_name"], [user objectForKey:@"last_name"]] forState:UIControlStateNormal];
         
         [self.likesButton setTitle:[NSString stringWithFormat:@"%@", [JSON objectForKey:@"likes"]] forState:UIControlStateNormal];
+        
+        if ([[NSString stringWithFormat:@"%@", [JSON objectForKey:@"liked"]] isEqualToString:@"1"]) {
+            [self.likeButton setImage:[UIImage imageNamed:@"like.png"] forState:UIControlStateNormal];
+        } else {
+            [self.likeButton setImage:[UIImage imageNamed:@"like_highlighted.png"] forState:UIControlStateNormal];
+        }
         self.ingredients = [[NSMutableArray alloc] initWithArray:[JSON objectForKey:@"ingredients"]];
         
         [self.ingredients addObject:[NSDictionary dictionaryWithObject:@"Add to Grocery List" forKey:@"name"]];
@@ -181,7 +192,7 @@
         
         
         // rating view
-        self.averageRatingView.rating = [[NSString stringWithFormat:@"%@", [JSON objectForKey:@"rating"]] integerValue];
+        self.averageRatingView.rating = [[NSString stringWithFormat:@"%@", [JSON objectForKey:@"rating"]] floatValue];
         self.ratingView.rating = [[NSString stringWithFormat:@"%@", [JSON objectForKey:@"user_rating"]] integerValue];
         // adjust table view heights
         self.ingredientsTableView.frame = CGRectMake(self.ingredientsTableView.frame.origin.x, self.ingredientsTableView.frame.origin.y, self.ingredientsTableView.frame.size.width, 44 * self.ingredients.count);
@@ -224,7 +235,12 @@
     FrecipeAPIClient *client = [FrecipeAPIClient client];
     NSURLRequest *request = [client requestWithMethod:@"POST" path:path parameters:parameters];
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
-//        self.likesLabel.text = [NSString stringWithFormat:@"%@", [JSON objectForKey:@"likes"]];
+
+        if ([[NSString stringWithFormat:@"%@", [JSON objectForKey:@"message"]] isEqualToString:@"like"]) {
+            [self.likeButton setImage:[UIImage imageNamed:@"like.png"] forState:UIControlStateNormal];
+        } else {
+            [self.likeButton setImage:[UIImage imageNamed:@"like_highlighted.png"] forState:UIControlStateNormal];
+        }
         [self.likesButton setTitle:[NSString stringWithFormat:@"%@", [JSON objectForKey:@"likes"]] forState:UIControlStateNormal];
         [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
@@ -304,23 +320,23 @@
         [operation start];
     }
     
-    
 }
 
 - (void)editMenuButtonPressed {
-    [self.editMenuView removeFromSuperview];
-    
-    [[[[UIApplication sharedApplication] delegate] window] addSubview:self.editMenuView];
-    self.editMenuView.frame = CGRectMake(self.editMenuView.frame.origin.x, 65, self.editMenuView.frame.size.width, self.editMenuView.frame.size.height);
-    if (self.editMenuView.alpha == 0) {
-        [UIView animateWithDuration:0.5 animations:^{
-            self.editMenuView.alpha = 1;
-        }];
-    } else {
-        [UIView animateWithDuration:0.5 animations:^{
-            self.editMenuView.alpha = 0;
-        }];
-    }
+    [self.editDeletePopoverViewController presentPopoverFromPoint:CGPointMake(self.view.frame.size.width- 30, 40)];
+//    [self.editMenuView removeFromSuperview];
+//    
+//    [[[[UIApplication sharedApplication] delegate] window] addSubview:self.editMenuView];
+//    self.editMenuView.frame = CGRectMake(self.editMenuView.frame.origin.x, 65, self.editMenuView.frame.size.width, self.editMenuView.frame.size.height);
+//    if (self.editMenuView.alpha == 0) {
+//        [UIView animateWithDuration:0.5 animations:^{
+//            self.editMenuView.alpha = 1;
+//        }];
+//    } else {
+//        [UIView animateWithDuration:0.5 animations:^{
+//            self.editMenuView.alpha = 0;
+//        }];
+//    }
 }
 
 - (IBAction)commentDeleteButtonPressed:(UIButton *)sender {
@@ -379,7 +395,7 @@
     NSURLRequest *request = [client requestWithMethod:@"POST" path:path parameters:parameters];
     
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
-        NSInteger rating = [[NSString stringWithFormat:@"%@", [JSON objectForKey:@"rating"]] integerValue];
+        CGFloat rating = [[NSString stringWithFormat:@"%@", [JSON objectForKey:@"rating"]] floatValue];
         
         self.averageRatingView.rating = rating;
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
@@ -436,10 +452,6 @@
 }
 
 - (void)goToEditRecipe {
-    [UIView animateWithDuration:0.5 animations:^{
-        self.editMenuView.alpha = 0;
-    }];
-    [self.editMenuTableView reloadData];
     [self performSegueWithIdentifier:@"EditRecipe" sender:self];
 }
 
@@ -525,7 +537,7 @@
 }
 
 // rating view delegate methods
-- (void)ratingViewDidRate:(FrecipeRatingView *)ratingView rating:(NSInteger)rating {
+- (void)ratingViewDidRate:(FrecipeRatingView *)ratingView rating:(CGFloat)rating {
     if ([ratingView isEqual:self.averageRatingView]) {
         
         if (self.ratingBorderView.alpha == 0) {
@@ -540,7 +552,7 @@
     } else {
         [self rate];
         
-        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Rating" message:[NSString stringWithFormat:@"You gave a rating of %d", rating] delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: nil];
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Rating" message:[NSString stringWithFormat:@"You gave a rating of %@", [NSNumber numberWithFloat:rating]] delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: nil];
         [alertView show];
     }
     
@@ -759,7 +771,8 @@
             }
         }
 
-    } else if ([tableView isEqual:self.editMenuTableView]) {
+    } else if ([tableView isEqual:self.editDeleteViewController.tableView]) {
+        [self.editDeletePopoverViewController dismissPopoverAnimated:YES];
         if (indexPath.row == 0) {
             [self goToEditRecipe];
         } else {

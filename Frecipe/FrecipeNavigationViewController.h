@@ -8,13 +8,15 @@
 
 #import <UIKit/UIKit.h>
 #import <FacebookSDK/FacebookSDK.h>
+#import "FPPopoverController.h"
+#import "ARCMacros.h"
+
 @interface FrecipeNavigationViewController : UIViewController
 
 @property (weak, nonatomic) IBOutlet FBProfilePictureView *fbProfilePictureView;
 @property (weak, nonatomic) IBOutlet UIImageView *profilePictureView;
 @property (weak, nonatomic) IBOutlet UIButton *nameButton;
 @property (weak, nonatomic) IBOutlet UICollectionView *menuCollectionView;
-@property (weak, nonatomic) IBOutlet UITableView *notificationsTableView;
-@property (weak, nonatomic) IBOutlet UIView *notificationsContainerView;
 @property (weak, nonatomic) IBOutlet FrecipeBadgeView *notificationsBadgeView;
+@property (strong, nonatomic) FPPopoverController *notificationsPopoverViewController;
 @end
