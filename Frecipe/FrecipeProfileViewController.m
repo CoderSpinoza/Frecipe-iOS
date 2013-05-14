@@ -175,7 +175,6 @@
         
         NSDictionary *following = [JSON objectForKey:@"following"];
         NSDictionary *liked = [JSON objectForKey:@"liked"];
-        NSLog(@"%@", following);
         [self.numOfFollowingButton setTitle:[NSString stringWithFormat:@"%u", following.count] forState:UIControlStateNormal];
         [self.numOfLikedButton setTitle:[NSString stringWithFormat:@"%u", liked.count] forState:UIControlStateNormal];
         

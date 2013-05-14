@@ -26,6 +26,9 @@
 @property (strong, nonatomic) NSMutableArray *facebookFriends;
 @property (nonatomic, assign) BOOL alreadyLoaded;
 
+@property (strong, nonatomic) UIView *headerView;
+@property (strong, nonatomic) UISearchBar *recipeSearchBar;
+
 
 @end
 
@@ -54,13 +57,8 @@
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-//    self.notificationBadge = [self addNotificationBadge];
 }
 
-//- (void)viewWillDisappear:(BOOL)animated {
-//    [super viewWillDisappear:animated];
-//    [self.notificationBadge removeFromSuperview];
-//}
 
 - (void)didReceiveMemoryWarning
 {
@@ -71,6 +69,14 @@
 - (IBAction)revealMenu:(UIBarButtonItem *)sender {
     FrecipeNavigationController *navigationController = (FrecipeNavigationController *)self.navigationController;
     [navigationController revealMenu];
+}
+
+- (void)setupHeaderView {
+    self.headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 44)];
+    self.recipeSearchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 44)];
+    
+    [self.headerView addSubview:self.recipeSearchBar];
+//    self.recipesCollectionView.
 }
 
 
@@ -213,6 +219,11 @@
 }
 
 // collection view delegate methods
+
+- (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath {
+    UICollectionReusableView *view = [collectionView dequeueReusableSupplementaryViewOfKind:kind withReuseIdentifier:@"SearchBarHeader" forIndexPath:indexPath];
+    return view;
+}
 
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
     return 1;

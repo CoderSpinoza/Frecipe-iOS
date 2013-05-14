@@ -116,12 +116,10 @@
         FBRequest *request = [FBRequest requestForMyFriends];
         [request startWithCompletionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
             self.facebookFriends = [NSMutableArray arrayWithArray:[result objectForKey:@"data"]];
-            NSLog(@"%u", self.facebookFriends.count);
             NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES];
             
             NSArray *sortDescriptors = [NSArray arrayWithObjects:sortDescriptor, nil];
             self.facebookFriends = [[self.facebookFriends sortedArrayUsingDescriptors:sortDescriptors] mutableCopy];
-            NSLog(@"%u", self.facebookFriends.count);
             if (self.uids) {
                 [self.facebookFriendsTableView reloadData];
             }
@@ -234,19 +232,22 @@
         
         if (!cell) {
             cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"FriendCell"];
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
         }
+        
         
         NSPredicate *filterPredicate = [NSPredicate predicateWithFormat:@"first_name beginswith[c] %@", [self.alphabets objectAtIndex:indexPath.section]];
         NSArray *filteredFriends = [self.facebookFriends filteredArrayUsingPredicate:filterPredicate];
         NSDictionary *facebookFriend = [filteredFriends objectAtIndex:indexPath.row];
         
+        cell.imageView.image = [UIImage imageNamed:@"default_profile_picture.png"];
         
-        FBProfilePictureView *profilePictureView = (FBProfilePictureView *)[cell viewWithTag:1];
+        FBProfilePictureView *profilePictureView = [[FBProfilePictureView alloc] initWithProfileID:[NSString stringWithFormat:@"%@", [facebookFriend objectForKey:@"id"]] pictureCropping:FBProfilePictureCroppingSquare];
         
-        UILabel *nameLabel = (UILabel *)[cell viewWithTag:2];
+        profilePictureView.frame = CGRectMake(0, 0, 44, 44);
+        [cell addSubview:profilePictureView];
         
-        profilePictureView.profileID = [NSString stringWithFormat:@"%@", [facebookFriend objectForKey:@"id"]];
-        nameLabel.text = [NSString stringWithFormat:@"%@", [facebookFriend objectForKey:@"name"]];
+        cell.textLabel.text = [NSString stringWithFormat:@"%@", [facebookFriend objectForKey:@"name"]];
         
         
         if ([self.selectedFriends containsObject:[facebookFriend objectForKey:@"id"]]) {
@@ -267,42 +268,82 @@
         
         NSDictionary *facebookFriend = [self.searchedFriends objectAtIndex:indexPath.row];
         
-        cell.textLabel.text = [NSString stringWithFormat:@"%@ %@", [facebookFriend objectForKey:@"first_name"], [facebookFriend objectForKey:@"last_name"]];
-        
+        cell.textLabel.text = [NSString stringWithFormat:@"%@", [facebookFriend objectForKey:@"name"]];
         cell.imageView.image = [UIImage imageNamed:@"default_profile_picture.png"];
-        FBProfilePictureView *profilePictureView = [[FBProfilePictureView alloc] initWithProfileID:[NSString stringWithFormat:@"%@", [facebookFriend objectForKey:@"uid"]] pictureCropping:FBProfilePictureCroppingSquare];
+        
+        if ([self.selectedFriends containsObject:[facebookFriend objectForKey:@"id"]]) {
+            cell.accessoryType = UITableViewCellAccessoryCheckmark;
+        } else {
+            cell.accessoryType = UITableViewCellAccessoryNone;
+        }
+
+
+        FBProfilePictureView *profilePictureView = [[FBProfilePictureView alloc] initWithProfileID:[NSString stringWithFormat:@"%@", [facebookFriend objectForKey:@"id"]] pictureCropping:FBProfilePictureCroppingSquare];
         profilePictureView.frame = CGRectMake(0, 0, 44, 44);
         [cell addSubview:profilePictureView];
-        cell.imageView.hidden = YES;
         
         return cell;
     }
 }
 
+- (NSIndexPath *)indexPathForFriend:(NSDictionary *)friend {
+    NSInteger section = [self.alphabets indexOfObject:[[NSString stringWithFormat:@"%@", [friend objectForKey:@"name"]] substringToIndex:1]];
+    
+    NSPredicate *filterPredicate = [NSPredicate predicateWithFormat:@"name beginswith[c] %@", [self.alphabets objectAtIndex:section]];
+    NSArray *filteredFriends = [self.facebookFriends filteredArrayUsingPredicate:filterPredicate];
+    NSInteger row = [filteredFriends indexOfObject:friend];
+    
+    return [NSIndexPath indexPathForRow:row inSection:section];
+}
+
+- (NSDictionary *)friendForIndexPath:(NSIndexPath *)indexpath {
+    NSPredicate *filterPredicate = [NSPredicate predicateWithFormat:@"name beginsWith[c] %@", [self.alphabets objectAtIndex:indexpath.section]];
+    NSArray *filteredFriends = [self.facebookFriends filteredArrayUsingPredicate:filterPredicate];
+    return [filteredFriends objectAtIndex:indexpath.row];
+}
+
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    
-    if ([tableView isEqual:self.facebookFriendsTableView]) {
+        if ([tableView isEqual:self.facebookFriendsTableView]) {
         UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
         cell.accessoryType = UITableViewCellAccessoryCheckmark;
         
-        NSDictionary *facebookFriend = [self.facebookFriends objectAtIndex:indexPath.row];
+            NSDictionary *facebookFriend = [self friendForIndexPath:indexPath];
         
         [self.selectedFriends addObject:[NSString stringWithFormat:@"%@", [facebookFriend objectForKey:@"id"]]];
     } else {
         
+        NSDictionary *selectedFriend = [self.searchedFriends objectAtIndex:indexPath.row];
+        NSInteger index = [self.facebookFriends indexOfObject:selectedFriend];
+        UITableViewCell *cell = [self.facebookFriendsTableView cellForRowAtIndexPath:[NSIndexPath indexPathForItem:index inSection:0]];
+        
+        
+        
+        [self.searchDisplayController setActive:NO animated:YES];
+
+        
+        NSIndexPath *scrollIndexPath = [self indexPathForFriend:selectedFriend];
+        UITableViewCell *toBeUncheckedCell = [self.facebookFriendsTableView cellForRowAtIndexPath:scrollIndexPath];
+        if ([self.selectedFriends containsObject:[NSString stringWithFormat:@"%@", [selectedFriend objectForKey:@"id"]]]) {
+            NSLog(@"here");
+            [self.selectedFriends removeObject:[NSString stringWithFormat:@"%@", [selectedFriend objectForKey:@"id"]]];
+            toBeUncheckedCell.accessoryType = UITableViewCellAccessoryNone;
+        } else {
+            [self.selectedFriends addObject:[NSString stringWithFormat:@"%@", [selectedFriend objectForKey:@"id"]]];
+            toBeUncheckedCell.accessoryType = UITableViewCellAccessoryCheckmark;
+        }
+        [self.facebookFriendsTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:scrollIndexPath.row inSection:scrollIndexPath.section] atScrollPosition:UITableViewScrollPositionTop animated:NO];
     }
     
 }
 
 - (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    
     if ([tableView isEqual:self.facebookFriendsTableView]) {
         UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
         cell.accessoryType = UITableViewCellAccessoryNone;
         
-        NSDictionary *facebookFriend = [self.facebookFriends objectAtIndex:indexPath.row];
+        NSDictionary *facebookFriend = [self friendForIndexPath:indexPath];
         [self.selectedFriends removeObject:[NSString stringWithFormat:@"%@", [facebookFriend objectForKey:@"id"]]];
     } else {
         

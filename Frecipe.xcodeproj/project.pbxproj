@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		BC272C53E9E9495BB99A3C98 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CC3902FF59D545519B935676 /* libPods.a */; };
+		C2670305174170FD00BBBDD6 /* iPadLoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C2670304174170FD00BBBDD6 /* iPadLoginViewController.m */; };
 		C294412E1733246800FDD542 /* badge.png in Resources */ = {isa = PBXBuildFile; fileRef = C294412D1733246800FDD542 /* badge.png */; };
 		C294413117332BC800FDD542 /* UIViewController+Frecipe.m in Sources */ = {isa = PBXBuildFile; fileRef = C294413017332BC800FDD542 /* UIViewController+Frecipe.m */; };
 		C294413817349AE000FDD542 /* FrecipeBadgeView.m in Sources */ = {isa = PBXBuildFile; fileRef = C294413717349ADF00FDD542 /* FrecipeBadgeView.m */; };
@@ -50,8 +51,6 @@
 		C2A32850172E01DF00EBB23B /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C2A3284F172E01DF00EBB23B /* libsqlite3.dylib */; };
 		C2A32852172E02A600EBB23B /* favicon_57*57.png in Resources */ = {isa = PBXBuildFile; fileRef = C2A32851172E02A600EBB23B /* favicon_57*57.png */; };
 		C2A32854172E02A800EBB23B /* favicon_114*114.png in Resources */ = {isa = PBXBuildFile; fileRef = C2A32853172E02A800EBB23B /* favicon_114*114.png */; };
-		C2A3285C172E036300EBB23B /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = C2A3285B172E036300EBB23B /* Default.png */; };
-		C2A3285E172E036600EBB23B /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C2A3285D172E036600EBB23B /* Default@2x.png */; };
 		C2A32860172E036800EBB23B /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C2A3285F172E036800EBB23B /* Default-568h@2x.png */; };
 		C2A32863172E041D00EBB23B /* FrecipeInitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C2A32862172E041D00EBB23B /* FrecipeInitViewController.m */; };
 		C2A32866172E043B00EBB23B /* FrecipeNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = C2A32865172E043B00EBB23B /* FrecipeNavigationController.m */; };
@@ -83,6 +82,11 @@
 		C2E47725172F94E700EC3660 /* star_empty@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C2E47721172F94E600EC3660 /* star_empty@2x.png */; };
 		C2E47726172F94E700EC3660 /* star_full.png in Resources */ = {isa = PBXBuildFile; fileRef = C2E47722172F94E600EC3660 /* star_full.png */; };
 		C2E47727172F94E700EC3660 /* star_full@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C2E47723172F94E600EC3660 /* star_full@2x.png */; };
+		C2E4895C174202DF00EF20E6 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = C2A3285B172E036300EBB23B /* Default.png */; };
+		C2E4895D174202EB00EF20E6 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C2A3285D172E036600EBB23B /* Default@2x.png */; };
+		C2E489601742046A00EF20E6 /* iPadNavigationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C2E4895F1742046A00EF20E6 /* iPadNavigationViewController.m */; };
+		C2E489631742048300EF20E6 /* iPadNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = C2E489621742048300EF20E6 /* iPadNavigationController.m */; };
+		C2E48966174204D200EF20E6 /* iPadViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C2E48965174204D200EF20E6 /* iPadViewController.m */; };
 		C2E668D6173B6DDA00D1975D /* back_arrow.png in Resources */ = {isa = PBXBuildFile; fileRef = C2E668D5173B6DDA00D1975D /* back_arrow.png */; };
 		C2E668D8173C738F00D1975D /* default_recipe_picture.png in Resources */ = {isa = PBXBuildFile; fileRef = C2E668D7173C738F00D1975D /* default_recipe_picture.png */; };
 		C2E668DA173C73D500D1975D /* star_half.png in Resources */ = {isa = PBXBuildFile; fileRef = C2E668D9173C73D500D1975D /* star_half.png */; };
@@ -115,6 +119,8 @@
 
 /* Begin PBXFileReference section */
 		B229DB6A887849DC88A926C2 /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = SOURCE_ROOT; };
+		C2670303174170FD00BBBDD6 /* iPadLoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iPadLoginViewController.h; sourceTree = "<group>"; };
+		C2670304174170FD00BBBDD6 /* iPadLoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iPadLoginViewController.m; sourceTree = "<group>"; };
 		C294412D1733246800FDD542 /* badge.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = badge.png; sourceTree = "<group>"; };
 		C294412F17332BC800FDD542 /* UIViewController+Frecipe.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+Frecipe.h"; sourceTree = "<group>"; };
 		C294413017332BC800FDD542 /* UIViewController+Frecipe.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+Frecipe.m"; sourceTree = "<group>"; };
@@ -218,6 +224,12 @@
 		C2E47721172F94E600EC3660 /* star_empty@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "star_empty@2x.png"; sourceTree = "<group>"; };
 		C2E47722172F94E600EC3660 /* star_full.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = star_full.png; sourceTree = "<group>"; };
 		C2E47723172F94E600EC3660 /* star_full@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "star_full@2x.png"; sourceTree = "<group>"; };
+		C2E4895E1742046A00EF20E6 /* iPadNavigationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iPadNavigationViewController.h; sourceTree = "<group>"; };
+		C2E4895F1742046A00EF20E6 /* iPadNavigationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iPadNavigationViewController.m; sourceTree = "<group>"; };
+		C2E489611742048300EF20E6 /* iPadNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iPadNavigationController.h; sourceTree = "<group>"; };
+		C2E489621742048300EF20E6 /* iPadNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iPadNavigationController.m; sourceTree = "<group>"; };
+		C2E48964174204D200EF20E6 /* iPadViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iPadViewController.h; sourceTree = "<group>"; };
+		C2E48965174204D200EF20E6 /* iPadViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iPadViewController.m; sourceTree = "<group>"; };
 		C2E668D5173B6DDA00D1975D /* back_arrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = back_arrow.png; sourceTree = "<group>"; };
 		C2E668D7173C738F00D1975D /* default_recipe_picture.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = default_recipe_picture.png; sourceTree = "<group>"; };
 		C2E668D9173C73D500D1975D /* star_half.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = star_half.png; sourceTree = "<group>"; };
@@ -285,6 +297,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		C2670302174170DF00BBBDD6 /* iPad */ = {
+			isa = PBXGroup;
+			children = (
+				C2670303174170FD00BBBDD6 /* iPadLoginViewController.h */,
+				C2670304174170FD00BBBDD6 /* iPadLoginViewController.m */,
+				C2E489611742048300EF20E6 /* iPadNavigationController.h */,
+				C2E489621742048300EF20E6 /* iPadNavigationController.m */,
+				C2E4895E1742046A00EF20E6 /* iPadNavigationViewController.h */,
+				C2E4895F1742046A00EF20E6 /* iPadNavigationViewController.m */,
+				C2E48964174204D200EF20E6 /* iPadViewController.h */,
+				C2E48965174204D200EF20E6 /* iPadViewController.m */,
+			);
+			name = iPad;
+			sourceTree = "<group>";
+		};
 		C2A327CA172DFAAD00EBB23B = {
 			isa = PBXGroup;
 			children = (
@@ -341,6 +368,7 @@
 		C2A327DC172DFAAD00EBB23B /* Frecipe */ = {
 			isa = PBXGroup;
 			children = (
+				C2670302174170DF00BBBDD6 /* iPad */,
 				C2A327E5172DFAAD00EBB23B /* FrecipeAppDelegate.h */,
 				C2A327E6172DFAAD00EBB23B /* FrecipeAppDelegate.m */,
 				C2A327EE172DFAAD00EBB23B /* MainStoryboard_iPhone.storyboard */,
@@ -570,8 +598,6 @@
 				C2A32829172DFB9900EBB23B /* loginpage_640*1136.png in Resources */,
 				C2A32852172E02A600EBB23B /* favicon_57*57.png in Resources */,
 				C2A32854172E02A800EBB23B /* favicon_114*114.png in Resources */,
-				C2A3285C172E036300EBB23B /* Default.png in Resources */,
-				C2A3285E172E036600EBB23B /* Default@2x.png in Resources */,
 				C2A32860172E036800EBB23B /* Default-568h@2x.png in Resources */,
 				C2A32890172E4F6C00EBB23B /* iTunesArtwork.png in Resources */,
 				C2E47724172F94E700EC3660 /* star_empty.png in Resources */,
@@ -598,6 +624,8 @@
 				C2E668FE173F06EE00D1975D /* share.png in Resources */,
 				C2E668FF173F06EE00D1975D /* thumb_highlighted.png in Resources */,
 				C2E66900173F06EE00D1975D /* thumb.png in Resources */,
+				C2E4895C174202DF00EF20E6 /* Default.png in Resources */,
+				C2E4895D174202EB00EF20E6 /* Default@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -677,6 +705,10 @@
 				C2E668EA173DBA4400D1975D /* FPTouchView.m in Sources */,
 				C2E668ED173DBD8500D1975D /* FrecipeNotificationsViewController.m in Sources */,
 				C2E668F0173EE28D00D1975D /* FrecipeEditDeleteViewController.m in Sources */,
+				C2670305174170FD00BBBDD6 /* iPadLoginViewController.m in Sources */,
+				C2E489601742046A00EF20E6 /* iPadNavigationViewController.m in Sources */,
+				C2E489631742048300EF20E6 /* iPadNavigationController.m in Sources */,
+				C2E48966174204D200EF20E6 /* iPadViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -63,6 +63,7 @@
     [self.nameButton setBackgroundImage:[UIImage imageNamed:@"button_background_image.png"] forState:UIControlStateHighlighted];
     [self fetchUserInfo];
     [self setupNotifications];
+
     
 }
 
@@ -148,6 +149,7 @@
     self.notificationsPopoverViewController.arrowDirection = FPPopoverArrowDirectionAny;
     self.notificationsPopoverViewController.contentSize = CGSizeMake(280, self.view.frame.size.height * 0.9);
     [self.notificationsPopoverViewController presentPopoverFromView:self.notificationsBadgeView];
+    [self checkNotifications];
 }
 
 
@@ -171,12 +173,15 @@
         self.notifications = [NSArray arrayWithArray:[JSON objectForKey:@"notifications"]];
         NSString *unseen = [NSString stringWithFormat:@"%@", [JSON objectForKey:@"unseen_count"]];
         
+        NSLog(@"%@", self.notifications);
         self.notificationsBadgeView.text = unseen;
         FrecipeNavigationController *navigationController = (FrecipeNavigationController *)self.slidingViewController.topViewController;
         FrecipeMainViewController *viewController = [navigationController.childViewControllers objectAtIndex:0];
         viewController.notificationBadge.text = unseen;
 
         self.notificationsViewController.notifications = self.notifications;
+        
+        [self.notificationsViewController.tableView reloadData];
 
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         NSLog(@"%@", error);
@@ -185,8 +190,6 @@
 }
 
 - (void)checkNotifications {
-    
-    
     NSString *path = @"notifications/check";
     
     [[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];
@@ -219,7 +222,7 @@
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         NSLog(@"%@", error);
     }];
-//    [operation start];
+    [operation start];
 }
 
 // pop over delegate methods

@@ -123,7 +123,7 @@
 }
 
 - (void)checkIfFacebookUserIsRegisteredWithId:(NSString *)uid Email:(NSString *)email FirstName:(NSString *)firstName LastName:(NSString *)lastName {
-    NSString *path = @"tokens/facebook_check";
+    NSString *path = @"/tokens/facebook_check";
     [[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];
     [[AFNetworkActivityIndicatorManager sharedManager] incrementActivityCount];
     

@@ -14,9 +14,9 @@
 + (FrecipeAPIClient *)client {
     NSString *url;
     if (PRODUCTION) {
-        url = @"http://fast-ravine-6720.herokuapp.com/";
+        url = @"http://fast-ravine-6720.herokuapp.com";
     } else {
-        url = @"http://localhost:5000/";
+        url = @"http://localhost:5000";
     }
     
     static FrecipeAPIClient *sharedClient = nil;
