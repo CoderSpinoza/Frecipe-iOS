@@ -19,4 +19,5 @@
 @property (weak, nonatomic) IBOutlet UICollectionView *menuCollectionView;
 @property (weak, nonatomic) IBOutlet FrecipeBadgeView *notificationsBadgeView;
 @property (strong, nonatomic) FPPopoverController *notificationsPopoverViewController;
+@property (weak, nonatomic) IBOutlet UISearchBar *searchBar;
 @end

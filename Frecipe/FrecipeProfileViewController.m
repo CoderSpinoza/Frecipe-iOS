@@ -288,6 +288,10 @@
     if ([segue.identifier isEqualToString:@"RecipeDetail"]) {
         FrecipeRecipeDetailViewController *recipeDetailViewController = (FrecipeRecipeDetailViewController *) segue.destinationViewController;
         recipeDetailViewController.recipeId = [self.selectedRecipe objectForKey:@"id"];
+        
+        recipeDetailViewController.navigationItem.leftBarButtonItem = nil;
+        
+        self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"back_arrowpng"] style:UIBarButtonItemStyleBordered target:self action:@selector(popViewControllerFromStack)];
     } else if ([segue.identifier isEqualToString:@"Profile"]) {
         FrecipeProfileViewController *profileViewController = (FrecipeProfileViewController *)segue.destinationViewController;
         

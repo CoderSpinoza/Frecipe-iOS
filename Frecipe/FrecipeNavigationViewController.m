@@ -18,11 +18,14 @@
 #import "FrecipeNotificationsViewController.h"
 #import <SDWebImage/UIImageView+WebCache.h>
 
-@interface FrecipeNavigationViewController () <UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UITableViewDataSource, UITableViewDelegate, FPPopoverControllerDelegate>
+@interface FrecipeNavigationViewController () <UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UITableViewDataSource, UITableViewDelegate, FPPopoverControllerDelegate, UISearchBarDelegate, UISearchDisplayDelegate>
 
 @property (strong, nonatomic) NSArray *menu;
 @property (strong, nonatomic) NSMutableArray *notifications;
 @property (strong, nonatomic) FrecipeNotificationsViewController *notificationsViewController;
+
+@property (strong, nonatomic) NSMutableArray *recipes;
+@property (strong, nonatomic) NSMutableArray *users;
 
 @end
 
@@ -57,14 +60,15 @@
     
     // setting delegates
     self.menuCollectionView.delegate = self;
-    self.menuCollectionView.dataSource = self;    
+    self.menuCollectionView.dataSource = self;
+    
+    self.searchBar.delegate = self;
+    self.searchDisplayController.delegate = self;
     
     // button and shadow setup
     [self.nameButton setBackgroundImage:[UIImage imageNamed:@"button_background_image.png"] forState:UIControlStateHighlighted];
     [self fetchUserInfo];
-    [self setupNotifications];
-
-    
+    [self setupNotifications];    
 }
 
 // fetch notifications every time this view appears
@@ -173,7 +177,6 @@
         self.notifications = [NSArray arrayWithArray:[JSON objectForKey:@"notifications"]];
         NSString *unseen = [NSString stringWithFormat:@"%@", [JSON objectForKey:@"unseen_count"]];
         
-        NSLog(@"%@", self.notifications);
         self.notificationsBadgeView.text = unseen;
         FrecipeNavigationController *navigationController = (FrecipeNavigationController *)self.slidingViewController.topViewController;
         FrecipeMainViewController *viewController = [navigationController.childViewControllers objectAtIndex:0];
@@ -225,9 +228,82 @@
     [operation start];
 }
 
+- (void)querySearchString:(NSString *)searchString {
+    NSString *path = @"tokens/search";
+    
+    [[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];
+    [[AFNetworkActivityIndicatorManager sharedManager] incrementActivityCount];
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSString *authentication_token = [defaults stringForKey:@"authentication_token"];
+    NSArray *keys = [NSArray arrayWithObjects:@"authentication_token", @"search",nil];
+    NSArray *values = [NSArray arrayWithObjects:authentication_token, searchString, nil];
+    NSDictionary *parameters = [NSDictionary dictionaryWithObjects:values forKeys:keys];
+    
+    FrecipeAPIClient *client = [FrecipeAPIClient client];
+    NSURLRequest *request = [client requestWithMethod:@"GET" path:path parameters:parameters];
+    
+    AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
+        self.recipes = [JSON objectForKey:@"recipes"];
+        self.users = [JSON objectForKey:@"users"];
+        
+        [self.searchDisplayController.searchResultsTableView reloadData];
+    } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
+        NSLog(@"%@", error);
+    }];
+    [operation start];
+}
+
 // pop over delegate methods
 - (void)presentedNewPopoverController:(FPPopoverController *)newPopoverController shouldDismissVisiblePopover:(FPPopoverController *)visiblePopoverController {
     [self checkNotifications];
+}
+
+// search bar and display delegate methods
+
+- (BOOL)searchBarShouldBeginEditing:(UISearchBar *)searchBar {
+    [self.slidingViewController anchorTopViewOffScreenTo:ECRight];
+    return YES;
+}
+
+- (BOOL)searchBarShouldEndEditing:(UISearchBar *)searchBar {
+    
+    [self.slidingViewController anchorTopViewTo:ECRight animations:^{
+    } onComplete:^{
+        if (self.slidingViewController.anchorRightRevealAmount == 200.f) {
+            self.searchBar.frame = CGRectMake(0, 0, 200.0f, 44.0f);
+        }
+    }];
+    self.recipes = nil;
+    self.users = nil;
+    
+        
+    [self.searchDisplayController.searchResultsTableView reloadData];
+    return YES;
+}
+
+- (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar {
+    self.slidingViewController.anchorRightRevealAmount = 200.0f;
+    [self.slidingViewController anchorTopViewTo:ECRight animations:^{
+        
+    } onComplete:^{
+        self.searchBar.frame = CGRectMake(0, 0, 200.0f, 44.0f);
+    }];
+}
+
+- (BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchString:(NSString *)searchString {
+    if (![searchString isEqualToString:@""]) {
+        [NSObject cancelPreviousPerformRequestsWithTarget:self];
+        [self performSelector:@selector(querySearchString:) withObject:searchString afterDelay:0.5];
+        
+        [self.slidingViewController setAnchorRightRevealAmount:320.f];
+
+    } else {
+        [self.slidingViewController setAnchorRightRevealAmount:200.f];
+
+    }
+    
+    return YES;
 }
 
 // collection view delegate and dataSource methods
@@ -251,7 +327,44 @@
     return cell;
 }
 
-// table view delegate methods
+// table view delegate and dataSource methods
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    return 2;
+    
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    if (section == 0) {
+        return self.recipes.count;
+    } else {
+        return self.users.count;
+    }
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
+    if (section == 0) {
+        return @"Recipes";
+    } else {
+        return @"Chefs";
+    }
+}
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell"];
+    if (!cell) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"Cell"];
+    }
+    
+    if (indexPath.section == 0) {
+        
+        NSDictionary *recipe = [self.recipes objectAtIndex:indexPath.row];
+        cell.textLabel.text = [NSString stringWithFormat:@"%@", [recipe objectForKey:@"name"]];
+    } else {
+        NSDictionary *user = [self.users objectAtIndex:indexPath.row];
+        cell.textLabel.text = [NSString stringWithFormat:@"%@ %@", [user objectForKey:@"first_name"], [user objectForKey:@"last_name"]];
+    }
+    return cell;
+}
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];

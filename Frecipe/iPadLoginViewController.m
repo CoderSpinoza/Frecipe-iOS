@@ -81,6 +81,7 @@
     NSURLRequest *request = [client requestWithMethod:@"POST" path:path parameters:parameters];
     
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
+        NSLog(@"%@", JSON);
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
         
         NSDictionary *user = [JSON objectForKey:@"user"];

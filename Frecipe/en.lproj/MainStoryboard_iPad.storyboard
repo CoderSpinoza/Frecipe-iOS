@@ -173,8 +173,15 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" id="UgV-bV-9bh">
-                        <barButtonItem key="leftBarButtonItem" image="menu_icon.png" id="S7t-j7-fJY"/>
+                        <barButtonItem key="leftBarButtonItem" image="menu_icon.png" id="S7t-j7-fJY">
+                            <connections>
+                                <action selector="revealMenu:" destination="gmB-cI-b0r" id="7JL-ju-Pf8"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
+                    <connections>
+                        <outlet property="recipesCollectionView" destination="eGG-gI-kzC" id="jiv-Ev-nR2"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Tfa-Dd-pOW" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

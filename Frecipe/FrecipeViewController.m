@@ -184,15 +184,15 @@
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    self.navigationItem.backBarButtonItem = nil;
-    self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"back_arrow.png"] style:UIBarButtonItemStyleBordered target:segue.destinationViewController action:@selector(popViewControllerAnimated:)];
     if ([segue.identifier isEqualToString:@"RecipeDetail"]) {
         FrecipeRecipeDetailViewController *recipeDetailViewController = (FrecipeRecipeDetailViewController *) segue.destinationViewController;
+        
+        recipeDetailViewController.navigationItem.leftBarButtonItem = nil;
         recipeDetailViewController.recipeId = [self.selectedRecipe objectForKey:@"id"];
-        self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Frecipe" style:UIBarButtonItemStyleBordered target:segue.destinationViewController action:nil];
+        self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"back_arrow.png"] style:UIBarButtonItemStyleBordered target:segue.destinationViewController action:@selector(popViewControllerAnimated:)];
     } else if ([segue.identifier isEqualToString:@"Profile"] || [segue.identifier isEqualToString:@"Profile2"]) {
         FrecipeProfileViewController *destinationViewController = (FrecipeProfileViewController *)segue.destinationViewController;
-        
+        destinationViewController.navigationItem.leftBarButtonItem = nil;
         if (self.selectedUser == nil) {
             UIButton *button = (UIButton *)sender;
             UICollectionViewCell *cell = (UICollectionViewCell *)button.superview.superview.superview;
@@ -204,7 +204,7 @@
         destinationViewController.fromSegue = YES;
         
         destinationViewController.navigationItem.leftBarButtonItem = nil;
-        self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Frecipe" style:UIBarButtonItemStyleBordered target:destinationViewController action:@selector(popViewControllerFromStack)];
+        self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"back_arrow.png"] style:UIBarButtonItemStyleBordered target:segue.destinationViewController action:@selector(popViewControllerAnimated:)];
     }
 }
 
