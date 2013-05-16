@@ -33,6 +33,9 @@
 
 @property (strong,nonatomic) FPPopoverController *editDeletePopoverViewController;
 @property (strong, nonatomic) FrecipeEditDeleteViewController *editDeleteViewController;
+
+@property (strong, nonatomic) NSString *recipeImageURL;
+
 @end
 
 @implementation FrecipeRecipeDetailViewController
@@ -153,6 +156,7 @@
     [self.view addSubview:spinner];
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
         self.title = [[JSON objectForKey:@"recipe"] objectForKey:@"name"];
+        self.recipeImageURL = [NSString stringWithFormat:@"%@", [JSON objectForKey:@"recipe_image"]];
         if (PRODUCTION) {
             [self.recipeImageView setImageWithURL:[JSON objectForKey:@"recipe_image"] placeholderImage:[UIImage imageNamed:@"iTunesArtwork.png"]];
         } else {
@@ -250,11 +254,26 @@
     [operation start];
 }
 
+- (IBAction)shareButtonPressed {
+    if (FBSession.activeSession.isOpen) {
+        [FBSession.activeSession requestNewPublishPermissions:[NSArray arrayWithObject:@"publish_actions"] defaultAudience:FBSessionDefaultAudienceOnlyMe completionHandler:^(FBSession *session, NSError *error) {
+            
+            [FBRequestConnection startForPostOpenGraphObjectWithType:@"website" title:[NSString stringWithFormat:@"%@ has uploaded a new recipe!", [[NSUserDefaults standardUserDefaults] stringForKey:@"name"]]image:self.recipeImageURL url:@"https://itunes.apple.com/us/app/itunes-u/id490217893" description:@"Go to this link to download Frecipe!" objectProperties:nil completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
+                UIAlertView *alertView;
+                if (!error) {
+                    alertView = [[UIAlertView alloc] initWithTitle:@"Facebook Share" message:@"Successfully shared your recipe!" delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: nil];
+                } else {
+                    alertView = [[UIAlertView alloc] initWithTitle:@"Facebook share error" message:@"There was an error sharing your recipe on facebook" delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: nil];
+                }
+                [alertView show];
+            }];        
+        }];
+    }
+}
+
 - (IBAction)commentButtonPressed {
     [self.blockingView removeFromSuperview];
     [self.commentsView removeFromSuperview];
-    
-    
     
     [[[[UIApplication sharedApplication] delegate] window] addSubview:self.blockingView];
     [[[[UIApplication sharedApplication] delegate] window] addSubview:self.commentsView];
@@ -324,19 +343,6 @@
 
 - (void)editMenuButtonPressed {
     [self.editDeletePopoverViewController presentPopoverFromPoint:CGPointMake(self.view.frame.size.width- 30, 40)];
-//    [self.editMenuView removeFromSuperview];
-//    
-//    [[[[UIApplication sharedApplication] delegate] window] addSubview:self.editMenuView];
-//    self.editMenuView.frame = CGRectMake(self.editMenuView.frame.origin.x, 65, self.editMenuView.frame.size.width, self.editMenuView.frame.size.height);
-//    if (self.editMenuView.alpha == 0) {
-//        [UIView animateWithDuration:0.5 animations:^{
-//            self.editMenuView.alpha = 1;
-//        }];
-//    } else {
-//        [UIView animateWithDuration:0.5 animations:^{
-//            self.editMenuView.alpha = 0;
-//        }];
-//    }
 }
 
 - (IBAction)commentDeleteButtonPressed:(UIButton *)sender {

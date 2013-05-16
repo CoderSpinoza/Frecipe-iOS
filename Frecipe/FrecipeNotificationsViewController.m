@@ -126,7 +126,7 @@
         FBProfilePictureView *fbProfilePictreView = [[FBProfilePictureView alloc] initWithProfileID:[NSString stringWithFormat:@"%@", [source objectForKey:@"uid"]] pictureCropping:FBProfilePictureCroppingSquare];
         
         cell.imageView.image = [UIImage imageNamed:@"default_profile_picture.png"];
-        fbProfilePictreView.frame = CGRectMake(0, 0, 44, 44);
+        fbProfilePictreView.frame = CGRectMake(0, 0, 44, 43);
         [cell addSubview:fbProfilePictreView];
         cell.imageView.hidden = YES;
     } else {

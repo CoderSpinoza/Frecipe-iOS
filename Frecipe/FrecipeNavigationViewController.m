@@ -274,11 +274,6 @@
             self.searchBar.frame = CGRectMake(0, 0, 200.0f, 44.0f);
         }
     }];
-    self.recipes = nil;
-    self.users = nil;
-    
-        
-    [self.searchDisplayController.searchResultsTableView reloadData];
     return YES;
 }
 
@@ -359,9 +354,33 @@
         
         NSDictionary *recipe = [self.recipes objectAtIndex:indexPath.row];
         cell.textLabel.text = [NSString stringWithFormat:@"%@", [recipe objectForKey:@"name"]];
+        
+        UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 43, 43)];
+        [imageView setImageWithURL:[NSURL URLWithString:[recipe objectForKey:@"recipe_image"]] placeholderImage:[UIImage imageNamed:@"default_recipe_picture.png"]];
+        cell.imageView.image = [UIImage imageNamed:@"default_recipe_picture.png"];
+        
+        [cell addSubview:imageView];
+        cell.imageView.hidden = YES;
     } else {
         NSDictionary *user = [self.users objectAtIndex:indexPath.row];
         cell.textLabel.text = [NSString stringWithFormat:@"%@ %@", [user objectForKey:@"first_name"], [user objectForKey:@"last_name"]];
+        
+        
+        NSString *provider = [NSString stringWithFormat:@"%@", [user objectForKey:@"provider"]];
+        
+        if ([provider isEqualToString:@"facebook"]) {
+            cell.imageView.image = [UIImage imageNamed:@"default_profile_picture.png"];
+            FBProfilePictureView *fbProfilePictureView = [[FBProfilePictureView alloc] initWithProfileID:[NSString stringWithFormat:@"%@", [user objectForKey:@"uid"]] pictureCropping:FBProfilePictureCroppingSquare];
+            fbProfilePictureView.frame = CGRectMake(0, 0, 43, 43);
+            [cell addSubview:fbProfilePictureView];
+            cell.imageView.hidden = YES;
+            
+        } else {
+            UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(2, 2, 40, 40)];
+            [imageView setImageWithURL:[NSURL URLWithString:[user objectForKey:@"profile_picture"]] placeholderImage:[UIImage imageNamed:@"default_profile_picture.png"]];
+            cell.imageView.image = imageView.image;
+        }
+        
     }
     return cell;
 }
@@ -369,27 +388,42 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
     cell.selected = NO;
-    NSDictionary *notification = [self.notificationsViewController.notifications objectAtIndex:indexPath.row];
-    NSString *category = [NSString stringWithFormat:@"%@", [notification objectForKey:@"category"]];
-    
+    [self.searchBar resignFirstResponder];
     FrecipeNavigationController *navigationController = (FrecipeNavigationController *)self.slidingViewController.topViewController;
     FrecipeMainViewController *mainViewController = [navigationController.childViewControllers objectAtIndex:0];
     
-    [self.notificationsPopoverViewController dismissPopoverAnimated:YES];
-    if ([category isEqualToString:@"like"] || [category isEqualToString:@"comment"] || [category isEqualToString:@"upload"]) {
+    if ([tableView isEqual:self.searchDisplayController.searchResultsTableView]) {
+        
         [self.slidingViewController resetTopViewWithAnimations:^{
         } onComplete:^{
         }];
-        
-        
-        [mainViewController performSegueWithNotification:category Target:[notification objectForKey:@"recipe"]];
+        if (indexPath.section == 0) {
+            
+            [mainViewController performSegueWithNotification:@"like" Target:[self.recipes objectAtIndex:indexPath.row]];
+        } else {
+            [mainViewController performSegueWithNotification:@"follow" Target:[self.users objectAtIndex:indexPath.row]];
+        }
     } else {
-        [self.slidingViewController resetTopViewWithAnimations:^{
+        
+        NSDictionary *notification = [self.notificationsViewController.notifications objectAtIndex:indexPath.row];
+        NSString *category = [NSString stringWithFormat:@"%@", [notification objectForKey:@"category"]];
+        
+        [self.notificationsPopoverViewController dismissPopoverAnimated:YES];
+        if ([category isEqualToString:@"like"] || [category isEqualToString:@"comment"] || [category isEqualToString:@"upload"]) {
+            [self.slidingViewController resetTopViewWithAnimations:^{
+            } onComplete:^{
+            }];
             
-        } onComplete:^{
             
-        }];
-        [mainViewController performSegueWithNotification:category Target:[notification objectForKey:@"source"]];
+            [mainViewController performSegueWithNotification:category Target:[notification objectForKey:@"recipe"]];
+        } else {
+            [self.slidingViewController resetTopViewWithAnimations:^{
+                
+            } onComplete:^{
+                
+            }];
+            [mainViewController performSegueWithNotification:category Target:[notification objectForKey:@"source"]];
+        }
     }
 }
 

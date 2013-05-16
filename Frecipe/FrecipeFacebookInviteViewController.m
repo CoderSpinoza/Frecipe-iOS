@@ -304,7 +304,7 @@
 
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-        if ([tableView isEqual:self.facebookFriendsTableView]) {
+    if ([tableView isEqual:self.facebookFriendsTableView]) {
         UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
         cell.accessoryType = UITableViewCellAccessoryCheckmark;
         
@@ -314,14 +314,9 @@
     } else {
         
         NSDictionary *selectedFriend = [self.searchedFriends objectAtIndex:indexPath.row];
-        NSInteger index = [self.facebookFriends indexOfObject:selectedFriend];
-        UITableViewCell *cell = [self.facebookFriendsTableView cellForRowAtIndexPath:[NSIndexPath indexPathForItem:index inSection:0]];
-        
-        
-        
+
         [self.searchDisplayController setActive:NO animated:YES];
 
-        
         NSIndexPath *scrollIndexPath = [self indexPathForFriend:selectedFriend];
         UITableViewCell *toBeUncheckedCell = [self.facebookFriendsTableView cellForRowAtIndexPath:scrollIndexPath];
         if ([self.selectedFriends containsObject:[NSString stringWithFormat:@"%@", [selectedFriend objectForKey:@"id"]]]) {
@@ -329,6 +324,8 @@
             [self.selectedFriends removeObject:[NSString stringWithFormat:@"%@", [selectedFriend objectForKey:@"id"]]];
             toBeUncheckedCell.accessoryType = UITableViewCellAccessoryNone;
         } else {
+            UITableViewCell *cell = [self.facebookFriendsTableView cellForRowAtIndexPath:indexPath];
+            cell.selected = YES;
             [self.selectedFriends addObject:[NSString stringWithFormat:@"%@", [selectedFriend objectForKey:@"id"]]];
             toBeUncheckedCell.accessoryType = UITableViewCellAccessoryCheckmark;
         }

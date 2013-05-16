@@ -57,6 +57,8 @@
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
+    self.selectedRecipe = nil;
+    self.selectedUser = nil;
 }
 
 
@@ -199,7 +201,6 @@
             NSDictionary *user = [[self.recipes objectAtIndex:[self.recipesCollectionView indexPathForCell:cell].row] objectForKey:@"user"];
             self.selectedUser = user;
         }
-        
         destinationViewController.userId = [NSString stringWithFormat:@"%@", [self.selectedUser objectForKey:@"id"]];
         destinationViewController.fromSegue = YES;
         
