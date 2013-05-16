@@ -1410,6 +1410,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="504"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="separatorColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="blue" indentationWidth="10" reuseIdentifier="GroceryCell" id="n9q-9q-7YU">
                                         <rect key="frame" x="0.0" y="22" width="320" height="44"/>
@@ -1833,7 +1834,6 @@
         <class className="FrecipeRecipeDetailViewController" superclassName="UIViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeRecipeDetailViewController.h"/>
             <relationships>
-                <relationship kind="action" name="commentDeleteButtonPressed:" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="averageRatingView" candidateClass="FrecipeRatingView"/>
                 <relationship kind="outlet" name="commentButton" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="commentField" candidateClass="UITextField"/>
@@ -1891,8 +1891,8 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="gQH-mx-TWG"/>
-        <segue reference="sIr-9w-LZ8"/>
+        <segue reference="WnA-X5-8uH"/>
+        <segue reference="ev4-tv-MfP"/>
         <segue reference="TkR-fi-IFc"/>
     </inferredMetricsTieBreakers>
 </document>

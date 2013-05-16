@@ -277,7 +277,7 @@
     
     [[[[UIApplication sharedApplication] delegate] window] addSubview:self.blockingView];
     [[[[UIApplication sharedApplication] delegate] window] addSubview:self.commentsView];
-    
+
     if (self.commentsView.alpha == 0) {
         [UIView animateWithDuration:0.3 animations:^{
             self.commentsView.alpha = 1;

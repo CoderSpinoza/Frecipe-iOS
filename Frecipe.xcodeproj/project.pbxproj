@@ -68,6 +68,7 @@
 		C2A3288A172E04C500EBB23B /* FrecipeFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = C2A32889172E04C500EBB23B /* FrecipeFunctions.m */; };
 		C2A32890172E4F6C00EBB23B /* iTunesArtwork.png in Resources */ = {isa = PBXBuildFile; fileRef = C2A3288F172E4F6C00EBB23B /* iTunesArtwork.png */; };
 		C2A32893172E988D00EBB23B /* FrecipeFacebookInviteViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C2A32892172E988C00EBB23B /* FrecipeFacebookInviteViewController.m */; };
+		C2DE64E2174493960041152F /* grocery_list_background.jpg in Resources */ = {isa = PBXBuildFile; fileRef = C2DE64E1174493960041152F /* grocery_list_background.jpg */; };
 		C2E08EDF1735E51100C1C705 /* button_background_image.png in Resources */ = {isa = PBXBuildFile; fileRef = C2E08EDE1735E51100C1C705 /* button_background_image.png */; };
 		C2E08EF21735E5B600C1C705 /* frecipe.png in Resources */ = {isa = PBXBuildFile; fileRef = C2E08EEC1735E5B600C1C705 /* frecipe.png */; };
 		C2E08EF31735E5B600C1C705 /* grocery_list.png in Resources */ = {isa = PBXBuildFile; fileRef = C2E08EED1735E5B600C1C705 /* grocery_list.png */; };
@@ -207,6 +208,7 @@
 		C2A3288F172E4F6C00EBB23B /* iTunesArtwork.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iTunesArtwork.png; sourceTree = "<group>"; };
 		C2A32891172E988C00EBB23B /* FrecipeFacebookInviteViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrecipeFacebookInviteViewController.h; sourceTree = "<group>"; };
 		C2A32892172E988C00EBB23B /* FrecipeFacebookInviteViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FrecipeFacebookInviteViewController.m; sourceTree = "<group>"; };
+		C2DE64E1174493960041152F /* grocery_list_background.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = grocery_list_background.jpg; sourceTree = "<group>"; };
 		C2E08EDE1735E51100C1C705 /* button_background_image.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = button_background_image.png; sourceTree = "<group>"; };
 		C2E08EEC1735E5B600C1C705 /* frecipe.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = frecipe.png; sourceTree = "<group>"; };
 		C2E08EED1735E5B600C1C705 /* grocery_list.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = grocery_list.png; sourceTree = "<group>"; };
@@ -455,6 +457,7 @@
 				C2E668F6173F06EE00D1975D /* share.png */,
 				C2E668F7173F06EE00D1975D /* thumb_highlighted.png */,
 				C2E668F8173F06EE00D1975D /* thumb.png */,
+				C2DE64E1174493960041152F /* grocery_list_background.jpg */,
 				C2A32814172DFB9000EBB23B /* menu_icon.png */,
 				C2E47720172F94E600EC3660 /* star_empty.png */,
 				C2E47721172F94E600EC3660 /* star_empty@2x.png */,
@@ -626,6 +629,7 @@
 				C2E66900173F06EE00D1975D /* thumb.png in Resources */,
 				C2E4895C174202DF00EF20E6 /* Default.png in Resources */,
 				C2E4895D174202EB00EF20E6 /* Default@2x.png in Resources */,
+				C2DE64E2174493960041152F /* grocery_list_background.jpg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -49,6 +49,7 @@
     
     self.navigationItem.rightBarButtonItem = self.editButtonItem;
     
+    self.groceryListTableView.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"grocery_list_background.jpg"]];
     self.notificationBadge = [self addNotificationBadge];
 }
 

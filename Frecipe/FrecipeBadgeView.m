@@ -172,9 +172,7 @@
     CGSize retValue;
 	CGFloat rectWidth, rectHeight;
 	CGSize stringSize = [text sizeWithFont:[UIFont boldSystemFontOfSize:12]];
-	CGFloat flexSpace;
 	if ([text length]>=2) {
-		flexSpace = [text length];
 		rectWidth = 25 + (stringSize.width - 5);
         rectHeight = 25;
 		retValue = CGSizeMake(rectWidth, rectHeight);
