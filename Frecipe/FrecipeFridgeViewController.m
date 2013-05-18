@@ -83,12 +83,14 @@
             NSDictionary *addRow = [NSDictionary dictionaryWithObject:@"Add Ingredients" forKey:@"name"];
             [self.ingredients insertObject:addRow atIndex:0];
         }
+        
         [self.ingredientsTableView reloadData];
         [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         
         UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:@"There was an error loading your fridge info. Retry?" delegate:self cancelButtonTitle:@"Retry" otherButtonTitles:@"Cancel", nil];
         [alertView show];
+        NSLog(@"%@", error);
         
         [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
     }];

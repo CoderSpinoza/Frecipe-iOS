@@ -11,7 +11,7 @@
 @interface UIViewController (Frecipe)
 
 - (BOOL)isTall;
-
-
+- (BOOL)isIpad;
+- (BOOL)isIphone;
 
 @end

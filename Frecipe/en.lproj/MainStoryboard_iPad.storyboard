@@ -97,10 +97,10 @@
             </objects>
             <point key="canvasLocation" x="-249" y="-1843"/>
         </scene>
-        <!--Frecipe Init View Controller-->
+        <!--I Pad Init View Controller-->
         <scene sceneID="4">
             <objects>
-                <viewController storyboardIdentifier="Initial" id="2" customClass="FrecipeInitViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="Initial" id="2" customClass="iPadInitViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="5">
                         <rect key="frame" x="0.0" y="20" width="768" height="1004"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -111,10 +111,10 @@
             </objects>
             <point key="canvasLocation" x="735" y="-1843"/>
         </scene>
-        <!--Frecipe Navigation View Controller-->
+        <!--I Pad Navigation View Controller-->
         <scene sceneID="jvv-JK-sfW">
             <objects>
-                <viewController storyboardIdentifier="Navigation" id="crg-aJ-a06" customClass="FrecipeNavigationViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="Navigation" id="crg-aJ-a06" customClass="iPadNavigationViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="CfD-VC-Vfg">
                         <rect key="frame" x="0.0" y="20" width="768" height="1004"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -125,10 +125,10 @@
             </objects>
             <point key="canvasLocation" x="1818" y="-1835"/>
         </scene>
-        <!--Frecipe Navigation Controller-->
+        <!--I Pad Navigation Controller-->
         <scene sceneID="Hrk-fx-czc">
             <objects>
-                <navigationController storyboardIdentifier="frecipe.png" definesPresentationContext="YES" id="hG0-1L-L67" customClass="FrecipeNavigationController" sceneMemberID="viewController">
+                <navigationController storyboardIdentifier="frecipe.png" definesPresentationContext="YES" id="hG0-1L-L67" customClass="iPadNavigationController" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="A0H-rU-Ivi">
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -140,10 +140,10 @@
             </objects>
             <point key="canvasLocation" x="2797" y="-1835"/>
         </scene>
-        <!--Frecipe View Controller-->
+        <!--I Pad View Controller-->
         <scene sceneID="V4e-cp-TcF">
             <objects>
-                <viewController id="gmB-cI-b0r" customClass="FrecipeViewController" sceneMemberID="viewController">
+                <viewController id="gmB-cI-b0r" customClass="iPadViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="WAS-a0-QVw">
                         <rect key="frame" x="0.0" y="64" width="768" height="960"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -158,7 +158,7 @@
                                     <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 </collectionViewFlowLayout>
                                 <cells>
-                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="cKE-3X-zRQ">
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="RecipeCell" id="cKE-3X-zRQ">
                                         <rect key="frame" x="0.0" y="0.0" width="160" height="160"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
@@ -179,9 +179,6 @@
                             </connections>
                         </barButtonItem>
                     </navigationItem>
-                    <connections>
-                        <outlet property="recipesCollectionView" destination="eGG-gI-kzC" id="jiv-Ev-nR2"/>
-                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Tfa-Dd-pOW" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -196,38 +193,6 @@
         <class className="ECSlidingViewController" superclassName="UIViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/ECSlidingViewController.h"/>
         </class>
-        <class className="FBProfilePictureView" superclassName="UIView">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/FBProfilePictureView.h"/>
-        </class>
-        <class className="FrecipeBadgeView" superclassName="UIView">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeBadgeView.h"/>
-        </class>
-        <class className="FrecipeInitViewController" superclassName="ECSlidingViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeInitViewController.h"/>
-        </class>
-        <class className="FrecipeMainViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeMainViewController.h"/>
-        </class>
-        <class className="FrecipeNavigationController" superclassName="UINavigationController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeNavigationController.h"/>
-        </class>
-        <class className="FrecipeNavigationViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeNavigationViewController.h"/>
-            <relationships>
-                <relationship kind="outlet" name="fbProfilePictureView" candidateClass="FBProfilePictureView"/>
-                <relationship kind="outlet" name="menuCollectionView" candidateClass="UICollectionView"/>
-                <relationship kind="outlet" name="nameButton" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="notificationsBadgeView" candidateClass="FrecipeBadgeView"/>
-                <relationship kind="outlet" name="profilePictureView" candidateClass="UIImageView"/>
-            </relationships>
-        </class>
-        <class className="FrecipeViewController" superclassName="FrecipeMainViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeViewController.h"/>
-            <relationships>
-                <relationship kind="action" name="revealMenu:" candidateClass="UIBarButtonItem"/>
-                <relationship kind="outlet" name="recipesCollectionView" candidateClass="UICollectionView"/>
-            </relationships>
-        </class>
         <class className="UICollectionReusableView" superclassName="UIView">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/UICollectionReusableView.h"/>
         </class>
@@ -240,6 +205,9 @@
         <class className="UICollectionViewLayout" superclassName="NSObject">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/UICollectionViewLayout.h"/>
         </class>
+        <class className="iPadInitViewController" superclassName="ECSlidingViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/iPadInitViewController.h"/>
+        </class>
         <class className="iPadLoginViewController" superclassName="UIViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/iPadLoginViewController.h"/>
             <relationships>
@@ -251,6 +219,15 @@
                 <relationship kind="outlet" name="passwordField" candidateClass="UITextField"/>
                 <relationship kind="outlet" name="signupButton" candidateClass="UIButton"/>
             </relationships>
+        </class>
+        <class className="iPadNavigationController" superclassName="UINavigationController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/iPadNavigationController.h"/>
+        </class>
+        <class className="iPadNavigationViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/iPadNavigationViewController.h"/>
+        </class>
+        <class className="iPadViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/iPadViewController.h"/>
         </class>
     </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">

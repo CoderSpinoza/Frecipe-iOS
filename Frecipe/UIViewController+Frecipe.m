@@ -12,12 +12,23 @@
 
 - (BOOL)isTall {
     CGFloat height = [[UIScreen mainScreen] bounds].size.height;
-    if (height == 568) {
+    if (height == 568 || height == 1024) {
         return YES;
     } else {
         return NO;
     }
 }
 
+- (BOOL)isIpad {
+    NSString *device = [[UIDevice currentDevice] model];
+    
+    return [device hasPrefix:@"iPad"];
+}
+
+- (BOOL)isIphone {
+    NSString *device = [[UIDevice currentDevice] model];
+    
+    return [device hasPrefix:@"iPhone"];
+}
 
 @end

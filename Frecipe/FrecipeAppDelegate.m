@@ -39,8 +39,17 @@ NSString *const FBSessionStateChangedNotification = @"com.Frecipe.Frecipe:FBSess
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSString *authentication_token = [defaults objectForKey:@"authentication_token"];
     
+    NSString *provider = [defaults stringForKey:@"provider"];
     [[UIBarButtonItem appearance] setTintColor:[[UIColor alloc] initWithRed:0.86 green:0.30 blue:0.27 alpha:1]];
     
+    if ([provider isEqualToString:@"facebook"]) {
+        
+        if (!FBSession.activeSession.isOpen) {
+            [FBSession openActiveSessionWithReadPermissions:[NSArray arrayWithObjects:@"email", nil]allowLoginUI:NO completionHandler:^(FBSession *session, FBSessionState status, NSError *error) {
+                NSLog(@"facebook");
+            }];
+        }
+    }
     
     [[UINavigationBar appearance] setBackgroundImage:[UIImage imageNamed:@"bar_red.png"] forBarMetrics:UIBarMetricsDefault];
     
@@ -57,7 +66,6 @@ NSString *const FBSessionStateChangedNotification = @"com.Frecipe.Frecipe:FBSess
     } else {
         initViewController = [storyboard instantiateViewControllerWithIdentifier:@"Login"];
     }
-    
     self.window.rootViewController = initViewController;
     return YES;
 }

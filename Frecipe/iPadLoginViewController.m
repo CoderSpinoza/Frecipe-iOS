@@ -81,7 +81,6 @@
     NSURLRequest *request = [client requestWithMethod:@"POST" path:path parameters:parameters];
     
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
-        NSLog(@"%@", JSON);
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
         
         NSDictionary *user = [JSON objectForKey:@"user"];
@@ -124,6 +123,12 @@
 
 - (void)dismissKeyboard {
     [self.currentField resignFirstResponder];
+}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    if ([segue.identifier isEqualToString:@"Login"]) {
+        NSLog(@"login");
+    }
 }
 
 // text delegate methods

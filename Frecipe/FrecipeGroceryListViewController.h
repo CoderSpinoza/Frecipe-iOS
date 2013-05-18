@@ -11,5 +11,8 @@
 
 @interface FrecipeGroceryListViewController : FrecipeMainViewController
 
+@property (weak, nonatomic) IBOutlet UICollectionView *recipesCollectionView;
 @property (weak, nonatomic) IBOutlet UITableView *groceryListTableView;
+@property (weak, nonatomic) IBOutlet UIView *groceryListView;
+@property (weak, nonatomic) IBOutlet UILabel *recipeNameLabel;
 @end

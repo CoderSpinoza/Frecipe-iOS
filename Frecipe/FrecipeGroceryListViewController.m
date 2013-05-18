@@ -8,16 +8,20 @@
 
 #import "FrecipeGroceryListViewController.h"
 #import "FrecipeNavigationController.h"
+#import "FrecipeAppDelegate.h"
 #import "FrecipeAPIClient.h"
 #import "FrecipeBadgeView.h"
+#import <SDWebImage/UIImageView+WebCache.h>
 
-@interface FrecipeGroceryListViewController () <UITableViewDelegate, UITableViewDataSource> {
+@interface FrecipeGroceryListViewController () <UITableViewDelegate, UITableViewDataSource, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout> {
     BOOL userIsInTheMiddleOfEditingGroceryList;
+    BOOL displayingSpecificRecipe;
 }
 
 @property (strong, nonatomic) NSMutableArray *groceryList;
 @property (strong, nonatomic) NSMutableArray *selectedGroceryList;
-
+@property (strong, nonatomic) NSMutableArray *recipes;
+@property (strong, nonatomic) NSIndexPath *displayedRecipeIndexPath;
 @end
 
 @implementation FrecipeGroceryListViewController
@@ -47,9 +51,19 @@
     self.groceryListTableView.dataSource = self;
     self.groceryListTableView.delegate = self;
     
+    self.recipesCollectionView.dataSource = self;
+    self.recipesCollectionView.delegate = self;
+    
     self.navigationItem.rightBarButtonItem = self.editButtonItem;
     
-    self.groceryListTableView.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"grocery_list_background.jpg"]];
+    [self.view setBackgroundImage:[UIImage imageNamed:@"grocery_list_background.jpg"]];
+    
+    
+    self.groceryListView.layer.cornerRadius = 5.0f;
+    
+    self.groceryListTableView.layer.borderColor = [[UIColor colorWithRed:0.8 green:0.8 blue:0.8 alpha:0.8] CGColor];
+    self.groceryListTableView.layer.borderWidth = 1.0f;
+    
     self.notificationBadge = [self addNotificationBadge];
 }
 
@@ -86,20 +100,30 @@
     NSURLRequest *request = [client requestWithMethod:@"POST" path:path parameters:parameters];
     
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
+        NSLog(@"%@", JSON);
+        self.groceryList = [NSMutableArray arrayWithArray:[JSON objectForKey:@"groceries"]];
+        self.recipes = [NSMutableArray arrayWithArray:[JSON objectForKey:@"recipes"]];
         
-        self.groceryList = [NSMutableArray arrayWithArray:JSON];
+        NSDictionary *all = [NSDictionary dictionaryWithObjectsAndKeys:@"0", @"id", @"All", @"name", @"grocery_list.png", @"recipe_image", nil];
+        
+        [self.recipes insertObject:all atIndex:0];
         
         if (userIsInTheMiddleOfEditingGroceryList) {
             NSDictionary *addRow = [NSDictionary dictionaryWithObject:@"Add To Grocery List" forKey:@"name"];
             [self.groceryList insertObject:addRow atIndex:0];
         }
+        
+        NSLog(@"%@", self.recipes);
+        self.recipeNameLabel.text = [NSString stringWithFormat:@"%@", [[self.recipes objectAtIndex:0] objectForKey:@"name"]];
         [self.groceryListTableView reloadData];
+        [self.recipesCollectionView reloadData];
         [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         NSLog(@"%@", error);
         UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:@"There was an error loading your grocery list. Retry?" delegate:self cancelButtonTitle:@"Retry" otherButtonTitles:@"Cancel", nil];
         [alertView show];
         [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
+        NSLog(@"%@", error);
         
     }];
     [operation start];
@@ -128,7 +152,6 @@
     FrecipeAPIClient *client = [FrecipeAPIClient client];
     NSURLRequest *request = [client requestWithMethod:@"POST" path:path parameters:parameters];
     
-    NSLog(@"%@", parameters);
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
         NSMutableArray *deletedGroceries = [NSArray arrayWithArray:[JSON objectForKey:@"fridge"]];
         
@@ -239,7 +262,13 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     // Return the number of rows in the section.
-    return self.groceryList.count;
+    if (displayingSpecificRecipe) {
+        NSDictionary *recipe = [self.recipes objectAtIndex:self.displayedRecipeIndexPath.row];
+        return recipe.count;
+    } else {
+        return self.groceryList.count;
+    }
+    
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -271,5 +300,44 @@
         }
     }
 }
+
+// collection view delegate and dataSource methods
+
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
+    return self.recipes.count;
+}
+
+- (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
+    return 1;
+}
+
+- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
+    UICollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"RecipeCell" forIndexPath:indexPath];
+    
+    
+    NSDictionary *recipe = [self.recipes objectAtIndex:indexPath.row];
+    UIImageView *imageView = (UIImageView *)[cell viewWithTag:1];
+    
+    if (indexPath.row == 0) {
+        [imageView setImage:[UIImage imageNamed:@"grocery_list.png"]];
+        cell.layer.borderColor = [[UIColor colorWithRed:0.8 green:0.8 blue:0.8 alpha:0.8] CGColor];
+        cell.layer.borderWidth = 1.0f;
+    } else {
+        if (PRODUCTION) {
+            [imageView setImageWithURL:[recipe objectForKey:@"recipe_image"] placeholderImage:[UIImage imageNamed:@"default_recipe_image.png"]];
+        } else {
+            [imageView setImageWithURL:[NSString stringWithFormat:@"http://localhost:5000/%@", [recipe objectForKey:@"recipe_image"]] placeholderImage:[UIImage imageNamed:@"default_recipe_image.png"]];
+        }
+    }
+    return cell;
+}
+
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+    displayingSpecificRecipe = indexPath.row != 0;
+    self.navigationItem.rightBarButtonItem.enabled = !displayingSpecificRecipe;
+    
+    self.recipeNameLabel.text = [NSString stringWithFormat:@"%@", [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"name"]];
+}
+
 
 @end

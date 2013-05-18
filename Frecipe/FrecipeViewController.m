@@ -55,7 +55,8 @@
     
 }
 
-- (void)viewDidAppear:(BOOL)animated {
+- (void)viewDidDisappear:(BOOL)animated {
+    
     [super viewDidAppear:animated];
     self.selectedRecipe = nil;
     self.selectedUser = nil;
@@ -239,7 +240,7 @@
     UIImageView *recipeImageView = (UIImageView *)[cell viewWithTag:6];
     
     if (PRODUCTION) {
-        [recipeImageView setImageWithURL:[[self.recipes objectAtIndex:indexPath.row] objectForKey:@"recipe_image"] placeholderImage:[UIImage imageNamed:@"bar_red.png"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType) {
+        [recipeImageView setImageWithURL:[[self.recipes objectAtIndex:indexPath.row] objectForKey:@"recipe_image"] placeholderImage:[UIImage imageNamed:@"default_recipe_picture.png"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType) {
             UIImageView *recipeImageView = (UIImageView *)[cell viewWithTag:6];
             
             if (self.alreadyLoaded == NO) {

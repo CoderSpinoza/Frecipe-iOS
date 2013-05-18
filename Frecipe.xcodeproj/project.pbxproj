@@ -68,6 +68,8 @@
 		C2A3288A172E04C500EBB23B /* FrecipeFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = C2A32889172E04C500EBB23B /* FrecipeFunctions.m */; };
 		C2A32890172E4F6C00EBB23B /* iTunesArtwork.png in Resources */ = {isa = PBXBuildFile; fileRef = C2A3288F172E4F6C00EBB23B /* iTunesArtwork.png */; };
 		C2A32893172E988D00EBB23B /* FrecipeFacebookInviteViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C2A32892172E988C00EBB23B /* FrecipeFacebookInviteViewController.m */; };
+		C2CB619817458D8A004B9C11 /* iPadInitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C2CB619717458D8A004B9C11 /* iPadInitViewController.m */; };
+		C2CB619B1745EC7D004B9C11 /* UIView+Frecipe.m in Sources */ = {isa = PBXBuildFile; fileRef = C2CB619A1745EC7D004B9C11 /* UIView+Frecipe.m */; };
 		C2DE64E2174493960041152F /* grocery_list_background.jpg in Resources */ = {isa = PBXBuildFile; fileRef = C2DE64E1174493960041152F /* grocery_list_background.jpg */; };
 		C2E08EDF1735E51100C1C705 /* button_background_image.png in Resources */ = {isa = PBXBuildFile; fileRef = C2E08EDE1735E51100C1C705 /* button_background_image.png */; };
 		C2E08EF21735E5B600C1C705 /* frecipe.png in Resources */ = {isa = PBXBuildFile; fileRef = C2E08EEC1735E5B600C1C705 /* frecipe.png */; };
@@ -208,6 +210,10 @@
 		C2A3288F172E4F6C00EBB23B /* iTunesArtwork.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iTunesArtwork.png; sourceTree = "<group>"; };
 		C2A32891172E988C00EBB23B /* FrecipeFacebookInviteViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrecipeFacebookInviteViewController.h; sourceTree = "<group>"; };
 		C2A32892172E988C00EBB23B /* FrecipeFacebookInviteViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FrecipeFacebookInviteViewController.m; sourceTree = "<group>"; };
+		C2CB619617458D8A004B9C11 /* iPadInitViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iPadInitViewController.h; sourceTree = "<group>"; };
+		C2CB619717458D8A004B9C11 /* iPadInitViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iPadInitViewController.m; sourceTree = "<group>"; };
+		C2CB61991745EC7D004B9C11 /* UIView+Frecipe.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+Frecipe.h"; sourceTree = "<group>"; };
+		C2CB619A1745EC7D004B9C11 /* UIView+Frecipe.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Frecipe.m"; sourceTree = "<group>"; };
 		C2DE64E1174493960041152F /* grocery_list_background.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = grocery_list_background.jpg; sourceTree = "<group>"; };
 		C2E08EDE1735E51100C1C705 /* button_background_image.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = button_background_image.png; sourceTree = "<group>"; };
 		C2E08EEC1735E5B600C1C705 /* frecipe.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = frecipe.png; sourceTree = "<group>"; };
@@ -304,6 +310,8 @@
 			children = (
 				C2670303174170FD00BBBDD6 /* iPadLoginViewController.h */,
 				C2670304174170FD00BBBDD6 /* iPadLoginViewController.m */,
+				C2CB619617458D8A004B9C11 /* iPadInitViewController.h */,
+				C2CB619717458D8A004B9C11 /* iPadInitViewController.m */,
 				C2E489611742048300EF20E6 /* iPadNavigationController.h */,
 				C2E489621742048300EF20E6 /* iPadNavigationController.m */,
 				C2E4895E1742046A00EF20E6 /* iPadNavigationViewController.h */,
@@ -421,6 +429,8 @@
 				C2E668DE173DB5CB00D1975D /* TriangleView.m */,
 				C294412F17332BC800FDD542 /* UIViewController+Frecipe.h */,
 				C294413017332BC800FDD542 /* UIViewController+Frecipe.m */,
+				C2CB61991745EC7D004B9C11 /* UIView+Frecipe.h */,
+				C2CB619A1745EC7D004B9C11 /* UIView+Frecipe.m */,
 				C2E08EF817389DA900C1C705 /* FrecipeMainViewController.h */,
 				C2E08EF917389DA900C1C705 /* FrecipeMainViewController.m */,
 				C2A327DD172DFAAD00EBB23B /* Supporting Files */,
@@ -713,6 +723,8 @@
 				C2E489601742046A00EF20E6 /* iPadNavigationViewController.m in Sources */,
 				C2E489631742048300EF20E6 /* iPadNavigationController.m in Sources */,
 				C2E48966174204D200EF20E6 /* iPadViewController.m in Sources */,
+				C2CB619817458D8A004B9C11 /* iPadInitViewController.m in Sources */,
+				C2CB619B1745EC7D004B9C11 /* UIView+Frecipe.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

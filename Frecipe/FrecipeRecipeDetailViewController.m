@@ -411,49 +411,46 @@
 }
 
 - (void)addToGroceryList {
+    NSString *path = @"groceries";
+    [[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];
+    [[AFNetworkActivityIndicatorManager sharedManager] incrementActivityCount];
     
-    if (self.selectedIngredients.count > 0) {
-        NSString *path = @"groceries";
-        [[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];
-        [[AFNetworkActivityIndicatorManager sharedManager] incrementActivityCount];
-        
-        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-        NSString *authentication_token = [defaults objectForKey:@"authentication_token"];
-        
-        
-        NSMutableArray *ingredientsArray = [[NSMutableArray alloc] init];
-        for (NSDictionary *ingredient in self.selectedIngredients) {
-            [ingredientsArray addObject:[NSString stringWithFormat:@"%@", [ingredient objectForKey:@"name"]]];
-        }
-        NSString *groceriesString = [ingredientsArray componentsJoinedByString:@","];
-        
-        NSArray *keys = [NSArray arrayWithObjects:@"authentication_token", @"groceries", nil];
-        NSArray *values = [NSArray arrayWithObjects:authentication_token, groceriesString, nil];
-        NSDictionary *parameters = [NSDictionary dictionaryWithObjects:values forKeys:keys];
-        
-        FrecipeAPIClient *client = [FrecipeAPIClient client];
-        NSURLRequest *request = [client requestWithMethod:@"POST" path:path parameters:parameters];
-        
-        // add a spinner view
-        UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-        spinner.center = self.view.center;
-        [spinner startAnimating];
-        [self.view addSubview:spinner];
-        
-        AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
-            [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
-            
-            [self.missingIngredients removeObjectsInArray:self.selectedIngredients];
-            [spinner stopAnimating];
-            [spinner removeFromSuperview];
-        } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
-            NSLog(@"%@", error);
-            [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
-            [spinner stopAnimating];
-            [spinner removeFromSuperview];
-        }];
-        [operation start];
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSString *authentication_token = [defaults objectForKey:@"authentication_token"];
+    
+    
+    NSMutableArray *ingredientsArray = [[NSMutableArray alloc] init];
+    for (NSDictionary *ingredient in self.missingIngredients) {
+        [ingredientsArray addObject:[NSString stringWithFormat:@"%@", [ingredient objectForKey:@"name"]]];
     }
+    NSString *groceriesString = [ingredientsArray componentsJoinedByString:@","];
+    
+    NSArray *keys = [NSArray arrayWithObjects:@"authentication_token", @"recipe_id", @"groceries", nil];
+    NSArray *values = [NSArray arrayWithObjects:authentication_token, self.recipeId, groceriesString, nil];
+    NSDictionary *parameters = [NSDictionary dictionaryWithObjects:values forKeys:keys];
+    
+    FrecipeAPIClient *client = [FrecipeAPIClient client];
+    NSURLRequest *request = [client requestWithMethod:@"POST" path:path parameters:parameters];
+    
+    // add a spinner view
+    UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+    spinner.center = self.view.center;
+    [spinner startAnimating];
+    [self.view addSubview:spinner];
+    
+    AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
+        [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
+        
+        [self.missingIngredients removeObjectsInArray:self.selectedIngredients];
+        [spinner stopAnimating];
+        [spinner removeFromSuperview];
+    } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
+        NSLog(@"%@", error);
+        [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
+        [spinner stopAnimating];
+        [spinner removeFromSuperview];
+    }];
+    [operation start];
     
 }
 
@@ -758,23 +755,23 @@
     
     if ([tableView isEqual:self.ingredientsTableView]) {
         if (indexPath.row == self.ingredients.count - 1) {
-            if (userIsInTheMiddleOfEditingIngredientsList == NO) {
-                [self setEditing:YES animated:YES];
-            } else {
-                
-                [self addToGroceryList];
-                [self.selectedIngredients removeAllObjects];
-                [self setEditing:NO animated:YES];
-            }
-            
+//            if (userIsInTheMiddleOfEditingIngredientsList == NO) {
+//                [self setEditing:YES animated:YES];
+//            } else {
+//                
+//                [self addToGroceryList];
+//                [self.selectedIngredients removeAllObjects];
+//                [self setEditing:NO animated:YES];
+//            }
+            [self addToGroceryList];            
         } else {
-            if (userIsInTheMiddleOfEditingIngredientsList == YES) {
-                if ([self.missingIngredients containsObject:[self.ingredients objectAtIndex:indexPath.row]]) {
-                    if (![self.selectedIngredients containsObject:[self.ingredients objectAtIndex:indexPath.row]]) {
-                        [self.selectedIngredients addObject:[self.ingredients objectAtIndex:indexPath.row]];
-                    }
-                }
-            }
+//            if (userIsInTheMiddleOfEditingIngredientsList == YES) {
+//                if ([self.missingIngredients containsObject:[self.ingredients objectAtIndex:indexPath.row]]) {
+//                    if (![self.selectedIngredients containsObject:[self.ingredients objectAtIndex:indexPath.row]]) {
+//                        [self.selectedIngredients addObject:[self.ingredients objectAtIndex:indexPath.row]];
+//                    }
+//                }
+//            }
         }
 
     } else if ([tableView isEqual:self.editDeleteViewController.tableView]) {
@@ -788,9 +785,9 @@
 }
 
 - (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (userIsInTheMiddleOfEditingIngredientsList == YES && [self.selectedIngredients containsObject:[self.ingredients objectAtIndex:indexPath.row]]) {
-        [self.selectedIngredients removeObject:[self.ingredients objectAtIndex:indexPath.row]];
-    }
+//    if (userIsInTheMiddleOfEditingIngredientsList == YES && [self.selectedIngredients containsObject:[self.ingredients objectAtIndex:indexPath.row]]) {
+//        [self.selectedIngredients removeObject:[self.ingredients objectAtIndex:indexPath.row]];
+//    }
 }
 
 // keybaord notification
