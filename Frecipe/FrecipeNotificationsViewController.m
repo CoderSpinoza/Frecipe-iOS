@@ -35,6 +35,7 @@
     [super viewDidLoad];
     
     self.title = @"Notifications";
+//    NSLog(@"load");
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
  
@@ -118,6 +119,11 @@
         UIView *backgroundView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 1, 1)];
         backgroundView.opaque = YES;
         backgroundView.backgroundColor = [UIColor colorWithRed:0.9 green:0.9 blue:0.95 alpha:0.7];
+        cell.backgroundView = backgroundView;
+    } else {
+        UIView *backgroundView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 1, 1)];
+        backgroundView.opaque = YES;
+        backgroundView.backgroundColor = [UIColor clearColor];
         cell.backgroundView = backgroundView;
     }
     NSString *provider = [NSString stringWithFormat:@"%@", [source objectForKey:@"provider"]];

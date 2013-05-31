@@ -10,11 +10,15 @@
 #import "FrecipeNavigationController.h"
 #import "FrecipeBadgeView.h"
 #import "FrecipeAPIClient.h"
+#import "FrecipeAppDelegate.h"
+#import <SDWebImage/UIButton+WebCache.h>
 
-@interface FrecipeFridgeViewController () <UIActionSheetDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITableViewDataSource, UITableViewDelegate> {
+@interface FrecipeFridgeViewController () <UIActionSheetDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITableViewDataSource, UITableViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout> {
     BOOL userIsInTheMiddleOfEditingIngredientsList;
 }
 
+@property (strong, nonatomic) UIRefreshControl *tableViewRefreshControl;
+@property (strong, nonatomic) UIRefreshControl *collectionViewRefreshControl;
 @property (strong, nonatomic) NSMutableArray *ingredients;
 @property (strong, nonatomic) NSMutableArray *selectedIngredients;
 
@@ -48,7 +52,13 @@
     self.navigationItem.rightBarButtonItem = self.editButtonItem;
     self.ingredientsTableView.delegate = self;
     self.ingredientsTableView.dataSource = self;
+    
+    self.ingredientsCollectionView.delegate = self;
+    self.ingredientsCollectionView.dataSource = self;
+    self.ingredientsCollectionView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"fridge_background.png"]];
+    self.ingredientsCollectionView.allowsMultipleSelection = YES;
     self.notificationBadge = [self addNotificationBadge];
+    [self addRefreshControl];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -65,6 +75,28 @@
 - (IBAction)revealMenu:(UIBarButtonItem *)sender {
     FrecipeNavigationController *navigationController = (FrecipeNavigationController *)self.navigationController;
     [navigationController revealMenu];
+}
+
+- (void)addRefreshControl {
+    UIRefreshControl *tableViewRefreshControl = [[UIRefreshControl alloc] init];
+    [tableViewRefreshControl addTarget:self action:@selector(fetchIngredients) forControlEvents:UIControlEventValueChanged];
+    tableViewRefreshControl.tintColor = [UIColor grayColor];
+    
+    UIRefreshControl *collectionViewRefreshControl = [[UIRefreshControl alloc] init];
+    [collectionViewRefreshControl addTarget:self action:@selector(fetchIngredients) forControlEvents:UIControlEventValueChanged];
+    collectionViewRefreshControl.tintColor = [UIColor grayColor];
+    
+    [self.ingredientsTableView addSubview:tableViewRefreshControl];
+    [self.ingredientsCollectionView addSubview:collectionViewRefreshControl];
+    self.ingredientsTableView.alwaysBounceVertical = YES;
+    self.ingredientsCollectionView.alwaysBounceVertical = YES;
+    self.tableViewRefreshControl = tableViewRefreshControl;
+    self.collectionViewRefreshControl = collectionViewRefreshControl;
+    
+    UIView *backgroundView = [[UIView alloc] initWithFrame:CGRectMake(self.ingredientsCollectionView.bounds.origin.x, - self.ingredientsCollectionView.frame.size.height, self.ingredientsCollectionView.bounds.size.width, self.ingredientsCollectionView.bounds.size.height)];
+    backgroundView.backgroundColor = [UIColor whiteColor];
+//    backgroundView.alpha = 0.5;
+    [self.ingredientsCollectionView insertSubview:backgroundView atIndex:0];
 }
 
 - (void)fetchIngredients {
@@ -85,12 +117,19 @@
         }
         
         [self.ingredientsTableView reloadData];
+        [self.ingredientsCollectionView reloadData];
+        
+        [self.tableViewRefreshControl endRefreshing];
+        [self.collectionViewRefreshControl endRefreshing];
         [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         
         UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:@"There was an error loading your fridge info. Retry?" delegate:self cancelButtonTitle:@"Retry" otherButtonTitles:@"Cancel", nil];
         [alertView show];
         NSLog(@"%@", error);
+        
+        [self.tableViewRefreshControl endRefreshing];
+        [self.collectionViewRefreshControl endRefreshing];
         
         [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
     }];
@@ -120,10 +159,21 @@
         }
         [self.selectedIngredients removeAllObjects];
         [self.ingredientsTableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationAutomatic];
+        [self.ingredientsCollectionView reloadSections:[NSIndexSet indexSetWithIndex:0]];
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         NSLog(@"%@", error);
     }];
     [operation start];
+}
+
+- (IBAction)segmentedControlPressed:(UISegmentedControl *)sender {
+    if (sender.selectedSegmentIndex == 0) {
+        self.ingredientsCollectionView.hidden = NO;
+        self.ingredientsTableView.hidden = YES;
+    } else {
+        self.ingredientsCollectionView.hidden = YES;
+        self.ingredientsTableView.hidden = NO;
+    }
 }
 
 - (void)openAddIngredientsModal {
@@ -178,19 +228,35 @@
         NSDictionary *addRow = [NSDictionary dictionaryWithObjects:values forKeys:keys];
         [self.ingredients insertObject:addRow atIndex:0];
         [self.ingredientsTableView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:0 inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
+        [self.ingredientsCollectionView insertItemsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:0 inSection:0]]];
+        
         self.navigationController.toolbarHidden = NO;
         [self.ingredientsTableView setEditing:YES animated:YES];
         
     } else {
+        for (int i = 0; i < self.ingredients.count; i++) {
+            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:i inSection:0];
+            
+            [self.ingredientsCollectionView reloadItemsAtIndexPaths:[NSArray arrayWithObject:indexPath]];
+            UICollectionViewCell *cell = [self.ingredientsCollectionView cellForItemAtIndexPath:indexPath];
+            UIView *coverView = [cell viewWithTag:4];
+            coverView.hidden = YES;
+        }
+
         [self.ingredients removeObjectAtIndex:0];
         [self.ingredientsTableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:0 inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
+        [self.ingredientsCollectionView deleteItemsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:0 inSection:0]]];
         
         self.navigationController.toolbarHidden = YES;
+        
         [self.selectedIngredients removeAllObjects];
         [self.ingredientsTableView setEditing:NO animated:YES];
-    }
+
+            }
     [super setEditing:editing animated:animated];
 }
+
+// table view delegate and dataSource methods
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 1;
@@ -225,5 +291,77 @@
             [self.selectedIngredients removeObject:[self.ingredients objectAtIndex:indexPath.row]];
         }
     }
+}
+
+// collection view delegate and dataSource methods
+
+- (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
+    return 1;
+}
+
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
+    return self.ingredients.count;
+}
+
+- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
+    UICollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"FridgeCell" forIndexPath:indexPath];
+    
+    NSDictionary *ingredient = [self.ingredients objectAtIndex:indexPath.row];
+    
+    NSString *url;
+    if (PRODUCTION || [[NSString stringWithFormat:@"%@", [ingredient objectForKey:@"image"]] isEqualToString:@"https://s3.amazonaws.com/Frecipe/public/image/ingredients/default_ingredient_image.png"]) {
+        url = [NSString stringWithFormat:@"%@", [ingredient objectForKey:@"image"]];
+    } else {
+        url = [NSString stringWithFormat:@"http://localhost:5000/%@", [ingredient objectForKey:@"image"]];
+    }
+    UIButton *imageButton = (UIButton *)[cell viewWithTag:1];
+    [imageButton setBackgroundImageWithURL:[NSURL URLWithString:url] forState:UIControlStateNormal];
+    
+    UILabel *nameLabel = (UILabel *)[cell viewWithTag:2];
+    nameLabel.text = [NSString stringWithFormat:@"%@", [ingredient objectForKey:@"name"]];
+    
+    [cell setShadowWithColor:[UIColor blackColor] Radius:1.0f Offset:CGSizeMake(1.0f, 1.0f) Opacity:0.4f];
+    
+    UIView *coverView = [cell viewWithTag:4];
+    if ([self.selectedIngredients containsObject:ingredient]) {
+//        cell.selected = YES;
+        coverView.hidden = NO;
+    } else {
+//        cell.selected = NO;
+        coverView.hidden = YES;
+    }
+    return cell;
+}
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+    UICollectionViewCell *cell = [self.ingredientsCollectionView cellForItemAtIndexPath:indexPath];
+    if (userIsInTheMiddleOfEditingIngredientsList) {
+        if (indexPath.row == 0) {
+            [self openAddIngredientsActionSheet];
+            cell.selected = NO;
+        } else {
+            NSLog(@"selected");
+            [self.selectedIngredients addObject:[self.ingredients objectAtIndex:indexPath.row]];
+            UIView *coverView = [cell viewWithTag:4];
+            coverView.hidden = NO;
+        }
+    } else {
+        cell.selected = NO;
+    }
+    
+}
+
+- (void)collectionView:(UICollectionView *)collectionView didDeselectItemAtIndexPath:(NSIndexPath *)indexPath {
+    
+    if (userIsInTheMiddleOfEditingIngredientsList) {
+        NSLog(@"deselected");
+        UICollectionViewCell *cell = [self.ingredientsCollectionView cellForItemAtIndexPath:indexPath];
+        if (indexPath.row != 0) {
+            [self.selectedIngredients removeObject:[self.ingredients objectAtIndex:indexPath.row]];
+            UIView *coverView = [cell viewWithTag:4];
+            coverView.hidden = YES;
+        } else {
+            cell.selected = NO;
+        }
+    } 
 }
 @end

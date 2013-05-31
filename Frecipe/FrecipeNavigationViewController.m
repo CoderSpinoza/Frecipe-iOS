@@ -16,6 +16,7 @@
 #import "FrecipeGroceryListViewController.h"
 #import "FrecipeSettingsViewController.h"
 #import "FrecipeNotificationsViewController.h"
+#import "FrecipeAppDelegate.h"
 #import <SDWebImage/UIImageView+WebCache.h>
 
 @interface FrecipeNavigationViewController () <UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UITableViewDataSource, UITableViewDelegate, FPPopoverControllerDelegate, UISearchBarDelegate, UISearchDisplayDelegate>
@@ -68,7 +69,16 @@
     // button and shadow setup
     [self.nameButton setBackgroundImage:[UIImage imageNamed:@"button_background_image.png"] forState:UIControlStateHighlighted];
     [self fetchUserInfo];
-    [self setupNotifications];    
+    [self setupNotifications];
+    if (!FBSession.activeSession.isOpen) {
+        [FBSession openActiveSessionWithReadPermissions:[NSArray arrayWithObjects:@"email", nil]allowLoginUI:NO completionHandler:^(FBSession *session, FBSessionState status, NSError *error) {
+            if (!error) {
+                NSLog(@"%@ %u", session, status);
+            } else {
+                NSLog(@"%@", error);
+            }
+        }];
+    }
 }
 
 // fetch notifications every time this view appears
@@ -102,15 +112,23 @@
         [defaults setObject:nil forKey:@"authentication_token"];
         [defaults setObject:nil forKey:@"provider"];
         [defaults setObject: nil forKey:@"uid"];
+        [defaults setObject:nil forKey:@"name"];
         [defaults setObject:nil forKey:@"id"];
         [defaults synchronize];
         
         [FBSession.activeSession closeAndClearTokenInformation];
-        [self.slidingViewController anchorTopViewOffScreenTo:ECRight animations:nil onComplete:^{
-            self.slidingViewController.topViewController = newTopViewController;
-            [self.slidingViewController resetTopView];
-            
+
+       [self.slidingViewController anchorTopViewOffScreenTo:ECRight animations:nil onComplete:^{
+           NSLog(@"here");
+           FrecipeAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+           NSLog(@"%@", appDelegate.window.rootViewController);
+//            [self dismissViewControllerAnimated:YES completion:^{
+//                
+////                FrecipeAppDelegate *appDelegate
+//            }];
+           [self performSegueWithIdentifier:@"Login" sender:self];
         }];
+        
     } else {
         UIViewController *newTopViewController = [self.storyboard instantiateViewControllerWithIdentifier:identifier];
         [self.slidingViewController anchorTopViewOffScreenTo:ECRight animations:nil onComplete:^{
@@ -140,18 +158,15 @@
 
 - (void)setupNotifications {
     self.notificationsViewController.tableView.delegate = self;
+    self.notificationsViewController.delegate = self;
     self.notificationsPopoverViewController = [[FPPopoverController alloc] initWithViewController:self.notificationsViewController];
-    
     self.notificationsPopoverViewController.delegate = self;
     self.notificationsPopoverViewController.arrowDirection = FPPopoverArrowDirectionAny;
+    self.notificationsPopoverViewController.contentSize = CGSizeMake(280, self.view.frame.size.height * 0.9);
 }
 
 - (IBAction)setupNotifications:(UIButton *)sender {
-    self.notificationsViewController.delegate = self;
-    self.notificationsPopoverViewController = [[FPPopoverController alloc] initWithViewController:self.notificationsViewController];
     
-    self.notificationsPopoverViewController.arrowDirection = FPPopoverArrowDirectionAny;
-    self.notificationsPopoverViewController.contentSize = CGSizeMake(280, self.view.frame.size.height * 0.9);
     [self.notificationsPopoverViewController presentPopoverFromView:self.notificationsBadgeView];
     [self checkNotifications];
 }
@@ -219,9 +234,13 @@
     
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
         FrecipeNavigationController *navigationController = (FrecipeNavigationController *)self.slidingViewController.topViewController;
-        FrecipeMainViewController *viewController = [navigationController.childViewControllers objectAtIndex:0];
+        NSLog(@"%@", navigationController.childViewControllers);
+        
         self.notificationsBadgeView.text = @"0";
-        viewController.notificationBadge.text = @"0";
+        if (navigationController.childViewControllers.count > 0) {
+            FrecipeMainViewController *viewController = [navigationController.childViewControllers objectAtIndex:0];
+            viewController.notificationBadge.text = @"0";
+        }
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         NSLog(@"%@", error);
     }];
@@ -252,11 +271,6 @@
         NSLog(@"%@", error);
     }];
     [operation start];
-}
-
-// pop over delegate methods
-- (void)presentedNewPopoverController:(FPPopoverController *)newPopoverController shouldDismissVisiblePopover:(FPPopoverController *)visiblePopoverController {
-    [self checkNotifications];
 }
 
 // search bar and display delegate methods

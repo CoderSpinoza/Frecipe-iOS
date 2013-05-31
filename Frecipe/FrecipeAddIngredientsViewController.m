@@ -70,6 +70,7 @@
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSString *authentication_token = [defaults objectForKey:@"authentication_token"];
     
+    [self.ingredients addObject:[self.ingredientField.text capitalizedString]];
     NSString *ingredientsString = [self.ingredients componentsJoinedByString:@","];
     
     NSArray *keys = [NSArray arrayWithObjects:@"id", @"ingredients", nil];

@@ -30,4 +30,8 @@
 @property (weak, nonatomic) IBOutlet UIButton *commentSubmitButton;
 @property (weak, nonatomic) IBOutlet UIButton *likeButton;
 
+@property (weak, nonatomic) IBOutlet UIView *recipeMainView;
+@property (weak, nonatomic) IBOutlet UIView *ingredientsView;
+@property (weak, nonatomic) IBOutlet UIView *directionsView;
+
 @end

@@ -13,5 +13,8 @@
 - (BOOL)isTall;
 - (BOOL)isIpad;
 - (BOOL)isIphone;
-
+- (void)registerForKeyboardNotifications;
+- (void)saveUserInfo:(NSDictionary *)user Token:(NSString *)token ProfilePicture:(NSString *)profilePictureUrl;
+- (NSDictionary *)loaduserInfo;
+- (NSURL *)documentDirectory;
 @end

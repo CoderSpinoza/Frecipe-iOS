@@ -11,4 +11,5 @@
 @interface FrecipeFridgeViewController : FrecipeMainViewController
 
 @property (weak, nonatomic) IBOutlet UITableView *ingredientsTableView;
+@property (weak, nonatomic) IBOutlet UICollectionView *ingredientsCollectionView;
 @end

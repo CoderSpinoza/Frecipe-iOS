@@ -11,5 +11,6 @@
 @interface UIView (Frecipe)
 
 - (void)setBackgroundImage:(UIImage *)image;
-
+- (void)setShadowWithColor:(UIColor *)color Radius:(CGFloat)radius Offset:(CGSize)offset Opacity:(CGFloat)opacity;
+- (void)setBasicShadow;
 @end

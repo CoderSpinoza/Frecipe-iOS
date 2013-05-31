@@ -7,6 +7,7 @@
 //
 
 #import "iPadViewController.h"
+#import "iPadNavigationController.h"
 
 @interface iPadViewController ()
 
@@ -26,7 +27,6 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    NSLog(@"load");
 	// Do any additional setup after loading the view.
 }
 
@@ -36,4 +36,9 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (IBAction)revealMenu:(UIBarButtonItem *)sender {
+    iPadNavigationController *navigationController = self.navigationController;
+    
+    [navigationController revealMenu];
+}
 @end

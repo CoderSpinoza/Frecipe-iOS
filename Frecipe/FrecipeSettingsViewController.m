@@ -10,7 +10,9 @@
 #import "FrecipeNavigationController.h"
 #import "FrecipeBadgeView.h"
 
-@interface FrecipeSettingsViewController ()
+@interface FrecipeSettingsViewController () <UITableViewDataSource, UITableViewDelegate>
+
+@property (strong, nonatomic) NSArray *settings;
 
 @end
 
@@ -29,7 +31,12 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
+    
+    self.settingsTableView.dataSource = self;
+    self.settingsTableView.delegate = self;
     self.notificationBadge = [self addNotificationBadge];
+    
+    self.settings = [NSArray arrayWithObjects:@"Change Password", nil];
     
 }
 
@@ -42,5 +49,34 @@
 - (IBAction)revealMenu:(UIBarButtonItem *)sender {
     FrecipeNavigationController *navigationController = (FrecipeNavigationController *)self.navigationController;
     [navigationController revealMenu];
+}
+
+// table view delegate and dataSource methods
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    return 1;
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return self.settings.count;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"SettingCell" forIndexPath:indexPath];
+    if (!cell) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"SettingCell"];
+    }
+    cell.textLabel.text = [NSString stringWithFormat:@"%@", [self.settings objectAtIndex:indexPath.row]];
+    return cell;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+    if (indexPath.section == 0 && indexPath.row
+         == 0) {
+        [self performSegueWithIdentifier:@"ChangePassword" sender:self];
+        
+    }
+    cell.selected = NO;
 }
 @end

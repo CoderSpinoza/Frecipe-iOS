@@ -110,20 +110,32 @@
     
     if (FBSession.activeSession) {
         if (!FBSession.activeSession.isOpen) {
-            [FBSession openActiveSessionWithAllowLoginUI:NO];
+            [FBSession openActiveSessionWithReadPermissions:[NSArray arrayWithObject:@"email"] allowLoginUI:NO completionHandler:^(FBSession *session, FBSessionState status, NSError *error) {
+                FBRequest *request = [FBRequest requestForMyFriends];
+                [request startWithCompletionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
+                    self.facebookFriends = [NSMutableArray arrayWithArray:[result objectForKey:@"data"]];
+                    NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES];
+                    NSLog(@"%u", self.facebookFriends.count);
+                    NSArray *sortDescriptors = [NSArray arrayWithObjects:sortDescriptor, nil];
+                    self.facebookFriends = [[self.facebookFriends sortedArrayUsingDescriptors:sortDescriptors] mutableCopy];
+                    if (self.uids) {
+                        [self.facebookFriendsTableView reloadData];
+                    }
+                }];
+            }];
+        } else {
+            FBRequest *request = [FBRequest requestForMyFriends];
+            [request startWithCompletionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
+                self.facebookFriends = [NSMutableArray arrayWithArray:[result objectForKey:@"data"]];
+                NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES];
+                NSArray *sortDescriptors = [NSArray arrayWithObjects:sortDescriptor, nil];
+                self.facebookFriends = [[self.facebookFriends sortedArrayUsingDescriptors:sortDescriptors] mutableCopy];
+                if (self.uids) {
+                    [self.facebookFriendsTableView reloadData];
+                }
+            }];
+
         }
-        
-        FBRequest *request = [FBRequest requestForMyFriends];
-        [request startWithCompletionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
-            self.facebookFriends = [NSMutableArray arrayWithArray:[result objectForKey:@"data"]];
-            NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES];
-            
-            NSArray *sortDescriptors = [NSArray arrayWithObjects:sortDescriptor, nil];
-            self.facebookFriends = [[self.facebookFriends sortedArrayUsingDescriptors:sortDescriptors] mutableCopy];
-            if (self.uids) {
-                [self.facebookFriendsTableView reloadData];
-            }
-        }];
     }
     
 }

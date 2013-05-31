@@ -175,7 +175,7 @@
                     <navigationItem key="navigationItem" id="UgV-bV-9bh">
                         <barButtonItem key="leftBarButtonItem" image="menu_icon.png" id="S7t-j7-fJY">
                             <connections>
-                                <action selector="revealMenu:" destination="gmB-cI-b0r" id="7JL-ju-Pf8"/>
+                                <action selector="revealMenu:" destination="gmB-cI-b0r" id="9wS-pt-2GA"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -228,6 +228,10 @@
         </class>
         <class className="iPadViewController" superclassName="UIViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/iPadViewController.h"/>
+            <relationships>
+                <relationship kind="action" name="revealMenu:" candidateClass="UIBarButtonItem"/>
+                <relationship kind="outlet" name="revealMenu" candidateClass="UIBarButtonItem"/>
+            </relationships>
         </class>
     </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">

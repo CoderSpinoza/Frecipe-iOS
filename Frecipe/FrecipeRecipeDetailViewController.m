@@ -95,8 +95,9 @@
     self.commentField.delegate = self;
     
     self.ratingBorderView.layer.cornerRadius = 5.0f;
-    self.ratingBorderView.layer.borderColor = [[UIColor blackColor] CGColor];
-    self.ratingBorderView.layer.borderWidth = 2.0f;
+    [self.ratingBorderView setBasicShadow];
+//    self.ratingBorderView.layer.borderColor = [[UIColor lightGrayColor] CGColor];
+//    self.ratingBorderView.layer.borderWidth = 1.0f;
     
     
     self.scrollView.contentSize = CGSizeMake(self.view.frame.size.width, 900);
@@ -107,6 +108,10 @@
     self.commentsView.layer.shadowRadius = 5.0f;
     
     [self.commentButton setBackgroundImage:[UIImage imageNamed:@"button_background_image.png"] forState:UIControlStateHighlighted];
+    
+    
+    self.recipeMainView.layer.cornerRadius = 2.0f;
+    [self.recipeMainView setBasicShadow];
     
     [self addGestureRecognizers];
     [self registerForKeyboardNotification];
@@ -191,7 +196,7 @@
             [self.directionsTableView reloadData];
         }
         
-        self.missingIngredients = [JSON objectForKey:@"missing_ingredients"];
+        self.missingIngredients = [NSMutableArray arrayWithArray:[JSON objectForKey:@"missing_ingredients"]];
         
         
         
@@ -201,18 +206,29 @@
         // adjust table view heights
         self.ingredientsTableView.frame = CGRectMake(self.ingredientsTableView.frame.origin.x, self.ingredientsTableView.frame.origin.y, self.ingredientsTableView.frame.size.width, 44 * self.ingredients.count);
         
-        self.directionsLabel.frame = CGRectMake(self.directionsLabel.frame.origin.x, self.ingredientsTableView.frame.origin.y + self.ingredientsTableView.frame.size.height + 20, self.directionsLabel.frame.size.width, self.directionsLabel.frame.size.height);
+        self.ingredientsView.frame = CGRectMake(self.ingredientsView.frame.origin.x, self.ingredientsView.frame.origin.y, self.ingredientsView.frame.size.width, self.ingredientsTableView.frame.origin.y + self.ingredientsTableView.frame.size.height + 10);
         
-        self.directionsTableView.frame = CGRectMake(self.directionsTableView.frame.origin.x, self.directionsLabel.frame.origin.y + self.directionsLabel.frame.size.height + 20, self.directionsTableView.frame.size.width, self.directions.count * 44);
+        self.directionsLabel.frame = CGRectMake(self.directionsLabel.frame.origin.x, 5, self.directionsLabel.frame.size.width, self.directionsLabel.frame.size.height);
         
+        self.directionsTableView.frame = CGRectMake(self.directionsTableView.frame.origin.x, self.directionsLabel.frame.size.height + 10, self.directionsTableView.frame.size.width, self.directions.count * 44);
+        
+        if (self.directions.count > 0) {
+            self.directionsView.frame = CGRectMake(self.directionsView.frame.origin.x, self.ingredientsView.frame.origin.y + self.ingredientsView.frame.size.height + 20, self.directionsView.frame.size.width, self.directionsLabel.frame.size.height + self.directionsTableView.frame.size.height + 10);
+        } else {
+            self.directionsView.frame = CGRectMake(self.directionsView.frame.origin.x, self.ingredientsView.frame.origin.y + self.ingredientsView.frame.size.height + 10, self.directionsView.frame.size.width, 50);
+        }
+        
+        
+        [self.ingredientsView setBasicShadow];
+        [self.directionsView setBasicShadow];
         // comments
         
         self.comments = [NSMutableArray arrayWithArray:[JSON objectForKey:@"comments"]];
         [self.commentsTableView reloadData];
-        self.scrollView.contentSize = CGSizeMake(self.view.frame.size.width, self.directionsTableView.frame.origin.y + self.directionsTableView.frame.size.height + 20);
+        self.scrollView.contentSize = CGSizeMake(self.view.frame.size.width, self.directionsView.frame.origin.y + self.directionsView.frame.size.height + 10);
         
         if ([self isTall] == NO) {
-            self.scrollView.contentSize = CGSizeMake(self.view.frame.size.width, self.scrollView.contentSize.height + 80);
+            self.scrollView.contentSize = CGSizeMake(self.view.frame.size.width, self.scrollView.contentSize.height + 90);
         }
         [spinner removeFromSuperview];
         [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
@@ -258,12 +274,12 @@
     if (FBSession.activeSession.isOpen) {
         [FBSession.activeSession requestNewPublishPermissions:[NSArray arrayWithObject:@"publish_actions"] defaultAudience:FBSessionDefaultAudienceOnlyMe completionHandler:^(FBSession *session, NSError *error) {
             
-            [FBRequestConnection startForPostOpenGraphObjectWithType:@"website" title:[NSString stringWithFormat:@"%@ has uploaded a new recipe!", [[NSUserDefaults standardUserDefaults] stringForKey:@"name"]]image:self.recipeImageURL url:@"https://itunes.apple.com/us/app/itunes-u/id490217893" description:@"Go to this link to download Frecipe!" objectProperties:nil completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
+            [FBRequestConnection startForPostOpenGraphObjectWithType:@"website" title:[NSString stringWithFormat:@"%@ has shared a recipe!", [[NSUserDefaults standardUserDefaults] stringForKey:@"name"]]image:self.recipeImageURL url:@"https://itunes.apple.com/us/app/itunes-u/id490217893" description:@"Go to this link to download Frecipe!" objectProperties:nil completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
                 UIAlertView *alertView;
                 if (!error) {
-                    alertView = [[UIAlertView alloc] initWithTitle:@"Facebook Share" message:@"Successfully shared your recipe!" delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: nil];
+                    alertView = [[UIAlertView alloc] initWithTitle:@"Facebook Share" message:@"Successfully shared a recipe!" delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: nil];
                 } else {
-                    alertView = [[UIAlertView alloc] initWithTitle:@"Facebook share error" message:@"There was an error sharing your recipe on facebook" delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: nil];
+                    alertView = [[UIAlertView alloc] initWithTitle:@"Facebook share error" message:@"There was an error sharing a recipe on facebook" delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: nil];
                 }
                 [alertView show];
             }];        
@@ -440,10 +456,13 @@
     
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
         [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
-        
+        NSLog(@"%@", self.missingIngredients);
         [self.missingIngredients removeObjectsInArray:self.selectedIngredients];
         [spinner stopAnimating];
         [spinner removeFromSuperview];
+        
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Success" message:@"Successfully added to Grocery List!" delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: nil];
+        [alertView show];
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         NSLog(@"%@", error);
         [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
@@ -500,6 +519,8 @@
         for (NSDictionary *ingredient in self.ingredients) {
             [destinationController.ingredients addObject:[ingredient objectForKey:@"name"]];
         }
+        
+        [destinationController.ingredients removeObjectAtIndex:destinationController.ingredients.count - 1];
         
         for (NSDictionary *step in self.directions) {
             [destinationController.directions addObject:step];
@@ -583,6 +604,7 @@
 
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    CGSize size;
     if ([tableView isEqual:self.commentsTableView]) {
         NSDictionary *comment = [[self.comments objectAtIndex:indexPath.row] objectForKey:@"comment"];
         
@@ -592,6 +614,15 @@
         CGSize textSize = [text sizeWithFont:[UIFont systemFontOfSize:14] constrainedToSize:constraintSize lineBreakMode:NSLineBreakByWordWrapping];
         
         return 50 + textSize.height;
+    } else if ([tableView isEqual:self.directionsTableView]){
+        size = [[NSString stringWithFormat:@"%u. %@", indexPath.row + 1, [self.directions objectAtIndex:indexPath.row]] sizeWithFont:[UIFont systemFontOfSize:18.0f] constrainedToSize:CGSizeMake(220.0f, MAXFLOAT) lineBreakMode:NSLineBreakByWordWrapping];
+        NSInteger lines = round(size.height / 18);
+        if (lines < 2) {
+            return 44;
+        } else {
+            return size.height + 16;
+        }
+
     } else {
         return 44;
     }
@@ -608,8 +639,9 @@
     } else {
         return  NO;
     }
-    
 }
+
+
 
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated {
     userIsInTheMiddleOfEditingIngredientsList = editing;
@@ -626,6 +658,7 @@
     }
     [super setEditing:editing animated:animated];
 }
+
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     // Return the number of sections.
@@ -680,6 +713,13 @@
             cell.textLabel.text = [NSString stringWithFormat:@"%@", [ingredient objectForKey:@"name"]];
         }
         
+        // enable cell selection for only the last row
+        if (indexPath.row == self.ingredients.count - 1) {
+            cell.userInteractionEnabled = YES;  
+        } else {
+            cell.userInteractionEnabled = NO;
+        }
+        
         return cell;
     } else if([tableView isEqual:self.directionsTableView]) {
         static NSString *CellIdentifier = @"DirectionCell";
@@ -692,6 +732,7 @@
         }
         
         cell.textLabel.text = [NSString stringWithFormat:@"%u. %@", indexPath.row + 1, [self.directions objectAtIndex:indexPath.row]];
+        cell.textLabel.font = [UIFont systemFontOfSize:15];
         return cell;
     } else if ([tableView isEqual:self.commentsTableView]) {
         static NSString *CellIdentifier = @"CommentCell";
@@ -720,7 +761,7 @@
         UITextView *textView = (UITextView *)[cell viewWithTag:4];
         textView.text = [NSString stringWithFormat:@"%@", [comment objectForKey:@"text"]];
         
-        CGSize constraintSize = CGSizeMake(220, MAXFLOAT);
+        CGSize constraintSize = CGSizeMake(280, MAXFLOAT);
         
         CGSize textSize = [textView.text sizeWithFont:[UIFont systemFontOfSize:14] constrainedToSize:constraintSize lineBreakMode:NSLineBreakByWordWrapping];
         textView.frame = CGRectMake(textView.frame.origin.x, textView.frame.origin.y, textView.frame.size.width, textSize.height + 20);
@@ -763,6 +804,8 @@
 //                [self.selectedIngredients removeAllObjects];
 //                [self setEditing:NO animated:YES];
 //            }
+            UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+            cell.selected = NO;
             [self addToGroceryList];            
         } else {
 //            if (userIsInTheMiddleOfEditingIngredientsList == YES) {

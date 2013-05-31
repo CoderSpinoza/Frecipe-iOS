@@ -19,6 +19,7 @@
 @property (weak, nonatomic) IBOutlet UIButton *followButton;
 
 @property (weak, nonatomic) IBOutlet UILabel *nameLabel;
+@property (weak, nonatomic) IBOutlet UIView *basicInfoView;
 @property (weak, nonatomic) IBOutlet UIView *detailInfoView;
 @property (weak, nonatomic) IBOutlet UILabel *numOfRecipesTitleLabel;
 @property (weak, nonatomic) IBOutlet UIButton *numOfRecipesButton;
@@ -38,6 +39,12 @@
 
 @property (weak, nonatomic) IBOutlet UICollectionView *recipesCollectionView;
 @property (weak, nonatomic) IBOutlet FrecipeRatingView *averageRatingView;
+
+@property (weak, nonatomic) IBOutlet UIView *websiteAndAboutView;
+@property (weak, nonatomic) IBOutlet UITextView *websiteTextView;
+@property (weak, nonatomic) IBOutlet UITextView *aboutTextView;
+@property (weak, nonatomic) IBOutlet UIView *separatorView;
+@property (weak, nonatomic) IBOutlet UILabel *websiteLabel;
 
 @property (nonatomic, assign) BOOL fromSegue;
 

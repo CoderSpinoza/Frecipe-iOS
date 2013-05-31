@@ -36,8 +36,9 @@
     self.lastNameField.delegate = self;
     self.passwordField.delegate = self;
     self.confirmationField.delegate = self;
-    
+    self.scrollView.contentSize = self.scrollView.frame.size;
     [self addGestureRecognizer];
+    [self registerForKeyboardNotifications];
     
 }
 
@@ -49,6 +50,9 @@
 
 - (IBAction)cancelButtonPressed:(UIBarButtonItem *)sender {
     [self dismissViewControllerAnimated:YES completion:nil];
+//    [self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
+    
+    
 }
 
 - (IBAction)useYourFacebookInfoButtonPressed {
@@ -130,6 +134,13 @@
 
             [defaults setObject:profilePictureUrl forKey:@"profile_picture"];
             [defaults synchronize];
+            
+            [self saveUserInfo:[JSON objectAtIndex:1] Token:nil ProfilePicture:nil];
+            FrecipeAppDelegate *delegate = [[UIApplication sharedApplication] delegate];
+            [UIView transitionWithView:delegate.window duration:0.7 options:UIViewAnimationOptionTransitionFlipFromLeft animations:^{
+                delegate.window.rootViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"Initial"];
+            } completion:nil];
+            
         } else {
             UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Signup Error" message:@"There was an error processing your signup request" delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: nil];
             [alertView show];
@@ -137,14 +148,10 @@
         
         [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
         
-        NSLog(@"%@", JSON);
-        FrecipeAppDelegate *delegate = [[UIApplication sharedApplication] delegate];
-        [UIView transitionWithView:delegate.window duration:0.7 options:UIViewAnimationOptionTransitionFlipFromLeft animations:^{
-            delegate.window.rootViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"Initial"];
-        } completion:nil];
-        
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         NSLog(@"%@", error);
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Signup Error" message:@"There was an error processing your signup request." delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: nil];
+        [alertView show];
         [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
     }];
     [operation start];
@@ -168,6 +175,18 @@
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
     [textField resignFirstResponder];
     return YES;
+}
+
+// keyboard notification registration
+- (void)keyboardWillBeShown:(NSNotification *)notification {
+    CGSize keyboardSize = [[[notification userInfo] objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
+    self.scrollView.frame = CGRectMake(self.scrollView.frame.origin.x, self.scrollView.frame.origin.y, self.scrollView.frame.size.width, self.scrollView.frame.size.height - keyboardSize.height);
+    [self.scrollView scrollRectToVisible:CGRectMake(self.currentField.frame.origin.x, self.currentField.frame.origin.y, self.currentField.frame.size.width, self.currentField.frame.size.height + 20) animated:YES];
+}
+
+- (void)keyboardWillBeHidden:(NSNotification *)notification {
+    CGSize keyboardSize = [[[notification userInfo] objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
+    self.scrollView.frame = CGRectMake(self.scrollView.frame.origin.x, self.scrollView.frame.origin.y, self.scrollView.frame.size.width, self.scrollView.frame.size.height + keyboardSize.height);
 }
 
 

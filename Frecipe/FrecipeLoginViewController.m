@@ -42,6 +42,9 @@
     [self addGestureRecognizers];
 }
 
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+}
 
 - (void)viewDidDisappear:(BOOL)animated {
     [super viewDidDisappear:animated];
@@ -93,6 +96,7 @@
         [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
         
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
+        NSLog(@"%@", error);
         UIAlertView *errorView = [[UIAlertView alloc] initWithTitle:@"LoginError" message:[JSON objectForKey:@"message"] delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: nil];
         [errorView show];
         [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
@@ -114,7 +118,8 @@
                 if (!error) {
                     [self checkIfFacebookUserIsRegisteredWithId:user.id Email:[user objectForKey:@"email"] FirstName:user.first_name LastName:user.last_name];
                 } else {
-                    NSLog(@"error TT");
+                    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Facebook Login Error" message:@"There was an error signing in with your facebook account." delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: nil];
+                    [alertView show];
                 }
                 
             }];
@@ -140,8 +145,10 @@
     
     UIView *spinnerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
     spinner.center = spinnerView.center;
-    spinnerView.center = self.view.center;
+    spinnerView.center = CGPointMake(self.view.frame.size.width / 2, self.view.frame.size.height / 2);
     spinnerView.backgroundColor = [UIColor blackColor];
+    spinnerView.alpha = 0.9;
+    spinnerView.layer.cornerRadius = 5.0f;
     
     [spinner startAnimating];
     [spinnerView addSubview:spinner];
@@ -151,6 +158,7 @@
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
         NSString *message = [JSON objectForKey:@"message"];
         if ([message isEqualToString:@"needs signup"]) {
+            [spinnerView removeFromSuperview];
             self.email = email;
             self.firstName = firstName;
             self.lastName = lastName;
@@ -180,6 +188,8 @@
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         NSLog(@"%@", error);
         [spinnerView removeFromSuperview];
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Login Error" message:@"There was an error processing your login request." delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: nil];
+        [alertView show];
         [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
     }];
     [operation start];

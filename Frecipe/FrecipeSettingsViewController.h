@@ -10,5 +10,5 @@
 #import "FrecipeMainViewController.h"
 
 @interface FrecipeSettingsViewController : FrecipeMainViewController
-@property (weak, nonatomic) IBOutlet UIImageView *profilePictureView;
+@property (weak, nonatomic) IBOutlet UITableView *settingsTableView;
 @end

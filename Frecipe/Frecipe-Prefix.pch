@@ -7,6 +7,9 @@
 #import <MobileCoreServices/MobileCoreServices.h>
 #import "UIViewController+Frecipe.h"
 #import "UIView+Frecipe.h"
+#import "UICollectionViewCell+Frecipe.h"
+#import "UIColor+Frecipe.h"
+
 #ifndef __IPHONE_5_0
 #warning "This project uses features only available in iOS SDK 5.0 and later."
 #endif

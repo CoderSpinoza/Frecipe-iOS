@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		BC272C53E9E9495BB99A3C98 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CC3902FF59D545519B935676 /* libPods.a */; };
+		C25651AB174D95AA005755A9 /* fridge_background.png in Resources */ = {isa = PBXBuildFile; fileRef = C25651AA174D95AA005755A9 /* fridge_background.png */; };
+		C25651AE174F6132005755A9 /* UIColor+Frecipe.m in Sources */ = {isa = PBXBuildFile; fileRef = C25651AD174F6132005755A9 /* UIColor+Frecipe.m */; };
+		C25651B11750679B005755A9 /* FrecipeEditProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C25651B01750679B005755A9 /* FrecipeEditProfileViewController.m */; };
 		C2670305174170FD00BBBDD6 /* iPadLoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C2670304174170FD00BBBDD6 /* iPadLoginViewController.m */; };
 		C294412E1733246800FDD542 /* badge.png in Resources */ = {isa = PBXBuildFile; fileRef = C294412D1733246800FDD542 /* badge.png */; };
 		C294413117332BC800FDD542 /* UIViewController+Frecipe.m in Sources */ = {isa = PBXBuildFile; fileRef = C294413017332BC800FDD542 /* UIViewController+Frecipe.m */; };
@@ -70,6 +73,14 @@
 		C2A32893172E988D00EBB23B /* FrecipeFacebookInviteViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C2A32892172E988C00EBB23B /* FrecipeFacebookInviteViewController.m */; };
 		C2CB619817458D8A004B9C11 /* iPadInitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C2CB619717458D8A004B9C11 /* iPadInitViewController.m */; };
 		C2CB619B1745EC7D004B9C11 /* UIView+Frecipe.m in Sources */ = {isa = PBXBuildFile; fileRef = C2CB619A1745EC7D004B9C11 /* UIView+Frecipe.m */; };
+		C2D1FB231749A8D50096C036 /* checkbox.png in Resources */ = {isa = PBXBuildFile; fileRef = C2D1FB211749A8D50096C036 /* checkbox.png */; };
+		C2D1FB241749A8D50096C036 /* checkmark.png in Resources */ = {isa = PBXBuildFile; fileRef = C2D1FB221749A8D50096C036 /* checkmark.png */; };
+		C2D1FB281749BF7F0096C036 /* black_leather.png in Resources */ = {isa = PBXBuildFile; fileRef = C2D1FB271749BF7F0096C036 /* black_leather.png */; };
+		C2D1FB2B1749C0F50096C036 /* gogeupleather.jpg in Resources */ = {isa = PBXBuildFile; fileRef = C2D1FB291749C0F50096C036 /* gogeupleather.jpg */; };
+		C2D1FB2C1749C0F50096C036 /* orange_leather.jpg in Resources */ = {isa = PBXBuildFile; fileRef = C2D1FB2A1749C0F50096C036 /* orange_leather.jpg */; };
+		C2D1FB2E174AF90D0096C036 /* default_ingredient_picture.png in Resources */ = {isa = PBXBuildFile; fileRef = C2D1FB2D174AF90C0096C036 /* default_ingredient_picture.png */; };
+		C2D1FB32174AFB2D0096C036 /* trash.png in Resources */ = {isa = PBXBuildFile; fileRef = C2D1FB31174AFB2D0096C036 /* trash.png */; };
+		C2D1FB35174B013B0096C036 /* UICollectionViewCell+Frecipe.m in Sources */ = {isa = PBXBuildFile; fileRef = C2D1FB34174B013B0096C036 /* UICollectionViewCell+Frecipe.m */; };
 		C2DE64E2174493960041152F /* grocery_list_background.jpg in Resources */ = {isa = PBXBuildFile; fileRef = C2DE64E1174493960041152F /* grocery_list_background.jpg */; };
 		C2E08EDF1735E51100C1C705 /* button_background_image.png in Resources */ = {isa = PBXBuildFile; fileRef = C2E08EDE1735E51100C1C705 /* button_background_image.png */; };
 		C2E08EF21735E5B600C1C705 /* frecipe.png in Resources */ = {isa = PBXBuildFile; fileRef = C2E08EEC1735E5B600C1C705 /* frecipe.png */; };
@@ -94,7 +105,6 @@
 		C2E668D8173C738F00D1975D /* default_recipe_picture.png in Resources */ = {isa = PBXBuildFile; fileRef = C2E668D7173C738F00D1975D /* default_recipe_picture.png */; };
 		C2E668DA173C73D500D1975D /* star_half.png in Resources */ = {isa = PBXBuildFile; fileRef = C2E668D9173C73D500D1975D /* star_half.png */; };
 		C2E668DC173C73DA00D1975D /* default_profile_picture.png in Resources */ = {isa = PBXBuildFile; fileRef = C2E668DB173C73DA00D1975D /* default_profile_picture.png */; };
-		C2E668DF173DB5CC00D1975D /* TriangleView.m in Sources */ = {isa = PBXBuildFile; fileRef = C2E668DE173DB5CB00D1975D /* TriangleView.m */; };
 		C2E668E8173DBA4400D1975D /* FPPopoverController.m in Sources */ = {isa = PBXBuildFile; fileRef = C2E668E3173DBA4400D1975D /* FPPopoverController.m */; };
 		C2E668E9173DBA4400D1975D /* FPPopoverView.m in Sources */ = {isa = PBXBuildFile; fileRef = C2E668E5173DBA4400D1975D /* FPPopoverView.m */; };
 		C2E668EA173DBA4400D1975D /* FPTouchView.m in Sources */ = {isa = PBXBuildFile; fileRef = C2E668E7173DBA4400D1975D /* FPTouchView.m */; };
@@ -122,6 +132,11 @@
 
 /* Begin PBXFileReference section */
 		B229DB6A887849DC88A926C2 /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = SOURCE_ROOT; };
+		C25651AA174D95AA005755A9 /* fridge_background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = fridge_background.png; sourceTree = "<group>"; };
+		C25651AC174F6131005755A9 /* UIColor+Frecipe.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+Frecipe.h"; sourceTree = "<group>"; };
+		C25651AD174F6132005755A9 /* UIColor+Frecipe.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+Frecipe.m"; sourceTree = "<group>"; };
+		C25651AF1750679A005755A9 /* FrecipeEditProfileViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrecipeEditProfileViewController.h; sourceTree = "<group>"; };
+		C25651B01750679B005755A9 /* FrecipeEditProfileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FrecipeEditProfileViewController.m; sourceTree = "<group>"; };
 		C2670303174170FD00BBBDD6 /* iPadLoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iPadLoginViewController.h; sourceTree = "<group>"; };
 		C2670304174170FD00BBBDD6 /* iPadLoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iPadLoginViewController.m; sourceTree = "<group>"; };
 		C294412D1733246800FDD542 /* badge.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = badge.png; sourceTree = "<group>"; };
@@ -214,6 +229,15 @@
 		C2CB619717458D8A004B9C11 /* iPadInitViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iPadInitViewController.m; sourceTree = "<group>"; };
 		C2CB61991745EC7D004B9C11 /* UIView+Frecipe.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+Frecipe.h"; sourceTree = "<group>"; };
 		C2CB619A1745EC7D004B9C11 /* UIView+Frecipe.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Frecipe.m"; sourceTree = "<group>"; };
+		C2D1FB211749A8D50096C036 /* checkbox.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = checkbox.png; sourceTree = "<group>"; };
+		C2D1FB221749A8D50096C036 /* checkmark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = checkmark.png; sourceTree = "<group>"; };
+		C2D1FB271749BF7F0096C036 /* black_leather.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = black_leather.png; sourceTree = "<group>"; };
+		C2D1FB291749C0F50096C036 /* gogeupleather.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = gogeupleather.jpg; sourceTree = "<group>"; };
+		C2D1FB2A1749C0F50096C036 /* orange_leather.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = orange_leather.jpg; sourceTree = "<group>"; };
+		C2D1FB2D174AF90C0096C036 /* default_ingredient_picture.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = default_ingredient_picture.png; sourceTree = "<group>"; };
+		C2D1FB31174AFB2D0096C036 /* trash.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = trash.png; sourceTree = "<group>"; };
+		C2D1FB33174B013B0096C036 /* UICollectionViewCell+Frecipe.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UICollectionViewCell+Frecipe.h"; sourceTree = "<group>"; };
+		C2D1FB34174B013B0096C036 /* UICollectionViewCell+Frecipe.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UICollectionViewCell+Frecipe.m"; sourceTree = "<group>"; };
 		C2DE64E1174493960041152F /* grocery_list_background.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = grocery_list_background.jpg; sourceTree = "<group>"; };
 		C2E08EDE1735E51100C1C705 /* button_background_image.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = button_background_image.png; sourceTree = "<group>"; };
 		C2E08EEC1735E5B600C1C705 /* frecipe.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = frecipe.png; sourceTree = "<group>"; };
@@ -242,8 +266,6 @@
 		C2E668D7173C738F00D1975D /* default_recipe_picture.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = default_recipe_picture.png; sourceTree = "<group>"; };
 		C2E668D9173C73D500D1975D /* star_half.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = star_half.png; sourceTree = "<group>"; };
 		C2E668DB173C73DA00D1975D /* default_profile_picture.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = default_profile_picture.png; sourceTree = "<group>"; };
-		C2E668DD173DB5CA00D1975D /* TriangleView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TriangleView.h; sourceTree = "<group>"; };
-		C2E668DE173DB5CB00D1975D /* TriangleView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TriangleView.m; sourceTree = "<group>"; };
 		C2E668E1173DBA4400D1975D /* ARCMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARCMacros.h; sourceTree = "<group>"; };
 		C2E668E2173DBA4400D1975D /* FPPopoverController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FPPopoverController.h; sourceTree = "<group>"; };
 		C2E668E3173DBA4400D1975D /* FPPopoverController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FPPopoverController.m; sourceTree = "<group>"; };
@@ -411,6 +433,8 @@
 				C2A32880172E04A100EBB23B /* FrecipeAddRecipeViewController.m */,
 				C2A32882172E04AB00EBB23B /* FrecipeAddToGroceryListViewController.h */,
 				C2A32883172E04AB00EBB23B /* FrecipeAddToGroceryListViewController.m */,
+				C25651AF1750679A005755A9 /* FrecipeEditProfileViewController.h */,
+				C25651B01750679B005755A9 /* FrecipeEditProfileViewController.m */,
 				C2A32891172E988C00EBB23B /* FrecipeFacebookInviteViewController.h */,
 				C2A32892172E988C00EBB23B /* FrecipeFacebookInviteViewController.m */,
 				C2E668EB173DBD8300D1975D /* FrecipeNotificationsViewController.h */,
@@ -425,12 +449,14 @@
 				C2E4771E172F94D000EC3660 /* FrecipeRatingView.m */,
 				C294413617349ADF00FDD542 /* FrecipeBadgeView.h */,
 				C294413717349ADF00FDD542 /* FrecipeBadgeView.m */,
-				C2E668DD173DB5CA00D1975D /* TriangleView.h */,
-				C2E668DE173DB5CB00D1975D /* TriangleView.m */,
 				C294412F17332BC800FDD542 /* UIViewController+Frecipe.h */,
 				C294413017332BC800FDD542 /* UIViewController+Frecipe.m */,
 				C2CB61991745EC7D004B9C11 /* UIView+Frecipe.h */,
 				C2CB619A1745EC7D004B9C11 /* UIView+Frecipe.m */,
+				C25651AC174F6131005755A9 /* UIColor+Frecipe.h */,
+				C25651AD174F6132005755A9 /* UIColor+Frecipe.m */,
+				C2D1FB33174B013B0096C036 /* UICollectionViewCell+Frecipe.h */,
+				C2D1FB34174B013B0096C036 /* UICollectionViewCell+Frecipe.m */,
 				C2E08EF817389DA900C1C705 /* FrecipeMainViewController.h */,
 				C2E08EF917389DA900C1C705 /* FrecipeMainViewController.m */,
 				C2A327DD172DFAAD00EBB23B /* Supporting Files */,
@@ -451,6 +477,7 @@
 				C2E08EDE1735E51100C1C705 /* button_background_image.png */,
 				C2E668D7173C738F00D1975D /* default_recipe_picture.png */,
 				C2E668DB173C73DA00D1975D /* default_profile_picture.png */,
+				C2D1FB2D174AF90C0096C036 /* default_ingredient_picture.png */,
 				C2A3288F172E4F6C00EBB23B /* iTunesArtwork.png */,
 				C2A32816172DFB9900EBB23B /* bar_red.png */,
 				C294412D1733246800FDD542 /* badge.png */,
@@ -467,7 +494,14 @@
 				C2E668F6173F06EE00D1975D /* share.png */,
 				C2E668F7173F06EE00D1975D /* thumb_highlighted.png */,
 				C2E668F8173F06EE00D1975D /* thumb.png */,
+				C2D1FB211749A8D50096C036 /* checkbox.png */,
+				C2D1FB221749A8D50096C036 /* checkmark.png */,
+				C2D1FB31174AFB2D0096C036 /* trash.png */,
+				C25651AA174D95AA005755A9 /* fridge_background.png */,
 				C2DE64E1174493960041152F /* grocery_list_background.jpg */,
+				C2D1FB271749BF7F0096C036 /* black_leather.png */,
+				C2D1FB291749C0F50096C036 /* gogeupleather.jpg */,
+				C2D1FB2A1749C0F50096C036 /* orange_leather.jpg */,
 				C2A32814172DFB9000EBB23B /* menu_icon.png */,
 				C2E47720172F94E600EC3660 /* star_empty.png */,
 				C2E47721172F94E600EC3660 /* star_empty@2x.png */,
@@ -640,6 +674,14 @@
 				C2E4895C174202DF00EF20E6 /* Default.png in Resources */,
 				C2E4895D174202EB00EF20E6 /* Default@2x.png in Resources */,
 				C2DE64E2174493960041152F /* grocery_list_background.jpg in Resources */,
+				C2D1FB231749A8D50096C036 /* checkbox.png in Resources */,
+				C2D1FB241749A8D50096C036 /* checkmark.png in Resources */,
+				C2D1FB281749BF7F0096C036 /* black_leather.png in Resources */,
+				C2D1FB2B1749C0F50096C036 /* gogeupleather.jpg in Resources */,
+				C2D1FB2C1749C0F50096C036 /* orange_leather.jpg in Resources */,
+				C2D1FB2E174AF90D0096C036 /* default_ingredient_picture.png in Resources */,
+				C2D1FB32174AFB2D0096C036 /* trash.png in Resources */,
+				C25651AB174D95AA005755A9 /* fridge_background.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -713,7 +755,6 @@
 				C294413117332BC800FDD542 /* UIViewController+Frecipe.m in Sources */,
 				C294413817349AE000FDD542 /* FrecipeBadgeView.m in Sources */,
 				C2E08EFA17389DAA00C1C705 /* FrecipeMainViewController.m in Sources */,
-				C2E668DF173DB5CC00D1975D /* TriangleView.m in Sources */,
 				C2E668E8173DBA4400D1975D /* FPPopoverController.m in Sources */,
 				C2E668E9173DBA4400D1975D /* FPPopoverView.m in Sources */,
 				C2E668EA173DBA4400D1975D /* FPTouchView.m in Sources */,
@@ -725,6 +766,9 @@
 				C2E48966174204D200EF20E6 /* iPadViewController.m in Sources */,
 				C2CB619817458D8A004B9C11 /* iPadInitViewController.m in Sources */,
 				C2CB619B1745EC7D004B9C11 /* UIView+Frecipe.m in Sources */,
+				C2D1FB35174B013B0096C036 /* UICollectionViewCell+Frecipe.m in Sources */,
+				C25651AE174F6132005755A9 /* UIColor+Frecipe.m in Sources */,
+				C25651B11750679B005755A9 /* FrecipeEditProfileViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

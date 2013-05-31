@@ -12,16 +12,17 @@
 #import "FrecipeAppDelegate.h"
 #import "FrecipeRecipeDetailViewController.h"
 #import "FrecipeBadgeView.h"
+#import "FrecipeEditProfileViewController.h"
 #import <QuartzCore/QuartzCore.h>
 #import <SDWebImage/UIImageView+WebCache.h>
 
 @interface FrecipeProfileViewController () <UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UIActionSheetDelegate, UIAlertViewDelegate, FrecipeRatingViewDelegate>
 
+@property (strong, nonatomic) NSDictionary *user;
 @property (strong, nonatomic) NSMutableArray *recipes;
 @property (strong, nonatomic) NSDictionary *selectedRecipe;
 @property (strong, nonatomic) NSDictionary *mostPopularRecipe;
 //@property (strong, nonatomic) FrecipeRatingView *averageRatingView;
-
 
 @end
 
@@ -44,10 +45,13 @@
     self.recipesCollectionView.dataSource = self;
     self.recipesCollectionView.delegate = self;
     
-//    FrecipeRatingView *ratingView = (FrecipeRatingView *)[self.view viewWithTag:1];
-//    ratingView.delegate = self;
+    self.basicInfoView.layer.cornerRadius = 3.0f;
+    self.detailInfoView.layer.cornerRadius = 3.0f;
+    self.websiteAndAboutView.layer.cornerRadius = 3.0f;
+    self.detailInfoView.clipsToBounds = YES;
+    
     self.averageRatingView.delegate = self;
-    [self fetchUserInfo];
+    
     
 }
 
@@ -57,6 +61,7 @@
     if (self.fromSegue == NO) {
         self.notificationBadge = [self addNotificationBadge];
     }
+    [self fetchUserInfo];
     
 }
 
@@ -133,8 +138,11 @@
     [spinner startAnimating];
     [self.view addSubview:spinner];
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
-        NSLog(@"%@", [JSON objectForKey:@"rating"]);
         NSDictionary *user = [JSON objectForKey:@"user"];
+        self.user = user;
+    
+        [self saveUserInfo:self.user Token:nil ProfilePicture:nil];
+        
         self.title = [NSString stringWithFormat:@"%@ %@", [user objectForKey:@"first_name"], [user objectForKey:@"last_name"]];
         
         NSString *provider = [NSString stringWithFormat:@"%@", [[JSON objectForKey:@"user"] objectForKey:@"provider"]];
@@ -162,6 +170,9 @@
         if ([[NSString stringWithFormat:@"%@", [JSON objectForKey:@"follow"]] isEqualToString:@"You"]) {
             self.followButton.enabled = NO;
             self.followButton.hidden = YES;
+            
+            // make a bar button on the left for edit profile
+            self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Edit" style:UIBarButtonItemStyleBordered target:self action:@selector(segueToEditProfile)];
         }
         [self.followButton setTitle:[NSString stringWithFormat:@"%@", [JSON objectForKey:@"follow"]] forState:UIControlStateNormal];
         
@@ -188,19 +199,42 @@
         } else {
             [self.popularRecipeButton setTitle:@"No recipes yet" forState:UIControlStateNormal];
         }
+        
+        // set website and about view
+        self.websiteTextView.text = [NSString stringWithFormat:@"%@", [self.user objectForKey:@"website"]];
+        self.aboutTextView.text = [NSString stringWithFormat:@"%@", [self.user objectForKey:@"about"]];
+        
+        [self.aboutTextView sizeToFit];
+        CGFloat height = [self.aboutTextView.text sizeWithFont:[UIFont systemFontOfSize:12.0f] constrainedToSize:CGSizeMake(280.0f, MAXFLOAT)].height;
+        if (height < 50) {
+            height = 50;
+        } else {
+            height += 10;
+        }
+        self.aboutTextView.frame = CGRectMake(self.aboutTextView.frame.origin.x, self.aboutTextView.frame.origin.y, self.aboutTextView.frame.size.width, height);
+        self.separatorView.frame = CGRectMake(self.separatorView.frame.origin.x, self.aboutTextView.frame.origin.y + self.aboutTextView.frame.size.height + 5, self.separatorView.frame.size.width, self.separatorView.frame.size.height);
+        self.websiteLabel.frame = CGRectMake(self.websiteLabel.frame.origin.x, self.separatorView.frame.origin.y + self.separatorView.frame.size.height, self.websiteLabel.frame.size.width, self.websiteLabel.frame.size.height);
+        self.websiteTextView.frame = CGRectMake(self.websiteTextView.frame.origin.x, self.websiteLabel.frame.origin.y + 10, self.websiteTextView.frame.size.width, self.websiteTextView.frame.size.height);
+        self.websiteAndAboutView.frame = CGRectMake(self.websiteAndAboutView.frame.origin.x, self.websiteAndAboutView.frame.origin.y, self.websiteAndAboutView.frame.size.width, self.websiteTextView.frame.origin.y + self.websiteTextView.frame.size.height + 10);
+        
+        self.detailInfoView.frame = CGRectMake(self.detailInfoView.frame.origin.x, self.websiteAndAboutView.frame.origin.y + self.websiteAndAboutView.frame.size.height + 10, self.detailInfoView.frame.size.width, self.detailInfoView.frame.size.height);
         [self.recipesCollectionView reloadData];
         
         
         if (self.recipes.count > 0) {
-            self.recipesCollectionView.frame = CGRectMake(self.recipesCollectionView.frame.origin.x, self.recipesCollectionView.frame.origin.y, self.recipesCollectionView.frame.size.width, 160 * ceil((float)self.recipes.count / 2));
-            
+            self.recipesCollectionView.frame = CGRectMake(self.recipesCollectionView.frame.origin.x, self.detailInfoView.frame.origin.y + self.detailInfoView.frame.size.height + 10, self.recipesCollectionView.frame.size.width, 150 * ceil((float)self.recipes.count / 2));
+            [self.recipesCollectionView setBasicShadow];
             if ([self isTall]) {
-                self.scrollView.contentSize = CGSizeMake(self.scrollView.contentSize.width, self.recipesCollectionView.frame.origin.y + self.recipesCollectionView.frame.size.height);
+                self.scrollView.contentSize = CGSizeMake(self.scrollView.contentSize.width, self.recipesCollectionView.frame.origin.y + self.recipesCollectionView.frame.size.height + 30);
             } else {
-                self.scrollView.contentSize = CGSizeMake(self.scrollView.contentSize.width, self.recipesCollectionView.frame.origin.y + self.recipesCollectionView.frame.size.height + 108);
+                self.scrollView.contentSize = CGSizeMake(self.scrollView.contentSize.width, self.recipesCollectionView.frame.origin.y + self.recipesCollectionView.frame.size.height + 118);
             }
         }
         
+        // set shadows after framing
+        [self.basicInfoView setBasicShadow];
+        [self.detailInfoView setBasicShadow];
+        [self.websiteAndAboutView setBasicShadow];
         [spinner stopAnimating];
         [spinner removeFromSuperview];
         [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
@@ -259,6 +293,10 @@
     [self performSegueWithIdentifier:@"RecipeDetail" sender:self];
 }
 
+- (void)segueToEditProfile {
+    [self performSegueWithIdentifier:@"EditProfile" sender:self];
+}
+
 - (void)popViewControllerFromStack {
     [self.navigationController popViewControllerAnimated:YES];
 }
@@ -291,13 +329,29 @@
         recipeDetailViewController.recipeId = [self.selectedRecipe objectForKey:@"id"];
         
         recipeDetailViewController.navigationItem.leftBarButtonItem = nil;
-        
-        self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"back_arrowpng"] style:UIBarButtonItemStyleBordered target:self action:@selector(popViewControllerFromStack)];
+        self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"back_arrow.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(popViewControllerFromStack)];
     } else if ([segue.identifier isEqualToString:@"Profile"]) {
         FrecipeProfileViewController *profileViewController = (FrecipeProfileViewController *)segue.destinationViewController;
         
         NSDictionary *user = [self.selectedRecipe objectForKey:@"user"];
         profileViewController.userId  = [NSString stringWithFormat:@"%@", [user objectForKey:@"id"]];        
+    } else if ([segue.identifier isEqualToString:@"EditProfile"]) {
+        FrecipeEditProfileViewController *destinationViewController = (FrecipeEditProfileViewController *)segue.destinationViewController;
+        
+        if (destinationViewController.view) {
+            destinationViewController.profilePictureView.image = self.profilePictureView.image;
+            destinationViewController.fbProfilePictureView.profileID = [NSString stringWithFormat:@"%@", [self.user objectForKey:@"uid"]];
+        }
+    } else if ([segue.identifier isEqualToString:@"Recipes"]) {
+        
+    } else if ([segue.identifier isEqualToString:@"Followers"]) {
+        
+    } else if ([segue.identifier isEqualToString:@"Likes"]) {
+        
+    } else if ([segue.identifier isEqualToString:@"Following"]) {
+        
+    } else if ([segue.identifier isEqualToString:@"Liked"]) {
+        
     }
 }
 
@@ -361,7 +415,7 @@
     UIButton *frontNameButton = (UIButton *)[cell viewWithTag:11];
     [frontNameButton setTitle:[NSString stringWithFormat:@"%@ %@", [user objectForKey:@"first_name"], [user objectForKey:@"last_name"]] forState:UIControlStateNormal];
     [frontNameButton sizeToFit];
-    frontNameButton.frame = CGRectMake(160 - [frontNameButton.titleLabel.text sizeWithFont:[UIFont boldSystemFontOfSize:13]].width - 7, frontNameButton.frame.origin.y, frontNameButton.frame.size.width, frontNameButton.frame.size.height);
+    frontNameButton.frame = CGRectMake(cell.frame.size.width - [frontNameButton.titleLabel.text sizeWithFont:[UIFont boldSystemFontOfSize:13]].width - 7, frontNameButton.frame.origin.y, frontNameButton.frame.size.width, frontNameButton.frame.size.height);
     
     UILabel *likesLabel = (UILabel *)[cell viewWithTag:9];
     likesLabel.text = [NSString stringWithFormat:@"%@ likes", [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"likes"]];

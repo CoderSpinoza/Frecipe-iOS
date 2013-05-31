@@ -60,7 +60,7 @@
 }
 
 - (IBAction)addButtonPressed:(UIBarButtonItem *)sender {
-    NSString *path = @"/groceries";
+    NSString *path = @"groceries";
     
     [[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];
     [[AFNetworkActivityIndicatorManager sharedManager] incrementActivityCount];

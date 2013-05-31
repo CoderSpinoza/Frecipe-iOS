@@ -36,6 +36,12 @@ NSString *const FBSessionStateChangedNotification = @"com.Frecipe.Frecipe:FBSess
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     // Override point for customization after application launch.
+    
+    NSURLCache *URLCache =
+    [[NSURLCache alloc] initWithMemoryCapacity:1024 * 1024
+                                  diskCapacity:1024 * 1024 * 5
+                                      diskPath:nil];
+    [NSURLCache setSharedURLCache:URLCache];
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSString *authentication_token = [defaults objectForKey:@"authentication_token"];
     
@@ -46,7 +52,6 @@ NSString *const FBSessionStateChangedNotification = @"com.Frecipe.Frecipe:FBSess
         
         if (!FBSession.activeSession.isOpen) {
             [FBSession openActiveSessionWithReadPermissions:[NSArray arrayWithObjects:@"email", nil]allowLoginUI:NO completionHandler:^(FBSession *session, FBSessionState status, NSError *error) {
-                NSLog(@"facebook");
             }];
         }
     }
@@ -55,7 +60,7 @@ NSString *const FBSessionStateChangedNotification = @"com.Frecipe.Frecipe:FBSess
     
     [[UISearchBar appearance] setBackgroundImage:[UIImage imageNamed:@"bar_red.png"]];
     
-    [[UIToolbar appearance] setBackgroundImage:[UIImage imageNamed:@"bar_red.png"] forToolbarPosition:UIToolbarPositionBottom barMetrics:UIBarMetricsDefault   ];
+    [[UIToolbar appearance] setBackgroundImage:[UIImage imageNamed:@"bar_red.png"] forToolbarPosition:UIToolbarPositionBottom barMetrics:UIBarMetricsDefault];
     
     UIStoryboard *storyboard = self.window.rootViewController.storyboard;
     UIViewController *initViewController;
