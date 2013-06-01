@@ -13,6 +13,7 @@
 #import "FrecipeRecipeDetailViewController.h"
 #import "FrecipeBadgeView.h"
 #import "FrecipeEditProfileViewController.h"
+#import "FrecipeProfileDetailViewController.h"
 #import <QuartzCore/QuartzCore.h>
 #import <SDWebImage/UIImageView+WebCache.h>
 
@@ -324,6 +325,7 @@
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    NSArray *identifiers = [NSArray arrayWithObjects:@"Recipes", @"Followers", @"Likes", @"Following", @"Liked", nil];
     if ([segue.identifier isEqualToString:@"RecipeDetail"]) {
         FrecipeRecipeDetailViewController *recipeDetailViewController = (FrecipeRecipeDetailViewController *) segue.destinationViewController;
         recipeDetailViewController.recipeId = [self.selectedRecipe objectForKey:@"id"];
@@ -342,16 +344,23 @@
             destinationViewController.profilePictureView.image = self.profilePictureView.image;
             destinationViewController.fbProfilePictureView.profileID = [NSString stringWithFormat:@"%@", [self.user objectForKey:@"uid"]];
         }
-    } else if ([segue.identifier isEqualToString:@"Recipes"]) {
+    } else if ([identifiers containsObject:segue.identifier]) {
         
-    } else if ([segue.identifier isEqualToString:@"Followers"]) {
-        
-    } else if ([segue.identifier isEqualToString:@"Likes"]) {
-        
-    } else if ([segue.identifier isEqualToString:@"Following"]) {
-        
-    } else if ([segue.identifier isEqualToString:@"Liked"]) {
-        
+        FrecipeProfileDetailViewController *destinationViewController = segue.destinationViewController;
+        destinationViewController.segueIdentifier = segue.identifier;
+        destinationViewController.title = [NSString stringWithFormat:@"%@ %@'s %@", [self.user objectForKey:@"first_name"], [self.user objectForKey:@"last_name"], segue.identifier];
+        destinationViewController.navigationItem.leftBarButtonItem = nil;
+        self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"back_arrow.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(popViewControllerFromStack)];
+        if ([segue.identifier isEqualToString:@"Recipes"]) {
+        } else if ([segue.identifier isEqualToString:@"Followers"]) {
+            
+        } else if ([segue.identifier isEqualToString:@"Likes"]) {
+            
+        } else if ([segue.identifier isEqualToString:@"Following"]) {
+            
+        } else if ([segue.identifier isEqualToString:@"Liked"]) {
+            
+        }
     }
 }
 
