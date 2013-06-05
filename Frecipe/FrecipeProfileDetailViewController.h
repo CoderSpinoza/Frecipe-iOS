@@ -12,5 +12,9 @@
 @property (strong, nonatomic) NSString *segueIdentifier;
 @property (strong, nonatomic) NSMutableArray *recipes;
 @property (strong, nonatomic) NSMutableArray *users;
+@property (strong, nonatomic) NSDictionary *user;
+@property (weak, nonatomic) IBOutlet UICollectionView *recipesCollectionView;
+
+@property (weak, nonatomic) IBOutlet UITableView *usersTableView;
 
 @end

@@ -36,8 +36,7 @@
     self.settingsTableView.delegate = self;
     self.notificationBadge = [self addNotificationBadge];
     
-    self.settings = [NSArray arrayWithObjects:@"Change Password", nil];
-    
+    self.settings = [NSArray arrayWithObjects:@"Change Password", @"Send Feedback", nil];
 }
 
 - (void)didReceiveMemoryWarning
@@ -75,7 +74,8 @@
     if (indexPath.section == 0 && indexPath.row
          == 0) {
         [self performSegueWithIdentifier:@"ChangePassword" sender:self];
-        
+    } else if (indexPath.section == 0 && indexPath.row == 1) {
+        [self performSegueWithIdentifier:@"SendFeedback" sender:self];
     }
     cell.selected = NO;
 }

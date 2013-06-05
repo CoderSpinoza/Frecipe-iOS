@@ -34,4 +34,6 @@
 @property (weak, nonatomic) IBOutlet UIView *ingredientsView;
 @property (weak, nonatomic) IBOutlet UIView *directionsView;
 
+@property (weak, nonatomic) IBOutlet UIButton *addToGroceryListButton;
+
 @end

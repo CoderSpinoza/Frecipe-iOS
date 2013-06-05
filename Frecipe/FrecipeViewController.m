@@ -51,7 +51,7 @@
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     [self fetchRecipes];
-    [self fetchFacebookFriends];
+//    [self fetchFacebookFriends];
     
 }
 
@@ -85,8 +85,6 @@
 
 - (void)fetchRecipes {
     NSString *path = @"/recipes/possible";
-    [[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];
-    [[AFNetworkActivityIndicatorManager sharedManager] incrementActivityCount];
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSString *authentication_token = [defaults objectForKey:@"authentication_token"];
@@ -105,19 +103,11 @@
         
         self.refreshControl.attributedTitle = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"Last updated on %@", [FrecipeFunctions currentDate]]];
         
-        
-        if (self.facebookFriends) {
-            [self.recipesCollectionView reloadData];
-            self.alreadyLoaded = YES;
-        }
         [spinner stopAnimating];
         [spinner removeFromSuperview];
         [self.refreshControl endRefreshing];
-        
-    
-        
-        [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
-        
+
+        [self.recipesCollectionView reloadData];
         
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         NSLog(@"%@", error);
@@ -129,7 +119,7 @@
         UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:@"There was an error loading recipes. Retry?" delegate:self cancelButtonTitle:@"Retry" otherButtonTitles:@"Cancel", nil];
         
         [alertView show];
-        [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
+        [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
     }];
     [operation start];
 }

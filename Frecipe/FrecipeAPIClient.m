@@ -14,7 +14,11 @@
 + (FrecipeAPIClient *)client {
     NSString *url;
     if (PRODUCTION) {
-        url = @"http://fast-ravine-6720.herokuapp.com";
+        if (STAGING) {
+            url = @"http://fast-ravine-6720.herokuapp.com";
+        } else {
+            url = @"http://intense-cove-3838.herokuapp.com";
+        }
     } else {
         url = @"http://localhost:5000";
     }
@@ -22,6 +26,7 @@
     static FrecipeAPIClient *sharedClient = nil;
     static dispatch_once_t oncePredicate;
     dispatch_once(&oncePredicate, ^{
+        
         sharedClient = [[self alloc] initWithBaseURL:[NSURL URLWithString:url]];
     });
     return sharedClient;

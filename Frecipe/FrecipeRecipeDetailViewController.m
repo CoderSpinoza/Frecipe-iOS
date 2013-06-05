@@ -96,9 +96,6 @@
     
     self.ratingBorderView.layer.cornerRadius = 5.0f;
     [self.ratingBorderView setBasicShadow];
-//    self.ratingBorderView.layer.borderColor = [[UIColor lightGrayColor] CGColor];
-//    self.ratingBorderView.layer.borderWidth = 1.0f;
-    
     
     self.scrollView.contentSize = CGSizeMake(self.view.frame.size.width, 900);
     
@@ -112,6 +109,9 @@
     
     self.recipeMainView.layer.cornerRadius = 2.0f;
     [self.recipeMainView setBasicShadow];
+    
+    [self.likeButton setImage:[UIImage imageNamed:@"thumb.png"] forState:UIControlStateSelected];
+    [self.likeButton setImage:[UIImage imageNamed:@"thumb.png"] forState:UIControlStateHighlighted];
     
     [self addGestureRecognizers];
     [self registerForKeyboardNotification];
@@ -179,13 +179,11 @@
         [self.likesButton setTitle:[NSString stringWithFormat:@"%@", [JSON objectForKey:@"likes"]] forState:UIControlStateNormal];
         
         if ([[NSString stringWithFormat:@"%@", [JSON objectForKey:@"liked"]] isEqualToString:@"1"]) {
-            [self.likeButton setImage:[UIImage imageNamed:@"like.png"] forState:UIControlStateNormal];
+            self.likeButton.selected = YES;
         } else {
-            [self.likeButton setImage:[UIImage imageNamed:@"like_highlighted.png"] forState:UIControlStateNormal];
+            self.likeButton.selected = NO;
         }
         self.ingredients = [[NSMutableArray alloc] initWithArray:[JSON objectForKey:@"ingredients"]];
-        
-        [self.ingredients addObject:[NSDictionary dictionaryWithObject:@"Add to Grocery List" forKey:@"name"]];
         
         [self.ingredientsTableView reloadData];
         
@@ -206,7 +204,9 @@
         // adjust table view heights
         self.ingredientsTableView.frame = CGRectMake(self.ingredientsTableView.frame.origin.x, self.ingredientsTableView.frame.origin.y, self.ingredientsTableView.frame.size.width, 44 * self.ingredients.count);
         
-        self.ingredientsView.frame = CGRectMake(self.ingredientsView.frame.origin.x, self.ingredientsView.frame.origin.y, self.ingredientsView.frame.size.width, self.ingredientsTableView.frame.origin.y + self.ingredientsTableView.frame.size.height + 10);
+        self.addToGroceryListButton.frame = CGRectMake(self.addToGroceryListButton.frame.origin.x, self.ingredientsTableView.frame.origin.y + self.ingredientsTableView.frame.size.height + 5, self.addToGroceryListButton.frame.size.width, self.addToGroceryListButton.frame.size.height);
+        
+        self.ingredientsView.frame = CGRectMake(self.ingredientsView.frame.origin.x, self.ingredientsView.frame.origin.y, self.ingredientsView.frame.size.width, self.ingredientsTableView.frame.origin.y + self.ingredientsTableView.frame.size.height + self.addToGroceryListButton.frame.size.height + 10);
         
         self.directionsLabel.frame = CGRectMake(self.directionsLabel.frame.origin.x, 5, self.directionsLabel.frame.size.width, self.directionsLabel.frame.size.height);
         
@@ -257,9 +257,9 @@
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
 
         if ([[NSString stringWithFormat:@"%@", [JSON objectForKey:@"message"]] isEqualToString:@"like"]) {
-            [self.likeButton setImage:[UIImage imageNamed:@"like.png"] forState:UIControlStateNormal];
+            self.likeButton.selected = YES;
         } else {
-            [self.likeButton setImage:[UIImage imageNamed:@"like_highlighted.png"] forState:UIControlStateNormal];
+            self.likeButton.selected = NO;
         }
         [self.likesButton setTitle:[NSString stringWithFormat:@"%@", [JSON objectForKey:@"likes"]] forState:UIControlStateNormal];
         [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
@@ -426,7 +426,7 @@
     [operation start];
 }
 
-- (void)addToGroceryList {
+- (IBAction)addToGroceryList {
     NSString *path = @"groceries";
     [[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];
     [[AFNetworkActivityIndicatorManager sharedManager] incrementActivityCount];
@@ -436,13 +436,24 @@
     
     
     NSMutableArray *ingredientsArray = [[NSMutableArray alloc] init];
-    for (NSDictionary *ingredient in self.missingIngredients) {
+    NSMutableArray *inFridgeArray = [[NSMutableArray alloc] init];
+    for (NSDictionary *ingredient in self.ingredients) {
         [ingredientsArray addObject:[NSString stringWithFormat:@"%@", [ingredient objectForKey:@"name"]]];
+        
+        if ([self.missingIngredients containsObject:ingredient]) {
+            [inFridgeArray addObject:@"1"];
+        } else {
+            [inFridgeArray addObject:@"0"];
+        }
     }
+    
+    NSLog(@"%@", inFridgeArray);
+    
     NSString *groceriesString = [ingredientsArray componentsJoinedByString:@","];
     
-    NSArray *keys = [NSArray arrayWithObjects:@"authentication_token", @"recipe_id", @"groceries", nil];
-    NSArray *values = [NSArray arrayWithObjects:authentication_token, self.recipeId, groceriesString, nil];
+    NSString *inFridgeString = [inFridgeArray componentsJoinedByString:@","];
+    NSArray *keys = [NSArray arrayWithObjects:@"authentication_token", @"recipe_id", @"groceries", @"in_fridge", nil];
+    NSArray *values = [NSArray arrayWithObjects:authentication_token, self.recipeId, groceriesString, inFridgeString, nil];
     NSDictionary *parameters = [NSDictionary dictionaryWithObjects:values forKeys:keys];
     
     FrecipeAPIClient *client = [FrecipeAPIClient client];
@@ -470,8 +481,8 @@
         [spinner removeFromSuperview];
     }];
     [operation start];
-    
 }
+
 
 - (void)goToEditRecipe {
     [self performSegueWithIdentifier:@"EditRecipe" sender:self];
@@ -694,24 +705,26 @@
             cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"IngredientCell"];
         }
         NSDictionary *ingredient = [self.ingredients objectAtIndex:indexPath.row];
-                
-        if (indexPath.row != self.ingredients.count - 1) {
-            cell.textLabel.text = [NSString stringWithFormat:@"%u. %@", indexPath.row + 1, [ingredient objectForKey:@"name"]];
-
-            if (![self.missingIngredients containsObject:ingredient]) {
-                cell.accessoryType = UITableViewCellAccessoryCheckmark;
-            } else {
-                UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 50, 20)];
-                label.text = @"Missing";
-                label.textColor = [UIColor redColor];
-                label.textAlignment = NSTextAlignmentRight;
-                label.font = [label.font fontWithSize:10];
-                cell.accessoryView = label;
-                
-            }
+        
+        cell.textLabel.text = [NSString stringWithFormat:@"%u. %@", indexPath.row + 1, [ingredient objectForKey:@"name"]];
+        
+        if (![self.missingIngredients containsObject:ingredient]) {
+            cell.accessoryType = UITableViewCellAccessoryCheckmark;
         } else {
-            cell.textLabel.text = [NSString stringWithFormat:@"%@", [ingredient objectForKey:@"name"]];
+            UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 50, 20)];
+            label.text = @"Missing";
+            label.textColor = [UIColor redColor];
+            label.textAlignment = NSTextAlignmentRight;
+            label.font = [label.font fontWithSize:10];
+            cell.accessoryView = label;
         }
+//        if (indexPath.row != self.ingredients.count - 1) {
+//            
+//                
+//            }
+//        } else {
+//            cell.textLabel.text = [NSString stringWithFormat:@"%@", [ingredient objectForKey:@"name"]];
+//        }
         
         // enable cell selection for only the last row
         if (indexPath.row == self.ingredients.count - 1) {
@@ -794,30 +807,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    if ([tableView isEqual:self.ingredientsTableView]) {
-        if (indexPath.row == self.ingredients.count - 1) {
-//            if (userIsInTheMiddleOfEditingIngredientsList == NO) {
-//                [self setEditing:YES animated:YES];
-//            } else {
-//                
-//                [self addToGroceryList];
-//                [self.selectedIngredients removeAllObjects];
-//                [self setEditing:NO animated:YES];
-//            }
-            UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-            cell.selected = NO;
-            [self addToGroceryList];            
-        } else {
-//            if (userIsInTheMiddleOfEditingIngredientsList == YES) {
-//                if ([self.missingIngredients containsObject:[self.ingredients objectAtIndex:indexPath.row]]) {
-//                    if (![self.selectedIngredients containsObject:[self.ingredients objectAtIndex:indexPath.row]]) {
-//                        [self.selectedIngredients addObject:[self.ingredients objectAtIndex:indexPath.row]];
-//                    }
-//                }
-//            }
-        }
-
-    } else if ([tableView isEqual:self.editDeleteViewController.tableView]) {
+    if ([tableView isEqual:self.editDeleteViewController.tableView]) {
         [self.editDeletePopoverViewController dismissPopoverAnimated:YES];
         if (indexPath.row == 0) {
             [self goToEditRecipe];
@@ -828,9 +818,6 @@
 }
 
 - (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath {
-//    if (userIsInTheMiddleOfEditingIngredientsList == YES && [self.selectedIngredients containsObject:[self.ingredients objectAtIndex:indexPath.row]]) {
-//        [self.selectedIngredients removeObject:[self.ingredients objectAtIndex:indexPath.row]];
-//    }
 }
 
 // keybaord notification

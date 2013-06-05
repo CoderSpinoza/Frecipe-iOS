@@ -28,7 +28,7 @@
 @property (strong, nonatomic) NSIndexPath *displayedRecipeIndexPath;
 @property (strong, nonatomic) NSDictionary *selectedRecipe;
 @property (strong, nonatomic) NSMutableArray *selectedRecipes;
-
+@property (strong, nonatomic) NSDictionary *toBeRecoveredGrocery;
 @end
 
 @implementation FrecipeGroceryListViewController
@@ -122,10 +122,8 @@
 - (void)loadGroceryInfo {
     NSData *savedGroceryInfo = [[NSData alloc] initWithContentsOfURL:[NSURL URLWithString:@"GroceryInfo" relativeToURL:[self documentDirectory]]];
     self.completedGroceryList = [[NSKeyedUnarchiver unarchiveObjectWithData:savedGroceryInfo] mutableCopy];
-    NSLog(@"%@", self.completedGroceryList);
+
 }
-
-
 
 - (void)fetchGroceryList {
     NSString *path = @"groceries/list";
@@ -142,34 +140,14 @@
     NSURLRequest *request = [client requestWithMethod:@"POST" path:path parameters:parameters];
     
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
-//        self.recipes = [NSMutableArray arrayWithArray:[JSON objectForKey:@"recipes"]];
-//        
-//        self.groceryList = [NSMutableArray arrayWithArray:[JSON objectForKey:@"groceries"]];
-//        
-//        for (NSDictionary *recipe in self.recipes) {
-//            NSArray *missing_ingredients = [recipe objectForKey:@"missing_ingredients"];
-//            for (NSDictionary *ingredient in missing_ingredients) {
-//                if (![self.groceryList containsObject:ingredient]) {
-//                    [self.groceryList addObject:ingredient];
-//                }
-//            }
-//        }
-//        self.currentGroceryList = self.groceryList;
-//        NSDictionary *all = [NSDictionary dictionaryWithObjectsAndKeys:@"0", @"id", @"All Recipes", @"name", @"grocery_list.png", @"recipe_image", self.groceryList, @"missing_ingredients", nil];
-//        
-//        [self.recipes insertObject:all atIndex:0];
-//        
-//        self.recipeNameLabel.text = [NSString stringWithFormat:@"%@", [[self.recipes objectAtIndex:0] objectForKey:@"name"]];
-//        [self.groceryListTableView reloadData];
-//        [self.recipesCollectionView reloadData];
-        [self processGroceryListInformation:JSON];
+        [self processGroceryListInformation:[JSON objectForKey:@"grocery_list"]];
+
         [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         NSLog(@"%@", error);
         UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:@"There was an error loading your grocery list. Retry?" delegate:self cancelButtonTitle:@"Retry" otherButtonTitles:@"Cancel", nil];
         [alertView show];
         [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
-        NSLog(@"%@", error);
         
     }];
     [operation start];
@@ -209,16 +187,11 @@
     self.recipes = [NSMutableArray arrayWithArray:[groceryListInfo objectForKey:@"recipes"]];
     
     self.groceryList = [NSMutableArray arrayWithArray:[groceryListInfo objectForKey:@"groceries"]];
-    
-    
+    NSLog(@"%@", self.recipes);
     for (NSDictionary *recipe in self.recipes) {
         NSArray *missing_ingredients = [recipe objectForKey:@"missing_ingredients"];
         NSArray *groceries = [recipe objectForKey:@"groceries"];
-//        for (NSDictionary *ingredient in missing_ingredients) {
-//            if (![self.groceryList containsObject:ingredient]) {
-//                [self.groceryList addObject:ingredient];
-//            }
-//        }
+
         for (int i = 0; i < missing_ingredients.count; i++) {
             NSDictionary *ingredient = [missing_ingredients objectAtIndex:i];
             NSDictionary *groceryDetail = [groceries objectAtIndex:i];
@@ -227,14 +200,47 @@
             }
         }
     }
-    self.currentGroceryList = self.groceryList;
+    
     NSDictionary *all = [NSDictionary dictionaryWithObjectsAndKeys:@"0", @"id", @"All Recipes", @"name", @"grocery_list.png", @"recipe_image", self.groceryList, @"missing_ingredients", nil];
     
     [self.recipes insertObject:all atIndex:0];
     
-    self.recipeNameLabel.text = [NSString stringWithFormat:@"%@", [[self.recipes objectAtIndex:0] objectForKey:@"name"]];
-    [self.groceryListTableView reloadData];
+    NSLog(@"%d %d", self.currentGroceryList.count, self.currentGroceryDetailList.count);
+    self.currentGroceryList = [[self.recipes objectAtIndex:self.displayedRecipeIndexPath.row] objectForKey:@"missing_ingredients"];
+    self.currentGroceryDetailList = [[self.recipes objectAtIndex:self.displayedRecipeIndexPath.row] objectForKey:@"groceries"];
+    self.recipeNameLabel.text = [NSString stringWithFormat:@"%@", [[self.recipes objectAtIndex:self.displayedRecipeIndexPath.row] objectForKey:@"name"]];
+    [self.groceryListTableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationAutomatic];
     [self.recipesCollectionView reloadData];
+}
+
+- (void)recoverGrocery {
+    NSString *path = @"groceries/recover";
+    
+    [[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];
+    [[AFNetworkActivityIndicatorManager sharedManager] incrementActivityCount];
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSString *authentication_token = [defaults stringForKey:@"authentication_token"];
+    NSString *grocery_id = [NSString stringWithFormat:@"%@", [self.toBeRecoveredGrocery objectForKey:@"id"]];
+    
+    NSArray *keys = [NSArray arrayWithObjects:@"authentication_token", @"grocery_id", nil];
+    NSArray *values = [NSArray arrayWithObjects:authentication_token, grocery_id, nil];
+    NSDictionary *parameters = [NSDictionary dictionaryWithObjects:values forKeys:keys];
+    
+    FrecipeAPIClient *client = [FrecipeAPIClient client];
+    NSURLRequest *request = [client requestWithMethod:@"POST" path:path parameters:parameters];
+    
+    AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
+        [self processGroceryListInformation:[JSON objectForKey:@"grocery_list"]];
+    } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
+        NSLog(@"%@", error);
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:@"There was an error updating your grocery list." delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: nil];
+        [alertView show];
+    }];
+    [operation start];
+                            
+    
+    
 }
 
 - (IBAction)addToFridgeButtonPressed:(UIBarButtonItem *)sender {
@@ -297,7 +303,6 @@
     NSURLRequest *request = [client requestWithMethod:@"POST" path:path parameters:parameters];
     
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
-        NSLog(@"%@", JSON);
         NSDictionary *groceryListInfo = [JSON objectForKey:@"grocery_list"];
         [self processGroceryListInformation:groceryListInfo];
         [self.completedGroceryList removeAllObjects];
@@ -310,6 +315,9 @@
 }
 
 - (IBAction)deleteRecipesButtonPressed {
+    if (self.selectedRecipes.count == 0) {
+        return;
+    }
     NSString *path = @"grocery_recipes/multiple_delete";
     [[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];
     [[AFNetworkActivityIndicatorManager sharedManager] incrementActivityCount];
@@ -329,9 +337,10 @@
     FrecipeAPIClient *client = [FrecipeAPIClient client];
     NSURLRequest *request = [client requestWithMethod:@"POST" path:path parameters:parameters];
     
+    self.deleteRecipesButton.enabled = NO;
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
-        NSLog(@"%@", JSON);
         [self processGroceryListInformation:[JSON objectForKey:@"grocery_list"]];
+        self.deleteRecipesButton.enabled = YES;
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         NSLog(@"%@", error);
     }];
@@ -377,16 +386,6 @@
     NSURLRequest *request = [client requestWithMethod:@"POST" path:path parameters:parameters];
     
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
-//        NSMutableArray *deletedGroceries = [NSArray arrayWithArray:[JSON objectForKey:@"fridge"]];
-//        
-//        for (NSDictionary *deletedGrocery in deletedGroceries) {
-//            if ([self.currentGroceryList containsObject:deletedGrocery]) {
-//                
-//                NSInteger rowIndex = [self.currentGroceryList indexOfObject:deletedGrocery];
-//                [self.currentGroceryList removeObject:deletedGrocery];
-//                [self.groceryListTableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:rowIndex inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
-//            }
-//        }
         NSDictionary *groceryListInfo = [JSON objectForKey:@"grocery_list"];
         [self processGroceryListInformation:groceryListInfo];
         [self.completedGroceryList removeAllObjects];
@@ -407,12 +406,15 @@
     if (editingRecipes == NO) {
         editingRecipes = YES;
         sender.title = @"Done";
+        NSLog(@"deselect not working");
+        [self.recipesCollectionView deselectItemAtIndexPath:self.displayedRecipeIndexPath animated:YES];
         [UIView animateWithDuration:0.5 animations:^{
             self.groceryListView.frame = CGRectMake(-250, self.groceryListView.frame.origin.y, self.groceryListView.frame.size.width, self.groceryListView.frame.size.height);
             
             self.recipesCollectionView.frame = CGRectMake(self.recipesCollectionView.frame.origin.x - self.groceryListView.frame.size.width - 10, self.recipesCollectionView.frame.origin.y, self.recipesCollectionView.frame.size.width + self.groceryListView.frame.size.width, self.recipesCollectionView.frame.size.height);
             self.deleteRecipesButton.alpha = 1;
         }];
+        
     } else {
         editingRecipes = NO;
         sender.title = @"Edit";
@@ -424,12 +426,13 @@
             
         }];
         [self.selectedRecipes removeAllObjects];
+//        [self.recipesCollectionView selectItemAtIndexPath:self.displayedRecipeIndexPath animated:YES scrollPosition:UICollectionViewScrollPositionBottom];
     }
     [self.recipesCollectionView reloadData];
 }
 
 - (void)colorCollectionViewCell:(UICollectionViewCell *)cell {
-    [cell setShadowWithColor:[UIColor colorWithRed:0.86 green:0.30 blue:0.27 alpha:0.9] Radius:8.0f Offset:CGSizeMake(0, 0) Opacity:1.0f];
+    [cell setShadowWithColor:[UIColor colorWithRed:0.86 green:0.30 blue:0.27 alpha:1.0f] Radius:8.0f Offset:CGSizeMake(0, 0) Opacity:1.0f];
 }
 
 - (void)decolorCollectionViewCell:(UICollectionViewCell *)cell {
@@ -442,6 +445,10 @@
         if (buttonIndex == 0) {
             [self fetchGroceryList];
         }
+    } else if ([alertView.title isEqualToString:@"Are you sure?"]) {
+        if (buttonIndex == 0) {
+            [self recoverGrocery];
+        }
     } else {
         if (buttonIndex == 0) {
             [self deleteSelectedRecipe];
@@ -452,6 +459,10 @@
 
 // table view delegate and dataSource methods
 
+- (BOOL)isCellCrossedOutAtIndexPath:(NSIndexPath *)indexPath {
+    NSDictionary *groceryDetail = [self.currentGroceryDetailList objectAtIndex:indexPath.row];
+    return [[NSString stringWithFormat:@"%@", [groceryDetail objectForKey:@"active"]] isEqualToString:@"0"];
+}
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
     // Return NO if you do not want the specified item to be editable.
@@ -530,11 +541,8 @@
     
     cell.imageView.hidden = YES;
     
-    
-    NSDictionary *groceryDetail = [self.currentGroceryDetailList objectAtIndex:indexPath.row];
-    
     UIView *crossOutView = [cell viewWithTag:2];
-    if ([[NSString stringWithFormat:@"%@", [groceryDetail objectForKey:@"active"]] isEqualToString:@"0"]) {
+    if (displayingSpecificRecipe && [self isCellCrossedOutAtIndexPath:indexPath]) {
         crossOutView.hidden = NO;
         crossOutView.frame = CGRectMake(crossOutView.frame.origin.x, crossOutView.frame.origin.y, [cell.textLabel.text sizeWithFont:[UIFont systemFontOfSize:15.0f]].width + 50, crossOutView.frame.size.height);
     } else {
@@ -546,16 +554,16 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {    
-//    if (userIsInTheMiddleOfEditingGroceryList) {
-//        if (indexPath.row == 0) {
-//            [self openAddToGroceryListModal];
-//        } else {
-//            [self.selectedGroceryList addObject:[self.groceryList objectAtIndex:indexPath.row]];
-//        }
-//    }
     UITableViewCell *cell = [self.groceryListTableView cellForRowAtIndexPath:indexPath];
     UIButton *sender = (UIButton *)[cell viewWithTag:1];
     
+    if ([self isCellCrossedOutAtIndexPath:indexPath]) {
+        self.toBeRecoveredGrocery = [self.currentGroceryDetailList objectAtIndex:indexPath.row];
+        NSDictionary *tempGrocery = [self.currentGroceryList objectAtIndex:indexPath.row];
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Are you sure?" message:[NSString stringWithFormat:@"%@ will be added back to grocery list. Are you sure?", [tempGrocery objectForKey:@"name"]] delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: @"Cancel", nil];
+        [alertView show];
+        return;
+    }
     if (![self.completedGroceryList containsObject:[self.currentGroceryList objectAtIndex:indexPath.row]]) {
         [self.completedGroceryList addObject:[self.currentGroceryList objectAtIndex:indexPath.row]];
         sender.selected = YES;
@@ -572,7 +580,7 @@
     UITableViewCell *cell = [self.groceryListTableView cellForRowAtIndexPath:indexPath];
     UIButton *sender = (UIButton *)[cell viewWithTag:1];
 
-    if (![self.completedGroceryList containsObject:[self.currentGroceryList objectAtIndex:indexPath.row]]) {
+    if (![self.completedGroceryList containsObject:[self.currentGroceryList objectAtIndex:indexPath.row]] && ![self isCellCrossedOutAtIndexPath:indexPath]) {
         [self.completedGroceryList addObject:[self.currentGroceryList objectAtIndex:indexPath.row]];
         sender.selected = YES;
         cell.selected = YES;
@@ -587,7 +595,10 @@
 // collection view delegate and dataSource methods
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
-    self.navigationItem.rightBarButtonItem.enabled = self.recipes.count > 1;
+    if (!editingRecipes) {
+        self.navigationItem.rightBarButtonItem.enabled = self.recipes.count > 1;
+    }
+    
     return self.recipes.count;
 }
 
@@ -605,8 +616,6 @@
     
     if (indexPath.row == 0) {
         [imageView setImage:[UIImage imageNamed:@"grocery_list.png"]];
-//        cell.layer.borderColor = [[UIColor colorWithRed:0.8 green:0.8 blue:0.8 alpha:0.8] CGColor];
-//        cell.layer.borderWidth = 1.0f;
     } else {
         if (PRODUCTION) {
             [imageView setImageWithURL:[recipe objectForKey:@"recipe_image"] placeholderImage:[UIImage imageNamed:@"default_recipe_image.png"]];
@@ -618,6 +627,8 @@
     FrecipeBadgeView *deleteView = (FrecipeBadgeView *)[cell viewWithTag:2];
     deleteView.text = @"X";
     UIView *whiteView = [cell viewWithTag:3];
+    
+    cell.clipsToBounds = NO;
     if (indexPath.row != 0) {
         if (editingRecipes) {
             [UIView animateWithDuration:0.3 animations:^{
@@ -633,7 +644,14 @@
         deleteView.alpha = 0;
     }
     
-    [cell setShadowWithColor:[UIColor grayColor] Radius:2.0f Offset:CGSizeMake(0, 0) Opacity:0.5f];
+    if (!editingRecipes && [self.displayedRecipeIndexPath isEqual:indexPath]) {
+        [self colorCollectionViewCell:cell];
+        [collectionView selectItemAtIndexPath:indexPath animated:YES scrollPosition:UICollectionViewScrollPositionBottom];
+    } else {
+        [self decolorCollectionViewCell:cell];
+    }
+    
+//    [cell setShadowWithColor:[UIColor grayColor] Radius:2.0f Offset:CGSizeMake(0, 0) Opacity:0.5f];
     return cell;
 }
 
@@ -655,15 +673,14 @@
         
     } else {
         displayingSpecificRecipe = indexPath.row != 0;
+        self.displayedRecipeIndexPath = indexPath;
         self.recipeNameLabel.text = [NSString stringWithFormat:@"%@", [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"name"]];
         self.currentGroceryList = [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"missing_ingredients"];
         
         self.currentGroceryDetailList = [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"groceries"];
-        NSLog(@"%@", self.currentGroceryDetailList);
         
         [self colorCollectionViewCell:cell];
         [self.groceryListTableView reloadData];
-
     }
 }
 

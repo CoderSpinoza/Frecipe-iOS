@@ -7,6 +7,7 @@
 //
 
 #import "FrecipeAppDelegate.h"
+#import "FrecipeAPIClient.h"
 
 @implementation FrecipeAppDelegate
 
@@ -71,6 +72,8 @@ NSString *const FBSessionStateChangedNotification = @"com.Frecipe.Frecipe:FBSess
     } else {
         initViewController = [storyboard instantiateViewControllerWithIdentifier:@"Login"];
     }
+    
+    [[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];
     self.window.rootViewController = initViewController;
     return YES;
 }

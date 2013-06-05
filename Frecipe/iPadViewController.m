@@ -37,7 +37,7 @@
 }
 
 - (IBAction)revealMenu:(UIBarButtonItem *)sender {
-    iPadNavigationController *navigationController = self.navigationController;
+    iPadNavigationController *navigationController = (iPadNavigationController *)self.navigationController;
     
     [navigationController revealMenu];
 }

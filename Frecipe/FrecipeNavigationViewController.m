@@ -73,7 +73,6 @@
     if (!FBSession.activeSession.isOpen) {
         [FBSession openActiveSessionWithReadPermissions:[NSArray arrayWithObjects:@"email", nil]allowLoginUI:NO completionHandler:^(FBSession *session, FBSessionState status, NSError *error) {
             if (!error) {
-                NSLog(@"%@ %u", session, status);
             } else {
                 NSLog(@"%@", error);
             }
@@ -106,7 +105,6 @@
     NSString *identifier = [NSString stringWithFormat:@"%@", [self.menu objectAtIndex:indexPath.row]];
     
     if ([identifier isEqualToString:@"logout.png"]) {
-        UIViewController *newTopViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"Login"];
         
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
         [defaults setObject:nil forKey:@"authentication_token"];
@@ -117,18 +115,10 @@
         [defaults synchronize];
         
         [FBSession.activeSession closeAndClearTokenInformation];
-
+        
        [self.slidingViewController anchorTopViewOffScreenTo:ECRight animations:nil onComplete:^{
-           NSLog(@"here");
-           FrecipeAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
-           NSLog(@"%@", appDelegate.window.rootViewController);
-//            [self dismissViewControllerAnimated:YES completion:^{
-//                
-////                FrecipeAppDelegate *appDelegate
-//            }];
            [self performSegueWithIdentifier:@"Login" sender:self];
         }];
-        
     } else {
         UIViewController *newTopViewController = [self.storyboard instantiateViewControllerWithIdentifier:identifier];
         [self.slidingViewController anchorTopViewOffScreenTo:ECRight animations:nil onComplete:^{
@@ -176,9 +166,6 @@
     
     NSString *path = @"notifications/user";
     
-    [[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];
-    [[AFNetworkActivityIndicatorManager sharedManager] incrementActivityCount];
-    
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSString *authentication_token = [defaults stringForKey:@"authentication_token"];
     
@@ -210,9 +197,6 @@
 - (void)checkNotifications {
     NSString *path = @"notifications/check";
     
-    [[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];
-    [[AFNetworkActivityIndicatorManager sharedManager] incrementActivityCount];
-    
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSString *authentication_token = [defaults stringForKey:@"authentication_token"];
     
@@ -234,7 +218,6 @@
     
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
         FrecipeNavigationController *navigationController = (FrecipeNavigationController *)self.slidingViewController.topViewController;
-        NSLog(@"%@", navigationController.childViewControllers);
         
         self.notificationsBadgeView.text = @"0";
         if (navigationController.childViewControllers.count > 0) {
@@ -249,9 +232,6 @@
 
 - (void)querySearchString:(NSString *)searchString {
     NSString *path = @"tokens/search";
-    
-    [[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];
-    [[AFNetworkActivityIndicatorManager sharedManager] incrementActivityCount];
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSString *authentication_token = [defaults stringForKey:@"authentication_token"];

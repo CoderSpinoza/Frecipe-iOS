@@ -92,7 +92,7 @@
         [self performSegueWithIdentifier:@"RecipeDetail" sender:self];
     } else if ([category isEqualToString:@"follow"]) {
         self.selectedUser = target;
-        [self performSegueWithIdentifier:@"Profile" sender:self];
+        [self performSegueWithIdentifier:@"Profile2" sender:self];
     } else {
         self.selectedRecipe = target;
         [self performSegueWithIdentifier:@"RecipeDetail" sender:self];
@@ -105,15 +105,16 @@
     if ([segue.identifier isEqualToString:@"RecipeDetail"]) {
         FrecipeRecipeDetailViewController *recipeDetailViewController = (FrecipeRecipeDetailViewController *) segue.destinationViewController;
         recipeDetailViewController.recipeId = [self.selectedRecipe objectForKey:@"id"];
-        self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Frecipe" style:UIBarButtonItemStyleBordered target:segue.destinationViewController action:nil];
+
     } else if ([segue.identifier isEqualToString:@"Profile"] || [segue.identifier isEqualToString:@"Profile2"]) {
         FrecipeProfileViewController *destinationViewController = (FrecipeProfileViewController *)segue.destinationViewController;
+        NSLog(@"selected user: %@", self.selectedUser);
         destinationViewController.userId = [NSString stringWithFormat:@"%@", [self.selectedUser objectForKey:@"id"]];
         destinationViewController.fromSegue = YES;
         
         destinationViewController.navigationItem.leftBarButtonItem = nil;
-        self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Frecipe" style:UIBarButtonItemStyleBordered target:destinationViewController action:@selector(popViewControllerFromStack)];
     }
+    self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"back_arrow.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(popViewControllerAnimated:)];
 }
 
 

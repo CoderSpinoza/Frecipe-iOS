@@ -10,7 +10,7 @@
 #import "FrecipeAPIClient.h"
 #import "FrecipeAppDelegate.h"
 
-@interface FrecipeSignupViewController () <UITextFieldDelegate>
+@interface FrecipeSignupViewController () <UITextFieldDelegate, UIAlertViewDelegate>
 
 @property (strong, nonatomic) UITextField *currentField;
 
@@ -68,7 +68,8 @@
                     self.firstNameField.text = [NSString stringWithFormat:@"%@", [user objectForKey:@"first_name"]];
                     self.lastNameField.text = [NSString stringWithFormat:@"%@", [user objectForKey:@"last_name"]];
                 } else {
-                    NSLog(@"error TT");
+                    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:@"There was an error loading your facebook info. Retry?" delegate:self cancelButtonTitle:@"Retry" otherButtonTitles:@"Cancel", nil];
+                    [alertView show];
                 }
                 
             }];
@@ -124,7 +125,11 @@
             NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
             [defaults setObject:[JSON objectAtIndex:2] forKey:@"authentication_token"];
             [defaults setObject:[[JSON objectAtIndex:1] objectForKey:@"id"] forKey:@"id"];
-            [defaults setObject:[[JSON objectAtIndex:1] objectForKey:@"provider"] forKey:@"provider"];
+            
+            if ([[NSString stringWithFormat:@"%@", [[JSON objectAtIndex:1] objectForKey:@"provider"]] isEqualToString:@"facebook"]) {
+                [defaults setObject:[[JSON objectAtIndex:1] objectForKey:@"provider"] forKey:@"provider"];
+                [defaults setObject:[[JSON objectAtIndex:1] objectForKey:@"uid"] forKey:@"uid"];
+            }
             
             [defaults setObject:[NSString stringWithFormat:@"%@ %@", [[JSON objectAtIndex:1] objectForKey:@"first_name"], [[JSON objectAtIndex:1] objectForKey:@"last_name"]] forKey:@"name"];
             
@@ -175,6 +180,15 @@
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
     [textField resignFirstResponder];
     return YES;
+}
+
+// alert view delegate methods
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    if ([alertView.title isEqualToString:@"Error"]) {
+        if (buttonIndex == 0) {
+            [self useYourFacebookInfoButtonPressed];
+        }
+    }
 }
 
 // keyboard notification registration

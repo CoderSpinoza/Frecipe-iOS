@@ -97,7 +97,7 @@
         
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         NSLog(@"%@", error);
-        UIAlertView *errorView = [[UIAlertView alloc] initWithTitle:@"LoginError" message:[JSON objectForKey:@"message"] delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: nil];
+        UIAlertView *errorView = [[UIAlertView alloc] initWithTitle:@"Login Error" message:[JSON objectForKey:@"message"] delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: nil];
         [errorView show];
         [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
     }];
@@ -168,7 +168,7 @@
         } else {
             NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
             [defaults setObject:[JSON objectForKey:@"token"] forKey:@"authentication_token"];
-            
+            NSLog(@"%@", JSON);
             [defaults setObject:[[JSON objectForKey:@"user"] objectForKey:@"id"] forKey:@"id"];
             [defaults setObject:[[JSON objectForKey:@"user"] objectForKey:@"provider"] forKey:@"provider"];
             [defaults setObject:[NSString stringWithFormat:@"%@ %@", [[JSON objectForKey:@"user"] objectForKey:@"first_name"], [[JSON objectForKey:@"user"] objectForKey:@"last_name"]] forKey:@"name"];

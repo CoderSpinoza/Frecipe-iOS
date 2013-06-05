@@ -230,6 +230,8 @@
             } else {
                 self.scrollView.contentSize = CGSizeMake(self.scrollView.contentSize.width, self.recipesCollectionView.frame.origin.y + self.recipesCollectionView.frame.size.height + 118);
             }
+        } else {
+            self.recipesCollectionView.hidden = YES;
         }
         
         // set shadows after framing
@@ -239,6 +241,8 @@
         [spinner stopAnimating];
         [spinner removeFromSuperview];
         [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
+        
+        NSLog(@"%@", self.user);
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         
         [spinner stopAnimating];
@@ -254,6 +258,19 @@
 
 - (void)showFacebookFriendPicker {
     [self performSegueWithIdentifier:@"FacebookInvites" sender:self];
+}
+
+- (IBAction)recipesButtonPressed {
+    
+    CGPoint point;
+    if (self.recipes.count > 4) {
+        point = CGPointMake(0, self.recipesCollectionView.frame.origin.y - 20);
+    } else {
+        point = CGPointMake(0, self.scrollView.contentSize.height - self.scrollView.bounds.size.height);
+    }
+    [UIView animateWithDuration:0.5 animations:^{
+        self.scrollView.contentOffset = point;
+    }];
 }
 
 - (IBAction)inviteButtonPressed {
@@ -334,7 +351,7 @@
         self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"back_arrow.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(popViewControllerFromStack)];
     } else if ([segue.identifier isEqualToString:@"Profile"]) {
         FrecipeProfileViewController *profileViewController = (FrecipeProfileViewController *)segue.destinationViewController;
-        
+        NSLog(@"here");
         NSDictionary *user = [self.selectedRecipe objectForKey:@"user"];
         profileViewController.userId  = [NSString stringWithFormat:@"%@", [user objectForKey:@"id"]];        
     } else if ([segue.identifier isEqualToString:@"EditProfile"]) {
@@ -343,7 +360,17 @@
         if (destinationViewController.view) {
             destinationViewController.profilePictureView.image = self.profilePictureView.image;
             destinationViewController.fbProfilePictureView.profileID = [NSString stringWithFormat:@"%@", [self.user objectForKey:@"uid"]];
+            
         }
+    } else if ([segue.identifier isEqualToString:@"Profile2"] ) {
+        FrecipeProfileViewController *destinationViewController = (FrecipeProfileViewController *)segue.destinationViewController;
+        NSLog(@"selected user: %@", self.selectedUser);
+        destinationViewController.userId = [NSString stringWithFormat:@"%@", [self.selectedUser objectForKey:@"id"]];
+        destinationViewController.fromSegue = YES;
+        
+        destinationViewController.navigationItem.leftBarButtonItem = nil;
+
+        self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"back_arrow.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(popViewControllerFromStack)];
     } else if ([identifiers containsObject:segue.identifier]) {
         
         FrecipeProfileDetailViewController *destinationViewController = segue.destinationViewController;

@@ -11,6 +11,6 @@
 @interface FrecipeNotificationsViewController : UITableViewController
 
 @property (strong, nonatomic) NSMutableArray *notifications;
-@property (strong, nonatomic) UIViewController *delegate;
+@property (weak, nonatomic) UIViewController *delegate;
 
 @end

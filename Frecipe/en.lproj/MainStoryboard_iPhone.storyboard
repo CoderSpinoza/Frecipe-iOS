@@ -108,6 +108,7 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
+                    <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="blackTranslucent"/>
                     <connections>
                         <outlet property="fbProfilePictureView" destination="nId-1Z-spe" id="JmD-kc-m3b"/>
                         <outlet property="menuCollectionView" destination="GqY-nD-LRY" id="bIu-c9-TmA"/>
@@ -136,6 +137,7 @@
         <scene sceneID="Zzb-dT-o4d">
             <objects>
                 <navigationController storyboardIdentifier="frecipe.png" definesPresentationContext="YES" id="HSK-aZ-cnK" customClass="FrecipeNavigationController" sceneMemberID="viewController">
+                    <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="blackTranslucent"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="mZb-C4-u7V">
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -438,6 +440,7 @@
         <scene sceneID="bRk-zN-b1I">
             <objects>
                 <navigationController storyboardIdentifier="my_fridge.png" definesPresentationContext="YES" id="iSo-hh-N8l" customClass="FrecipeNavigationController" sceneMemberID="viewController">
+                    <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="blackTranslucent"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="FQ3-m2-Fuu">
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -556,7 +559,7 @@
                                 <action selector="segmentedControlPressed:" destination="Xhh-XG-uj1" eventType="valueChanged" id="Y2i-g5-eGg"/>
                             </connections>
                         </segmentedControl>
-                        <barButtonItem key="rightBarButtonItem" title="Edit" id="2pR-b1-ydD"/>
+                        <barButtonItem key="rightBarButtonItem" enabled="NO" title="Edit" id="2pR-b1-ydD"/>
                     </navigationItem>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics" barStyle="blackTranslucent"/>
                     <connections>
@@ -564,7 +567,7 @@
                         <outlet property="ingredientsTableView" destination="sO1-4x-hS4" id="YNL-q9-UMa"/>
                         <segue destination="Lg2-Ge-Dvc" kind="modal" identifier="AddIngredients" modalTransitionStyle="coverVertical" id="0Of-c5-MYL"/>
                         <segue destination="UIY-aZ-p57" kind="push" identifier="RecipeDetail" id="pUm-dt-NRF"/>
-                        <segue destination="jLj-s0-Acp" kind="push" identifier="Profile" id="ls3-hz-VdW"/>
+                        <segue destination="jLj-s0-Acp" kind="push" identifier="Profile2" id="ls3-hz-VdW"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Trj-pH-aU9" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -576,7 +579,7 @@
             <objects>
                 <viewController id="UIY-aZ-p57" customClass="FrecipeRecipeDetailViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="zcx-Lk-PpD">
-                        <rect key="frame" x="0.0" y="20" width="320" height="504"/>
+                        <rect key="frame" x="0.0" y="64" width="320" height="504"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="u1I-BJ-kRh">
@@ -610,7 +613,7 @@
                                                 <rect key="frame" x="190" y="10" width="30" height="30"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                                                <state key="normal" image="like_highlighted.png">
+                                                <state key="normal" image="thumb_highlighted.png">
                                                     <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
                                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                 </state>
@@ -683,7 +686,7 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" allowsSelectionDuringEditing="YES" allowsMultipleSelectionDuringEditing="YES" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="XJl-ba-nT0">
-                                                <rect key="frame" x="5" y="30" width="280" height="280"/>
+                                                <rect key="frame" x="10" y="30" width="280" height="280"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                 <prototypes>
@@ -698,6 +701,21 @@
                                                     </tableViewCell>
                                                 </prototypes>
                                             </tableView>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="FPM-Rq-UeL">
+                                                <rect key="frame" x="10" y="153" width="280" height="44"/>
+                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                                <state key="normal" title="Add Grocery List">
+                                                    <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                                </state>
+                                                <state key="highlighted">
+                                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                </state>
+                                                <connections>
+                                                    <action selector="addToGroceryList" destination="UIY-aZ-p57" eventType="touchUpInside" id="Dkb-KM-HoN"/>
+                                                </connections>
+                                            </button>
                                         </subviews>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                                     </view>
@@ -868,6 +886,7 @@
                     </view>
                     <navigationItem key="navigationItem" id="q0I-dF-jjb"/>
                     <connections>
+                        <outlet property="addToGroceryListButton" destination="FPM-Rq-UeL" id="4fj-Sx-dBI"/>
                         <outlet property="averageRatingView" destination="DRy-7F-miV" id="hmu-uy-SiV"/>
                         <outlet property="commentButton" destination="qwe-q2-huW" id="i5v-r9-4fw"/>
                         <outlet property="commentField" destination="Jwh-o7-8ZR" id="cH4-sl-qbJ"/>
@@ -959,6 +978,7 @@
         <scene sceneID="rd7-52-zMW">
             <objects>
                 <navigationController storyboardIdentifier="my_restaurant.png" definesPresentationContext="YES" id="Reh-15-ZHK" customClass="FrecipeNavigationController" sceneMemberID="viewController">
+                    <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="blackTranslucent"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="ZyW-Cp-R4a">
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -975,7 +995,7 @@
             <objects>
                 <viewController storyboardIdentifier="" id="jLj-s0-Acp" customClass="FrecipeProfileViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="nR7-Aa-Rtd">
-                        <rect key="frame" x="0.0" y="20" width="320" height="504"/>
+                        <rect key="frame" x="0.0" y="64" width="320" height="504"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="rdM-VD-HbP">
@@ -1077,7 +1097,7 @@
                                                             <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                         </state>
                                                         <connections>
-                                                            <segue destination="KHb-58-yiH" kind="push" identifier="Recipes" id="XSk-W8-XLW"/>
+                                                            <action selector="recipesButtonPressed" destination="jLj-s0-Acp" eventType="touchUpInside" id="VXR-z8-nHv"/>
                                                         </connections>
                                                     </button>
                                                 </subviews>
@@ -1416,6 +1436,21 @@
                                             </collectionViewCell>
                                         </cells>
                                     </collectionView>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="0lY-sg-3xN">
+                                        <rect key="frame" x="320" y="197" width="73" height="44"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                        <state key="normal" title="Button">
+                                            <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <state key="highlighted">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <connections>
+                                            <segue destination="jLj-s0-Acp" kind="push" identifier="Profile2" id="FGM-EP-PEy"/>
+                                        </connections>
+                                    </button>
                                 </subviews>
                                 <color key="backgroundColor" red="0.80000001192092896" green="0.80000001192092896" blue="0.80000001192092896" alpha="1" colorSpace="calibratedRGB"/>
                             </scrollView>
@@ -1463,7 +1498,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="bn6-TZ-w8m" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2440" y="1156"/>
+            <point key="canvasLocation" x="2228" y="1116"/>
         </scene>
         <!--Frecipe Edit Profile View Controller-->
         <scene sceneID="G1F-Ao-sCN">
@@ -1591,15 +1626,58 @@
             <objects>
                 <viewController id="KHb-58-yiH" customClass="FrecipeProfileDetailViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="aak-XI-ABc">
-                        <rect key="frame" x="0.0" y="20" width="320" height="548"/>
+                        <rect key="frame" x="0.0" y="64" width="320" height="504"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <collectionView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" minimumZoomScale="0.0" maximumZoomScale="0.0" dataMode="prototypes" id="rzg-Z6-uRX">
+                                <rect key="frame" x="0.0" y="-4" width="320" height="504"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="0.0" minimumInteritemSpacing="0.0" id="93y-oA-2jt">
+                                    <size key="itemSize" width="160" height="160"/>
+                                    <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                                    <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                                    <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                </collectionViewFlowLayout>
+                                <cells>
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="8bL-oZ-tB1">
+                                        <rect key="frame" x="0.0" y="0.0" width="160" height="160"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                            <rect key="frame" x="0.0" y="0.0" width="160" height="160"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </view>
+                                    </collectionViewCell>
+                                </cells>
+                            </collectionView>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="cfB-x7-aTk">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="504"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <prototypes>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" indentationWidth="10" reuseIdentifier="UserCell" id="vcP-br-fm4">
+                                        <rect key="frame" x="0.0" y="22" width="320" height="44"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </view>
+                                    </tableViewCell>
+                                </prototypes>
+                            </tableView>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" id="b3Z-uG-K23"/>
+                    <connections>
+                        <outlet property="recipesCollectionView" destination="rzg-Z6-uRX" id="8tm-4t-brn"/>
+                        <outlet property="usersTableView" destination="cfB-x7-aTk" id="mCi-EK-Shh"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="naW-7L-LgT" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3100" y="1591"/>
+            <point key="canvasLocation" x="3189" y="1770"/>
         </scene>
         <!--Frecipe Facebook Invite View Controller-->
         <scene sceneID="V2a-cN-XJY">
@@ -1677,6 +1755,7 @@
         <scene sceneID="1He-IC-G9U">
             <objects>
                 <navigationController storyboardIdentifier="grocery_list.png" definesPresentationContext="YES" id="msa-dD-EIZ" customClass="FrecipeNavigationController" sceneMemberID="viewController">
+                    <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="blackTranslucent"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="BcI-zw-IZG">
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -1737,16 +1816,18 @@
                             </connections>
                         </barButtonItem>
                     </navigationItem>
+                    <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="blackTranslucent"/>
                     <connections>
                         <outlet property="settingsTableView" destination="gFF-YU-wUO" id="BCZ-Pt-CgF"/>
-                        <segue destination="jLj-s0-Acp" kind="push" identifier="Profile" id="mvN-Bk-uj5"/>
+                        <segue destination="jLj-s0-Acp" kind="push" identifier="Profile2" id="mvN-Bk-uj5"/>
                         <segue destination="UIY-aZ-p57" kind="push" identifier="RecipeDetail" id="JE6-sc-Nr9"/>
                         <segue destination="cx6-ao-oYu" kind="push" identifier="ChangePassword" id="zc0-cY-jvW"/>
+                        <segue destination="dWK-Xw-Wc9" kind="modal" identifier="SendFeedback" modalTransitionStyle="coverVertical" id="kMN-HL-2jZ"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="aK9-gP-Mhx" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2404" y="2110"/>
+            <point key="canvasLocation" x="2420" y="2110"/>
         </scene>
         <!--Frecipe Change Password View Controller - Change Password-->
         <scene sceneID="mob-7Z-4XL">
@@ -1756,26 +1837,26 @@
                         <rect key="frame" x="0.0" y="64" width="320" height="504"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Current Password" minimumFontSize="17" id="jSZ-9H-swz">
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Current Password" minimumFontSize="17" clearButtonMode="whileEditing" id="jSZ-9H-swz">
                                 <rect key="frame" x="20" y="20" width="280" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" secureTextEntry="YES"/>
                             </textField>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="New Password" minimumFontSize="17" id="00f-8R-NJj">
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="New Password" minimumFontSize="17" clearButtonMode="whileEditing" id="00f-8R-NJj">
                                 <rect key="frame" x="20" y="58" width="280" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" secureTextEntry="YES"/>
                             </textField>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Confirmation" minimumFontSize="17" id="IGh-CB-cbB">
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Confirmation" minimumFontSize="17" clearButtonMode="whileEditing" id="IGh-CB-cbB">
                                 <rect key="frame" x="20" y="96" width="280" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" secureTextEntry="YES"/>
                             </textField>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="ZbT-lt-tZG">
-                                <rect key="frame" x="20" y="134" width="280" height="31"/>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="ZbT-lt-tZG">
+                                <rect key="frame" x="20" y="134" width="280" height="43"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                 <color key="textColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
@@ -1800,7 +1881,52 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ddv-H7-llU" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2867" y="2353"/>
+            <point key="canvasLocation" x="3080" y="2908"/>
+        </scene>
+        <!--Frecipe Send Feedback View Controller - Send Feedback-->
+        <scene sceneID="gvT-Qd-17w">
+            <objects>
+                <viewController id="dWK-Xw-Wc9" customClass="FrecipeSendFeedbackViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="JoQ-vR-l3K">
+                        <rect key="frame" x="0.0" y="20" width="320" height="548"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="hPe-aV-lp6">
+                                <rect key="frame" x="20" y="64" width="280" height="238"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                            <navigationBar contentMode="scaleToFill" id="QYf-JP-Zj6">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                <items>
+                                    <navigationItem title="Send Feedback" id="SzN-WN-ogd">
+                                        <barButtonItem key="leftBarButtonItem" title="Cancel" id="gqr-ZP-w3U">
+                                            <connections>
+                                                <action selector="cancelButtonPressed:" destination="dWK-Xw-Wc9" id="WeH-dn-VIL"/>
+                                            </connections>
+                                        </barButtonItem>
+                                        <barButtonItem key="rightBarButtonItem" title="Send" id="m55-eI-3wq">
+                                            <connections>
+                                                <action selector="sendButtonPressed:" destination="dWK-Xw-Wc9" id="ZXy-lK-sPF"/>
+                                            </connections>
+                                        </barButtonItem>
+                                    </navigationItem>
+                                </items>
+                            </navigationBar>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="Send Feedback" id="v9J-VJ-fuo"/>
+                    <connections>
+                        <outlet property="feedbackTextView" destination="hPe-aV-lp6" id="aVB-T1-CvX"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Qor-vK-yUm" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3095" y="2256"/>
         </scene>
         <!--Frecipe Grocery List View Controller - Grocery List-->
         <scene sceneID="klR-OK-Reg">
@@ -1830,7 +1956,7 @@
                                             <subviews>
                                                 <imageView userInteractionEnabled="NO" tag="1" contentMode="scaleToFill" id="yqm-1U-7eb">
                                                     <rect key="frame" x="0.0" y="0.0" width="60" height="60"/>
-                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxY="YES"/>
                                                 </imageView>
                                                 <view userInteractionEnabled="NO" alpha="0.0" tag="3" contentMode="scaleToFill" id="S58-Ha-v9t">
                                                     <rect key="frame" x="0.0" y="0.0" width="60" height="60"/>
@@ -1987,7 +2113,7 @@
                         <outlet property="recipesCollectionView" destination="R1Q-oI-rH5" id="W0A-yT-TuB"/>
                         <outlet property="trashButton" destination="pnU-lb-Vez" id="ahF-z6-sRS"/>
                         <segue destination="psT-Pj-8kp" kind="modal" identifier="AddToGroceryList" modalTransitionStyle="coverVertical" id="DIv-3u-9Ma"/>
-                        <segue destination="jLj-s0-Acp" kind="push" identifier="Profile" id="WnA-X5-8uH"/>
+                        <segue destination="jLj-s0-Acp" kind="push" identifier="Profile2" id="WnA-X5-8uH"/>
                         <segue destination="UIY-aZ-p57" kind="push" identifier="RecipeDetail" id="ev4-tv-MfP"/>
                     </connections>
                 </viewController>
@@ -2046,6 +2172,7 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
+                    <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="blackTranslucent"/>
                     <connections>
                         <outlet property="groceryField" destination="skH-kn-Hq0" id="M5e-pO-iDH"/>
                         <outlet property="groceryListTableView" destination="6zz-XO-SKg" id="sFP-86-jJJ"/>
@@ -2053,7 +2180,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="wbV-yT-zWZ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2050" y="2170"/>
+            <point key="canvasLocation" x="2052" y="2176"/>
         </scene>
         <!--Frecipe Forgot Password View Controller-->
         <scene sceneID="zQ1-cG-JBv">
@@ -2302,7 +2429,7 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
-                    <simulatedStatusBarMetrics key="simulatedStatusBarMetrics"/>
+                    <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="blackTranslucent"/>
                     <connections>
                         <outlet property="emailField" destination="Qbx-XA-oRX" id="INH-P8-bfn"/>
                         <outlet property="loginImageView" destination="mDG-UM-dhu" id="0T8-MX-bg8"/>
@@ -2323,10 +2450,10 @@
         <image name="default_recipe_picture.png" width="281" height="280"/>
         <image name="facebook_login_button.png" width="400" height="88"/>
         <image name="iTunesArtwork.png" width="512" height="512"/>
-        <image name="like_highlighted.png" width="2500" height="2500"/>
         <image name="loginpage_640*1136.png" width="640" height="1136"/>
         <image name="menu_icon.png" width="20" height="20"/>
         <image name="share.png" width="2500" height="2500"/>
+        <image name="thumb_highlighted.png" width="2500" height="2500"/>
         <image name="trash.png" width="44" height="44"/>
     </resources>
     <classes>
@@ -2369,7 +2496,6 @@
         <class className="FrecipeChangePasswordViewController" superclassName="UIViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeChangePasswordViewController.h"/>
             <relationships>
-                <relationship kind="action" name="saveButtonPressed:" candidateClass="UIBarButtonItem"/>
                 <relationship kind="outlet" name="currentPasswordField" candidateClass="UITextField"/>
                 <relationship kind="outlet" name="differentPasswordField" candidateClass="UITextField"/>
                 <relationship kind="outlet" name="errorLabel" candidateClass="UILabel"/>
@@ -2453,6 +2579,10 @@
         </class>
         <class className="FrecipeProfileDetailViewController" superclassName="UIViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeProfileDetailViewController.h"/>
+            <relationships>
+                <relationship kind="outlet" name="recipesCollectionView" candidateClass="UICollectionView"/>
+                <relationship kind="outlet" name="usersTableView" candidateClass="UITableView"/>
+            </relationships>
         </class>
         <class className="FrecipeProfileViewController" superclassName="FrecipeMainViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeProfileViewController.h"/>
@@ -2490,6 +2620,7 @@
         <class className="FrecipeRecipeDetailViewController" superclassName="UIViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeRecipeDetailViewController.h"/>
             <relationships>
+                <relationship kind="outlet" name="addToGroceryListButton" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="averageRatingView" candidateClass="FrecipeRatingView"/>
                 <relationship kind="outlet" name="commentButton" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="commentField" candidateClass="UITextField"/>
@@ -2510,6 +2641,12 @@
                 <relationship kind="outlet" name="recipeImageView" candidateClass="UIImageView"/>
                 <relationship kind="outlet" name="recipeMainView" candidateClass="UIView"/>
                 <relationship kind="outlet" name="scrollView" candidateClass="UIScrollView"/>
+            </relationships>
+        </class>
+        <class className="FrecipeSendFeedbackViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeSendFeedbackViewController.h"/>
+            <relationships>
+                <relationship kind="outlet" name="feedbackTextView" candidateClass="UITextView"/>
             </relationships>
         </class>
         <class className="FrecipeSettingsViewController" superclassName="FrecipeMainViewController">
@@ -2551,9 +2688,9 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
+        <segue reference="ls3-hz-VdW"/>
         <segue reference="GxI-kH-EJd"/>
-        <segue reference="gQH-mx-TWG"/>
-        <segue reference="FWi-4a-gi8"/>
+        <segue reference="ev4-tv-MfP"/>
         <segue reference="TkR-fi-IFc"/>
     </inferredMetricsTieBreakers>
 </document>

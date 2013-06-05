@@ -77,15 +77,17 @@
         } else {
             message = @"There was an error updating your password.";
         }
-        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Password Update Error" message:message delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: nil];
         self.errorLabel.text = message;
-//        [alertView show];
     }];
     [operation start];
 }
 
 - (BOOL)checkPasswordLength {
-    return self.currentPasswordField.text.length > 6 && self.differentPasswordField.text.length > 6 && self.passwordConfirmationField.text.length > 6;
+    return [self checkPasswordLengthForTextField:self.currentPasswordField] && [self checkPasswordLengthForTextField:self.differentPasswordField] && [self checkPasswordLengthForTextField:self.passwordConfirmationField];
+}
+
+- (BOOL)checkPasswordLengthForTextField:(UITextField *)textField {
+    return textField.text.length > 6 || textField.text.length == 0;
 }
 
 - (void)addGestureRecognizers {
@@ -108,10 +110,19 @@
 }
 
 - (BOOL)textFieldShouldEndEditing:(UITextField *)textField {
-    if (![self checkPasswordLength]) {
+    if (![self checkPasswordLengthForTextField:textField]) {
         self.errorLabel.text = @"Password should be longer than 6 letters.";
+        textField.layer.borderColor = [[UIColor redColor] CGColor];
+        textField.layer.borderWidth = 1.0f;
+        textField.layer.cornerRadius = 7.0f;
     } else {
-        self.errorLabel.text = @"";
+        
+        textField.layer.borderColor = [[UIColor clearColor] CGColor];
+        textField.layer.borderWidth = 1.0f;
+        if ([self checkPasswordLength]) {
+            self.errorLabel.text = @"";
+        }
+        
     }
     return YES;
 }

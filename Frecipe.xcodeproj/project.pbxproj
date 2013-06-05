@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		BC272C53E9E9495BB99A3C98 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CC3902FF59D545519B935676 /* libPods.a */; };
 		C205D7A6175858650032BD34 /* FrecipeProfileDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C205D7A5175858640032BD34 /* FrecipeProfileDetailViewController.m */; };
+		C251F006175D839C00DF956F /* FrecipeSendFeedbackViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C251F005175D839B00DF956F /* FrecipeSendFeedbackViewController.m */; };
 		C25651AB174D95AA005755A9 /* fridge_background.png in Resources */ = {isa = PBXBuildFile; fileRef = C25651AA174D95AA005755A9 /* fridge_background.png */; };
 		C25651AE174F6132005755A9 /* UIColor+Frecipe.m in Sources */ = {isa = PBXBuildFile; fileRef = C25651AD174F6132005755A9 /* UIColor+Frecipe.m */; };
 		C25651B11750679B005755A9 /* FrecipeEditProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C25651B01750679B005755A9 /* FrecipeEditProfileViewController.m */; };
@@ -137,6 +138,8 @@
 		B229DB6A887849DC88A926C2 /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = SOURCE_ROOT; };
 		C205D7A4175858630032BD34 /* FrecipeProfileDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrecipeProfileDetailViewController.h; sourceTree = "<group>"; };
 		C205D7A5175858640032BD34 /* FrecipeProfileDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FrecipeProfileDetailViewController.m; sourceTree = "<group>"; };
+		C251F004175D839B00DF956F /* FrecipeSendFeedbackViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrecipeSendFeedbackViewController.h; sourceTree = "<group>"; };
+		C251F005175D839B00DF956F /* FrecipeSendFeedbackViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FrecipeSendFeedbackViewController.m; sourceTree = "<group>"; };
 		C25651AA174D95AA005755A9 /* fridge_background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = fridge_background.png; sourceTree = "<group>"; };
 		C25651AC174F6131005755A9 /* UIColor+Frecipe.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+Frecipe.h"; sourceTree = "<group>"; };
 		C25651AD174F6132005755A9 /* UIColor+Frecipe.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+Frecipe.m"; sourceTree = "<group>"; };
@@ -456,6 +459,8 @@
 				C256F6751759446D00D44A84 /* FrecipeForgotPasswordViewController.m */,
 				C256F6771759909300D44A84 /* FrecipeChangePasswordViewController.h */,
 				C256F6781759909400D44A84 /* FrecipeChangePasswordViewController.m */,
+				C251F004175D839B00DF956F /* FrecipeSendFeedbackViewController.h */,
+				C251F005175D839B00DF956F /* FrecipeSendFeedbackViewController.m */,
 				C2A32885172E04BD00EBB23B /* FrecipeAPIClient.h */,
 				C2A32886172E04BD00EBB23B /* FrecipeAPIClient.m */,
 				C2A32888172E04C500EBB23B /* FrecipeFunctions.h */,
@@ -787,6 +792,7 @@
 				C205D7A6175858650032BD34 /* FrecipeProfileDetailViewController.m in Sources */,
 				C256F6761759446D00D44A84 /* FrecipeForgotPasswordViewController.m in Sources */,
 				C256F6791759909400D44A84 /* FrecipeChangePasswordViewController.m in Sources */,
+				C251F006175D839C00DF956F /* FrecipeSendFeedbackViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

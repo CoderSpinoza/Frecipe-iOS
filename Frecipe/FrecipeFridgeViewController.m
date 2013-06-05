@@ -63,6 +63,7 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    self.navigationItem.rightBarButtonItem.enabled = NO;
     [self fetchIngredients];
 }
 
@@ -94,8 +95,7 @@
     self.collectionViewRefreshControl = collectionViewRefreshControl;
     
     UIView *backgroundView = [[UIView alloc] initWithFrame:CGRectMake(self.ingredientsCollectionView.bounds.origin.x, - self.ingredientsCollectionView.frame.size.height, self.ingredientsCollectionView.bounds.size.width, self.ingredientsCollectionView.bounds.size.height)];
-    backgroundView.backgroundColor = [UIColor whiteColor];
-//    backgroundView.alpha = 0.5;
+    backgroundView.backgroundColor = [UIColor blackColor];
     [self.ingredientsCollectionView insertSubview:backgroundView atIndex:0];
 }
 
@@ -115,6 +115,8 @@
             NSDictionary *addRow = [NSDictionary dictionaryWithObject:@"Add Ingredients" forKey:@"name"];
             [self.ingredients insertObject:addRow atIndex:0];
         }
+        
+        self.navigationItem.rightBarButtonItem.enabled = YES;
         
         [self.ingredientsTableView reloadData];
         [self.ingredientsCollectionView reloadData];
@@ -330,6 +332,9 @@
 //        cell.selected = NO;
         coverView.hidden = YES;
     }
+    if (userIsInTheMiddleOfEditingIngredientsList && indexPath.row == 0) {
+        nameLabel.text = @"Add";
+    }
     return cell;
 }
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
@@ -339,7 +344,6 @@
             [self openAddIngredientsActionSheet];
             cell.selected = NO;
         } else {
-            NSLog(@"selected");
             [self.selectedIngredients addObject:[self.ingredients objectAtIndex:indexPath.row]];
             UIView *coverView = [cell viewWithTag:4];
             coverView.hidden = NO;
@@ -353,7 +357,6 @@
 - (void)collectionView:(UICollectionView *)collectionView didDeselectItemAtIndexPath:(NSIndexPath *)indexPath {
     
     if (userIsInTheMiddleOfEditingIngredientsList) {
-        NSLog(@"deselected");
         UICollectionViewCell *cell = [self.ingredientsCollectionView cellForItemAtIndexPath:indexPath];
         if (indexPath.row != 0) {
             [self.selectedIngredients removeObject:[self.ingredients objectAtIndex:indexPath.row]];
