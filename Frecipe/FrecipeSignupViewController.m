@@ -9,6 +9,7 @@
 #import "FrecipeSignupViewController.h"
 #import "FrecipeAPIClient.h"
 #import "FrecipeAppDelegate.h"
+#import "FrecipeSpinnerView.h"
 
 @interface FrecipeSignupViewController () <UITextFieldDelegate, UIAlertViewDelegate>
 
@@ -56,10 +57,16 @@
 }
 
 - (IBAction)useYourFacebookInfoButtonPressed {
+    FrecipeSpinnerView *spinnerView = [[FrecipeSpinnerView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
+    spinnerView.center = CGPointMake(self.view.frame.size.width / 2, self.view.frame.size.height / 2);
+    [spinnerView.spinner startAnimating];
+    [self.view addSubview:spinnerView];
     if (!FBSession.activeSession.isOpen) {
         NSArray *permissions = [[NSArray alloc] initWithObjects:
                                 @"email",
                                 nil];
+        
+        
         [FBSession openActiveSessionWithReadPermissions:permissions allowLoginUI:YES completionHandler:^(FBSession *session, FBSessionState status, NSError *error) {
             [[FBRequest requestForMe] startWithCompletionHandler:^(FBRequestConnection *connection, NSDictionary<FBGraphUser> *user, NSError *error) {
                 if (!error) {
@@ -71,9 +78,9 @@
                     UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:@"There was an error loading your facebook info. Retry?" delegate:self cancelButtonTitle:@"Retry" otherButtonTitles:@"Cancel", nil];
                     [alertView show];
                 }
+                [spinnerView removeFromSuperview];
                 
             }];
-
         }];
     } else {
         [[FBRequest requestForMe] startWithCompletionHandler:^(FBRequestConnection *connection, NSDictionary<FBGraphUser> *user, NSError *error) {
@@ -85,21 +92,41 @@
             } else {
                 NSLog(@"error TT");
             }
-            
+            [spinnerView removeFromSuperview];
         }];
-
     }
 }
 
-- (IBAction)signupButtonPressed {
+- (IBAction)signupButtonPressed:(id)sender {
+    if (![self.emailField.text isEmail]) {
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Signup Error" message:@"Please enter a valid email address." delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: nil];
+        [alertView show];
+        return;
+    }
     
-    [[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];
-    [[AFNetworkActivityIndicatorManager sharedManager] incrementActivityCount];
+    if (self.firstNameField.text.length == 0 || self.lastNameField.text.length == 0) {
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Signup Error" message:@"First name or last name cannot be blank." delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: nil];
+        [alertView show];
+        return;
+    }
+    
+    if (![self.passwordField.text isEqualToString:self.confirmationField.text]) {
+        NSLog(@"%u %@ %@", [self.emailField.text isEqualToString:self.confirmationField.text], self.emailField.text, self.confirmationField.text);
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Signup Error" message:@"Passwords do not match." delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: nil];
+        [alertView show];
+        return;
+    }
+    
+    if (self.passwordField.text.length == 0 || self.confirmationField.text.length == 0) {
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Signup Error" message:@"Passwords cannot be blank." delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: nil];
+        [alertView show];
+        return;
+    }
     
     NSString *path = @"users";
-    
     NSArray *keys;
     NSArray *values;
+    
     if (self.uid) {
         keys = [NSArray arrayWithObjects:@"email", @"first_name", @"last_name", @"password", @"password_confirmation", @"uid", @"provider", nil];
         values = [NSArray arrayWithObjects:self.emailField.text, self.firstNameField.text, self.lastNameField.text, self.passwordField.text, self.confirmationField.text, self.uid, @"facebook", nil];
@@ -116,27 +143,27 @@
     NSURLRequest *request = [client requestWithMethod:@"POST" path:path parameters:parameters];
     
     
+    
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
         
-        
-        NSString *message = [JSON objectAtIndex:0];
+        NSString *message = [JSON objectForKey:@"message"];
         
         if ([message isEqualToString:@"success"]) {
             NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-            [defaults setObject:[JSON objectAtIndex:2] forKey:@"authentication_token"];
-            [defaults setObject:[[JSON objectAtIndex:1] objectForKey:@"id"] forKey:@"id"];
+            [defaults setObject:[JSON objectForKey:@"authentication_token"] forKey:@"authentication_token"];
+            [defaults setObject:[[JSON objectForKey:@"user"] objectForKey:@"id"] forKey:@"id"];
             
-            if ([[NSString stringWithFormat:@"%@", [[JSON objectAtIndex:1] objectForKey:@"provider"]] isEqualToString:@"facebook"]) {
-                [defaults setObject:[[JSON objectAtIndex:1] objectForKey:@"provider"] forKey:@"provider"];
-                [defaults setObject:[[JSON objectAtIndex:1] objectForKey:@"uid"] forKey:@"uid"];
+            if ([[NSString stringWithFormat:@"%@", [[JSON objectForKey:@"user"] objectForKey:@"provider"]] isEqualToString:@"facebook"]) {
+                [defaults setObject:[[JSON objectForKey:@"user"] objectForKey:@"provider"] forKey:@"provider"];
+                [defaults setObject:[[JSON objectForKey:@"user"] objectForKey:@"uid"] forKey:@"uid"];
             }
             
-            [defaults setObject:[NSString stringWithFormat:@"%@ %@", [[JSON objectAtIndex:1] objectForKey:@"first_name"], [[JSON objectAtIndex:1] objectForKey:@"last_name"]] forKey:@"name"];
+            [defaults setObject:[NSString stringWithFormat:@"%@ %@", [[JSON objectForKey:@"user"] objectForKey:@"first_name"], [[JSON objectForKey:@"user"] objectForKey:@"last_name"]] forKey:@"name"];
             
             NSString *profilePictureUrl;
-        
-            profilePictureUrl = [NSString stringWithFormat:@"%@", [JSON objectAtIndex:3]];
-
+            
+            profilePictureUrl = [NSString stringWithFormat:@"%@", [JSON objectForKey:@"profile_picture"]];
+            
             [defaults setObject:profilePictureUrl forKey:@"profile_picture"];
             [defaults synchronize];
             
@@ -147,7 +174,7 @@
             } completion:nil];
             
         } else {
-            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Signup Error" message:@"There was an error processing your signup request" delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: nil];
+            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Signup Error" message:[JSON objectForKey:@"message"] delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: nil];
             [alertView show];
         }
         
@@ -155,7 +182,7 @@
         
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         NSLog(@"%@", error);
-        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Signup Error" message:@"There was an error processing your signup request." delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: nil];
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Signup Error" message:[JSON objectForKey:@"message"] delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: nil];
         [alertView show];
         [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
     }];

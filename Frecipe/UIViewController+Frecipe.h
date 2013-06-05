@@ -17,4 +17,5 @@
 - (void)saveUserInfo:(NSDictionary *)user Token:(NSString *)token ProfilePicture:(NSString *)profilePictureUrl;
 - (NSDictionary *)loaduserInfo;
 - (NSURL *)documentDirectory;
+- (BOOL)validateEmail:(NSString *)email;
 @end

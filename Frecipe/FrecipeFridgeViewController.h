@@ -12,4 +12,5 @@
 
 @property (weak, nonatomic) IBOutlet UITableView *ingredientsTableView;
 @property (weak, nonatomic) IBOutlet UICollectionView *ingredientsCollectionView;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *deleteButton;
 @end

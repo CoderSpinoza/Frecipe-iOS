@@ -298,7 +298,15 @@
     likesLabel.text = [NSString stringWithFormat:@"%@ likes", [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"likes"]];
     
     UIButton *missingIngredientsButton = (UIButton *)[cell viewWithTag:12];
-    [missingIngredientsButton setTitle:[NSString stringWithFormat:@"%u", missingIngredients.count] forState:UIControlStateNormal];
+    [missingIngredientsButton setBackgroundImage:[UIImage imageNamed:@"badge_green.png"] forState:UIControlStateSelected];
+    if (missingIngredients.count == 0) {
+        missingIngredientsButton.selected = YES;
+        [missingIngredientsButton setTitle:@"" forState:UIControlStateNormal];
+    } else {
+        missingIngredientsButton.selected = NO;
+        [missingIngredientsButton setTitle:[NSString stringWithFormat:@"%u", missingIngredients.count] forState:UIControlStateNormal];
+    }
+    
     
     return cell;
 }

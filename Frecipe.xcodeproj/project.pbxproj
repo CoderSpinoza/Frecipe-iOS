@@ -16,6 +16,10 @@
 		C256F6761759446D00D44A84 /* FrecipeForgotPasswordViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C256F6751759446D00D44A84 /* FrecipeForgotPasswordViewController.m */; };
 		C256F6791759909400D44A84 /* FrecipeChangePasswordViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C256F6781759909400D44A84 /* FrecipeChangePasswordViewController.m */; };
 		C2670305174170FD00BBBDD6 /* iPadLoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C2670304174170FD00BBBDD6 /* iPadLoginViewController.m */; };
+		C27674C9175F0DB400828EEF /* NSString+Frecipe.m in Sources */ = {isa = PBXBuildFile; fileRef = C27674C8175F0DB300828EEF /* NSString+Frecipe.m */; };
+		C27674CC175F208600828EEF /* FrecipeSpinnerView.m in Sources */ = {isa = PBXBuildFile; fileRef = C27674CB175F208600828EEF /* FrecipeSpinnerView.m */; };
+		C27674CE175F29ED00828EEF /* badge_green.png in Resources */ = {isa = PBXBuildFile; fileRef = C27674CD175F29EC00828EEF /* badge_green.png */; };
+		C27674D0175F332E00828EEF /* plus.png in Resources */ = {isa = PBXBuildFile; fileRef = C27674CF175F332E00828EEF /* plus.png */; };
 		C294412E1733246800FDD542 /* badge.png in Resources */ = {isa = PBXBuildFile; fileRef = C294412D1733246800FDD542 /* badge.png */; };
 		C294413117332BC800FDD542 /* UIViewController+Frecipe.m in Sources */ = {isa = PBXBuildFile; fileRef = C294413017332BC800FDD542 /* UIViewController+Frecipe.m */; };
 		C294413817349AE000FDD542 /* FrecipeBadgeView.m in Sources */ = {isa = PBXBuildFile; fileRef = C294413717349ADF00FDD542 /* FrecipeBadgeView.m */; };
@@ -151,6 +155,12 @@
 		C256F6781759909400D44A84 /* FrecipeChangePasswordViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FrecipeChangePasswordViewController.m; sourceTree = "<group>"; };
 		C2670303174170FD00BBBDD6 /* iPadLoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iPadLoginViewController.h; sourceTree = "<group>"; };
 		C2670304174170FD00BBBDD6 /* iPadLoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iPadLoginViewController.m; sourceTree = "<group>"; };
+		C27674C7175F0DB300828EEF /* NSString+Frecipe.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Frecipe.h"; sourceTree = "<group>"; };
+		C27674C8175F0DB300828EEF /* NSString+Frecipe.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Frecipe.m"; sourceTree = "<group>"; };
+		C27674CA175F208600828EEF /* FrecipeSpinnerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrecipeSpinnerView.h; sourceTree = "<group>"; };
+		C27674CB175F208600828EEF /* FrecipeSpinnerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FrecipeSpinnerView.m; sourceTree = "<group>"; };
+		C27674CD175F29EC00828EEF /* badge_green.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = badge_green.png; sourceTree = "<group>"; };
+		C27674CF175F332E00828EEF /* plus.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = plus.png; sourceTree = "<group>"; };
 		C294412D1733246800FDD542 /* badge.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = badge.png; sourceTree = "<group>"; };
 		C294412F17332BC800FDD542 /* UIViewController+Frecipe.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+Frecipe.h"; sourceTree = "<group>"; };
 		C294413017332BC800FDD542 /* UIViewController+Frecipe.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+Frecipe.m"; sourceTree = "<group>"; };
@@ -469,12 +479,16 @@
 				C2E4771E172F94D000EC3660 /* FrecipeRatingView.m */,
 				C294413617349ADF00FDD542 /* FrecipeBadgeView.h */,
 				C294413717349ADF00FDD542 /* FrecipeBadgeView.m */,
+				C27674CA175F208600828EEF /* FrecipeSpinnerView.h */,
+				C27674CB175F208600828EEF /* FrecipeSpinnerView.m */,
 				C294412F17332BC800FDD542 /* UIViewController+Frecipe.h */,
 				C294413017332BC800FDD542 /* UIViewController+Frecipe.m */,
 				C2CB61991745EC7D004B9C11 /* UIView+Frecipe.h */,
 				C2CB619A1745EC7D004B9C11 /* UIView+Frecipe.m */,
 				C25651AC174F6131005755A9 /* UIColor+Frecipe.h */,
 				C25651AD174F6132005755A9 /* UIColor+Frecipe.m */,
+				C27674C7175F0DB300828EEF /* NSString+Frecipe.h */,
+				C27674C8175F0DB300828EEF /* NSString+Frecipe.m */,
 				C2D1FB33174B013B0096C036 /* UICollectionViewCell+Frecipe.h */,
 				C2D1FB34174B013B0096C036 /* UICollectionViewCell+Frecipe.m */,
 				C2E08EF817389DA900C1C705 /* FrecipeMainViewController.h */,
@@ -501,6 +515,7 @@
 				C2A3288F172E4F6C00EBB23B /* iTunesArtwork.png */,
 				C2A32816172DFB9900EBB23B /* bar_red.png */,
 				C294412D1733246800FDD542 /* badge.png */,
+				C27674CD175F29EC00828EEF /* badge_green.png */,
 				C2A32817172DFB9900EBB23B /* facebook_login_button.png */,
 				C2A32818172DFB9900EBB23B /* frecipe_name.png */,
 				C2A3281B172DFB9900EBB23B /* loginpage_320*480.png */,
@@ -516,6 +531,7 @@
 				C2E668F8173F06EE00D1975D /* thumb.png */,
 				C2D1FB211749A8D50096C036 /* checkbox.png */,
 				C2D1FB221749A8D50096C036 /* checkmark.png */,
+				C27674CF175F332E00828EEF /* plus.png */,
 				C2D1FB31174AFB2D0096C036 /* trash.png */,
 				C25651AA174D95AA005755A9 /* fridge_background.png */,
 				C2DE64E1174493960041152F /* grocery_list_background.jpg */,
@@ -702,6 +718,8 @@
 				C2D1FB2E174AF90D0096C036 /* default_ingredient_picture.png in Resources */,
 				C2D1FB32174AFB2D0096C036 /* trash.png in Resources */,
 				C25651AB174D95AA005755A9 /* fridge_background.png in Resources */,
+				C27674CE175F29ED00828EEF /* badge_green.png in Resources */,
+				C27674D0175F332E00828EEF /* plus.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -793,6 +811,8 @@
 				C256F6761759446D00D44A84 /* FrecipeForgotPasswordViewController.m in Sources */,
 				C256F6791759909400D44A84 /* FrecipeChangePasswordViewController.m in Sources */,
 				C251F006175D839C00DF956F /* FrecipeSendFeedbackViewController.m in Sources */,
+				C27674C9175F0DB400828EEF /* NSString+Frecipe.m in Sources */,
+				C27674CC175F208600828EEF /* FrecipeSpinnerView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

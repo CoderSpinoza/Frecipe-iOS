@@ -10,6 +10,7 @@
 #import "FrecipeAPIClient.h"
 #import "FrecipeAppDelegate.h"
 #import "FrecipeSignupViewController.h"
+#import "FrecipeSpinnerView.h"
 #import <QuartzCore/QuartzCore.h>
 
 @interface FrecipeLoginViewController () <UITextFieldDelegate>
@@ -19,7 +20,6 @@
 @property (strong, nonatomic) NSString *firstName;
 @property (strong, nonatomic) NSString *lastName;
 @property (strong, nonatomic) NSString *uid;
-
 @end
 
 @implementation FrecipeLoginViewController
@@ -40,6 +40,7 @@
     self.emailField.delegate = self;
     self.passwordField.delegate = self;
     [self addGestureRecognizers];
+    
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -71,8 +72,12 @@
     NSDictionary *parameters = [NSDictionary dictionaryWithObjects:values forKeys:keys];
     NSURLRequest *request = [client requestWithMethod:@"POST" path:path parameters:parameters];
     
+    [self dismissKeyboard];
+    FrecipeSpinnerView *spinnerView = [[FrecipeSpinnerView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
+    spinnerView.center = CGPointMake(self.view.frame.size.width / 2, self.view.frame.size.height / 2);
+    [spinnerView.spinner startAnimating];
+    [self.view addSubview:spinnerView];
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
-        
         
         // save retrieved user data
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -93,10 +98,12 @@
         
         [self performSegueWithIdentifier:@"Login" sender:self];
         
+        [spinnerView removeFromSuperview];
         [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
         
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         NSLog(@"%@", error);
+        [spinnerView removeFromSuperview];
         UIAlertView *errorView = [[UIAlertView alloc] initWithTitle:@"Login Error" message:[JSON objectForKey:@"message"] delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: nil];
         [errorView show];
         [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
@@ -141,19 +148,11 @@
     
     NSURLRequest *request = [client requestWithMethod:@"POST" path:path parameters:parameters];
     
-    UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
     
-    UIView *spinnerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
-    spinner.center = spinnerView.center;
+    FrecipeSpinnerView *spinnerView = [[FrecipeSpinnerView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
     spinnerView.center = CGPointMake(self.view.frame.size.width / 2, self.view.frame.size.height / 2);
-    spinnerView.backgroundColor = [UIColor blackColor];
-    spinnerView.alpha = 0.9;
-    spinnerView.layer.cornerRadius = 5.0f;
-    
-    [spinner startAnimating];
-    [spinnerView addSubview:spinner];
+    [spinnerView.spinner startAnimating];
     [self.view addSubview:spinnerView];
-    
     
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
         NSString *message = [JSON objectForKey:@"message"];
@@ -168,7 +167,6 @@
         } else {
             NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
             [defaults setObject:[JSON objectForKey:@"token"] forKey:@"authentication_token"];
-            NSLog(@"%@", JSON);
             [defaults setObject:[[JSON objectForKey:@"user"] objectForKey:@"id"] forKey:@"id"];
             [defaults setObject:[[JSON objectForKey:@"user"] objectForKey:@"provider"] forKey:@"provider"];
             [defaults setObject:[NSString stringWithFormat:@"%@ %@", [[JSON objectForKey:@"user"] objectForKey:@"first_name"], [[JSON objectForKey:@"user"] objectForKey:@"last_name"]] forKey:@"name"];

@@ -304,8 +304,9 @@
     
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
         NSDictionary *groceryListInfo = [JSON objectForKey:@"grocery_list"];
-        [self processGroceryListInformation:groceryListInfo];
         [self.completedGroceryList removeAllObjects];
+        [self processGroceryListInformation:groceryListInfo];
+        
         [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         NSLog(@"%@", error);

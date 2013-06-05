@@ -155,6 +155,7 @@
     NSString *path = @"user_ingredients/multiple_delete";
     NSURLRequest *request = [client requestWithMethod:@"POST" path:path parameters:parameters];
     
+    self.deleteButton.enabled = NO;
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
         for (id ingredient in self.selectedIngredients) {
             [self.ingredients removeObject:ingredient];
@@ -162,8 +163,10 @@
         [self.selectedIngredients removeAllObjects];
         [self.ingredientsTableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationAutomatic];
         [self.ingredientsCollectionView reloadSections:[NSIndexSet indexSetWithIndex:0]];
+        self.deleteButton.enabled = YES;
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         NSLog(@"%@", error);
+        self.deleteButton.enabled = YES;
     }];
     [operation start];
 }
@@ -225,8 +228,8 @@
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated {
     userIsInTheMiddleOfEditingIngredientsList = editing;
     if (editing) {
-        NSArray *keys = [NSArray arrayWithObjects:@"name", nil];
-        NSArray *values = [NSArray arrayWithObjects:@"Add Ingredients", nil];
+        NSArray *keys = [NSArray arrayWithObjects:@"name", @"image", nil];
+        NSArray *values = [NSArray arrayWithObjects:@"Add Ingredients", @"https://s3.amazonaws.com/Frecipe/public/image/ingredients/plus.png", nil];
         NSDictionary *addRow = [NSDictionary dictionaryWithObjects:values forKeys:keys];
         [self.ingredients insertObject:addRow atIndex:0];
         [self.ingredientsTableView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:0 inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
@@ -311,6 +314,7 @@
     NSDictionary *ingredient = [self.ingredients objectAtIndex:indexPath.row];
     
     NSString *url;
+    
     if (PRODUCTION || [[NSString stringWithFormat:@"%@", [ingredient objectForKey:@"image"]] isEqualToString:@"https://s3.amazonaws.com/Frecipe/public/image/ingredients/default_ingredient_image.png"]) {
         url = [NSString stringWithFormat:@"%@", [ingredient objectForKey:@"image"]];
     } else {
