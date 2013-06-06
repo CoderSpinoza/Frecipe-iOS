@@ -39,8 +39,13 @@
 	// Do any additional setup after loading the view.
     self.emailField.delegate = self;
     self.passwordField.delegate = self;
-    [self addGestureRecognizers];
     
+    self.emailField.layer.cornerRadius = 5.0f;
+    self.passwordField.layer.cornerRadius = 5.0f;
+    self.emailField.clipsToBounds = YES;
+    self.passwordField.clipsToBounds = YES;
+    
+    [self addGestureRecognizers];
 }
 
 - (void)viewWillAppear:(BOOL)animated {

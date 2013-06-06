@@ -146,7 +146,7 @@
 
     UIView *view1;
     UIView *view2;
-    if (tapGestureRecognizer.view.tag == 10) {
+    if (tapGestureRecognizer.view.tag == 12) {
         cell = (UITableViewCell *)tapGestureRecognizer.view.superview.superview.superview;
         
         view1 = [cell viewWithTag:1];
@@ -254,7 +254,7 @@
         }];
     }
     
-    UIView *flipView1 = [cell viewWithTag:10];
+    UIView *flipView1 = [cell viewWithTag:12];
     UIView *flipView2 = [cell viewWithTag:1];
     
     UITapGestureRecognizer *flipGestureRecognizer1 = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(flipCell:)];

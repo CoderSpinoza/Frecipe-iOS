@@ -20,6 +20,8 @@
 		C27674CC175F208600828EEF /* FrecipeSpinnerView.m in Sources */ = {isa = PBXBuildFile; fileRef = C27674CB175F208600828EEF /* FrecipeSpinnerView.m */; };
 		C27674CE175F29ED00828EEF /* badge_green.png in Resources */ = {isa = PBXBuildFile; fileRef = C27674CD175F29EC00828EEF /* badge_green.png */; };
 		C27674D0175F332E00828EEF /* plus.png in Resources */ = {isa = PBXBuildFile; fileRef = C27674CF175F332E00828EEF /* plus.png */; };
+		C27674D617601D8D00828EEF /* UITextField+Frecipe.m in Sources */ = {isa = PBXBuildFile; fileRef = C27674D517601D8D00828EEF /* UITextField+Frecipe.m */; };
+		C27674D917601E1500828EEF /* FrecipeTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = C27674D817601E1400828EEF /* FrecipeTextField.m */; };
 		C294412E1733246800FDD542 /* badge.png in Resources */ = {isa = PBXBuildFile; fileRef = C294412D1733246800FDD542 /* badge.png */; };
 		C294413117332BC800FDD542 /* UIViewController+Frecipe.m in Sources */ = {isa = PBXBuildFile; fileRef = C294413017332BC800FDD542 /* UIViewController+Frecipe.m */; };
 		C294413817349AE000FDD542 /* FrecipeBadgeView.m in Sources */ = {isa = PBXBuildFile; fileRef = C294413717349ADF00FDD542 /* FrecipeBadgeView.m */; };
@@ -161,6 +163,10 @@
 		C27674CB175F208600828EEF /* FrecipeSpinnerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FrecipeSpinnerView.m; sourceTree = "<group>"; };
 		C27674CD175F29EC00828EEF /* badge_green.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = badge_green.png; sourceTree = "<group>"; };
 		C27674CF175F332E00828EEF /* plus.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = plus.png; sourceTree = "<group>"; };
+		C27674D417601D8C00828EEF /* UITextField+Frecipe.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UITextField+Frecipe.h"; sourceTree = "<group>"; };
+		C27674D517601D8D00828EEF /* UITextField+Frecipe.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UITextField+Frecipe.m"; sourceTree = "<group>"; };
+		C27674D717601E1400828EEF /* FrecipeTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrecipeTextField.h; sourceTree = "<group>"; };
+		C27674D817601E1400828EEF /* FrecipeTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FrecipeTextField.m; sourceTree = "<group>"; };
 		C294412D1733246800FDD542 /* badge.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = badge.png; sourceTree = "<group>"; };
 		C294412F17332BC800FDD542 /* UIViewController+Frecipe.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+Frecipe.h"; sourceTree = "<group>"; };
 		C294413017332BC800FDD542 /* UIViewController+Frecipe.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+Frecipe.m"; sourceTree = "<group>"; };
@@ -481,10 +487,14 @@
 				C294413717349ADF00FDD542 /* FrecipeBadgeView.m */,
 				C27674CA175F208600828EEF /* FrecipeSpinnerView.h */,
 				C27674CB175F208600828EEF /* FrecipeSpinnerView.m */,
+				C27674D717601E1400828EEF /* FrecipeTextField.h */,
+				C27674D817601E1400828EEF /* FrecipeTextField.m */,
 				C294412F17332BC800FDD542 /* UIViewController+Frecipe.h */,
 				C294413017332BC800FDD542 /* UIViewController+Frecipe.m */,
 				C2CB61991745EC7D004B9C11 /* UIView+Frecipe.h */,
 				C2CB619A1745EC7D004B9C11 /* UIView+Frecipe.m */,
+				C27674D417601D8C00828EEF /* UITextField+Frecipe.h */,
+				C27674D517601D8D00828EEF /* UITextField+Frecipe.m */,
 				C25651AC174F6131005755A9 /* UIColor+Frecipe.h */,
 				C25651AD174F6132005755A9 /* UIColor+Frecipe.m */,
 				C27674C7175F0DB300828EEF /* NSString+Frecipe.h */,
@@ -813,6 +823,8 @@
 				C251F006175D839C00DF956F /* FrecipeSendFeedbackViewController.m in Sources */,
 				C27674C9175F0DB400828EEF /* NSString+Frecipe.m in Sources */,
 				C27674CC175F208600828EEF /* FrecipeSpinnerView.m in Sources */,
+				C27674D617601D8D00828EEF /* UITextField+Frecipe.m in Sources */,
+				C27674D917601E1500828EEF /* FrecipeTextField.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -948,6 +960,7 @@
 					"-lsqlite3.0",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -972,6 +985,7 @@
 					"-lsqlite3.0",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

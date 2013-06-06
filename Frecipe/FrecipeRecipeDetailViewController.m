@@ -174,6 +174,13 @@
         
         NSDictionary *user = [JSON objectForKey:@"user"];
         self.user = [JSON objectForKey:@"user"];
+        
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        
+        NSString *provider = [defaults stringForKey:@"provider"];
+        if (![provider isEqualToString:@"facebook"]) {
+            self.shareButton.enabled = NO;
+        }
         [self.nameButton setTitle:[NSString stringWithFormat:@"%@ %@", [user objectForKey:@"first_name"], [user objectForKey:@"last_name"]] forState:UIControlStateNormal];
         
         [self.likesButton setTitle:[NSString stringWithFormat:@"%@", [JSON objectForKey:@"likes"]] forState:UIControlStateNormal];
@@ -195,8 +202,6 @@
         }
         
         self.missingIngredients = [NSMutableArray arrayWithArray:[JSON objectForKey:@"missing_ingredients"]];
-        
-        
         
         // rating view
         self.averageRatingView.rating = [[NSString stringWithFormat:@"%@", [JSON objectForKey:@"rating"]] floatValue];
@@ -718,20 +723,11 @@
             label.font = [label.font fontWithSize:10];
             cell.accessoryView = label;
         }
-//        if (indexPath.row != self.ingredients.count - 1) {
-//            
-//                
-//            }
-//        } else {
-//            cell.textLabel.text = [NSString stringWithFormat:@"%@", [ingredient objectForKey:@"name"]];
-//        }
         
+        cell.textLabel.font = [UIFont boldSystemFontOfSize:14];
+        cell.userInteractionEnabled = NO;
         // enable cell selection for only the last row
-        if (indexPath.row == self.ingredients.count - 1) {
-            cell.userInteractionEnabled = YES;  
-        } else {
-            cell.userInteractionEnabled = NO;
-        }
+    
         
         return cell;
     } else if([tableView isEqual:self.directionsTableView]) {
@@ -792,6 +788,7 @@
             
             deleteButton.frame = CGRectMake(timeLabel.frame.origin.x + timeLabel.frame.size.width - 5, deleteButton.frame.origin.y, deleteButton.frame.size.width, deleteButton.frame.size.height);
         }
+        cell.textLabel.font = [UIFont boldSystemFontOfSize:14];
         return cell;
 
     } else {

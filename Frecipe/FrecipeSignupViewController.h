@@ -17,4 +17,5 @@
 @property (weak, nonatomic) IBOutlet UITextField *confirmationField;
 @property (strong, nonatomic) NSString *uid;
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *signupButton;
 @end

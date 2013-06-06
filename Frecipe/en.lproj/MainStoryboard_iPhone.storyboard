@@ -64,10 +64,11 @@
                                     </collectionViewCell>
                                 </cells>
                             </collectionView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" reversesTitleShadowWhenHighlighted="YES" lineBreakMode="middleTruncation" id="0BB-jg-HFK">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" reversesTitleShadowWhenHighlighted="YES" lineBreakMode="middleTruncation" id="0BB-jg-HFK">
                                 <rect key="frame" x="0.0" y="44" width="200" height="50"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                <inset key="titleEdgeInsets" minX="50" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 <state key="normal">
                                     <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -386,7 +387,7 @@
                                     <action selector="showImagePickerActionSheet" destination="WPi-EU-Det" eventType="touchUpInside" id="spx-Cg-8bw"/>
                                 </connections>
                             </button>
-                            <tableView hidden="YES" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="zPG-N3-0xA">
+                            <tableView hidden="YES" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" allowsSelection="NO" showsSelectionImmediatelyOnTouchBegin="NO" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="zPG-N3-0xA">
                                 <rect key="frame" x="20" y="132" width="280" height="280"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -402,7 +403,7 @@
                                     </tableViewCell>
                                 </prototypes>
                             </tableView>
-                            <tableView hidden="YES" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="8dI-nx-QuS">
+                            <tableView hidden="YES" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" allowsSelection="NO" showsSelectionImmediatelyOnTouchBegin="NO" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="8dI-nx-QuS">
                                 <rect key="frame" x="20" y="132" width="280" height="280"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -633,6 +634,7 @@
                                                     <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
                                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                 </state>
+                                                <state key="disabled" image="share_highlighted.png"/>
                                                 <state key="highlighted">
                                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                 </state>
@@ -908,6 +910,7 @@
                         <outlet property="recipeImageView" destination="1an-3G-1o1" id="UOq-Vu-Z7c"/>
                         <outlet property="recipeMainView" destination="rmv-Df-007" id="FEB-Lf-bnx"/>
                         <outlet property="scrollView" destination="u1I-BJ-kRh" id="HGJ-DP-nIk"/>
+                        <outlet property="shareButton" destination="p9b-OG-1tS" id="BKc-1o-R3u"/>
                         <segue destination="WPi-EU-Det" kind="modal" identifier="EditRecipe" modalTransitionStyle="coverVertical" id="TkR-fi-IFc"/>
                     </connections>
                 </viewController>
@@ -1293,7 +1296,7 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" id="0GX-Sa-9j2">
-                                                <rect key="frame" x="0.0" y="94" width="300" height="29"/>
+                                                <rect key="frame" x="0.0" y="96" width="300" height="29"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="13"/>
@@ -2278,31 +2281,31 @@
                                             <action selector="useYourFacebookInfoButtonPressed" destination="ZGf-Ed-DJK" eventType="touchUpInside" id="ZDg-ma-g6c"/>
                                         </connections>
                                     </button>
-                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Email" textAlignment="center" minimumFontSize="17" background="bar_red.png" id="6z7-iz-OXI">
+                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Email" textAlignment="center" minimumFontSize="17" background="bar_red.png" clearButtonMode="whileEditing" id="6z7-iz-OXI">
                                         <rect key="frame" x="60" y="82" width="200" height="30"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <textInputTraits key="textInputTraits"/>
                                     </textField>
-                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="First Name" textAlignment="center" minimumFontSize="17" id="DGv-sT-Aro">
+                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="First Name" textAlignment="center" minimumFontSize="17" clearButtonMode="whileEditing" id="DGv-sT-Aro">
                                         <rect key="frame" x="60" y="120" width="200" height="30"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <textInputTraits key="textInputTraits"/>
                                     </textField>
-                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Last Name" textAlignment="center" minimumFontSize="17" id="Sa7-QR-6hR">
+                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Last Name" textAlignment="center" minimumFontSize="17" clearButtonMode="whileEditing" id="Sa7-QR-6hR">
                                         <rect key="frame" x="60" y="158" width="200" height="30"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <textInputTraits key="textInputTraits"/>
                                     </textField>
-                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Password" textAlignment="center" minimumFontSize="17" id="dLA-Av-qGX">
+                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Password" textAlignment="center" minimumFontSize="17" clearButtonMode="whileEditing" id="dLA-Av-qGX">
                                         <rect key="frame" x="60" y="196" width="200" height="30"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <textInputTraits key="textInputTraits" secureTextEntry="YES"/>
                                     </textField>
-                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Confirmation" textAlignment="center" minimumFontSize="17" id="JpD-2o-22n">
+                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Confirmation" textAlignment="center" minimumFontSize="17" clearButtonMode="whileEditing" id="JpD-2o-22n">
                                         <rect key="frame" x="60" y="234" width="200" height="30"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
@@ -2320,6 +2323,7 @@
                         <outlet property="lastNameField" destination="Sa7-QR-6hR" id="m1h-yt-q09"/>
                         <outlet property="passwordField" destination="dLA-Av-qGX" id="ivi-Q6-G84"/>
                         <outlet property="scrollView" destination="kSL-YP-LgH" id="apz-Jm-3SM"/>
+                        <outlet property="signupButton" destination="Dip-jO-JWT" id="6R2-gc-iO1"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="kpq-kj-yEd" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -2342,13 +2346,15 @@
                                         <rect key="frame" x="20" y="0.0" width="320" height="568"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES" flexibleMaxY="YES"/>
                                     </imageView>
-                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Email" textAlignment="center" minimumFontSize="17" id="Qbx-XA-oRX">
+                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Email" textAlignment="center" minimumFontSize="17" clearButtonMode="whileEditing" id="Qbx-XA-oRX" customClass="FrecipeTextField">
                                         <rect key="frame" x="80" y="128" width="200" height="30"/>
+                                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <textInputTraits key="textInputTraits"/>
                                     </textField>
-                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Password" textAlignment="center" minimumFontSize="17" id="XOz-Xo-oVa">
+                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Password" textAlignment="center" minimumFontSize="17" clearButtonMode="whileEditing" id="XOz-Xo-oVa" customClass="FrecipeTextField">
                                         <rect key="frame" x="80" y="166" width="200" height="30"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <textInputTraits key="textInputTraits" secureTextEntry="YES"/>
                                     </textField>
@@ -2356,7 +2362,7 @@
                                         <rect key="frame" x="80" y="204" width="200" height="44"/>
                                         <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                         <state key="normal" title="LogIn">
-                                            <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
+                                            <color key="titleColor" red="0.19607843137254902" green="0.30980392156862746" blue="0.52156862745098043" alpha="1" colorSpace="calibratedRGB"/>
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                         <state key="highlighted">
@@ -2390,7 +2396,7 @@
                                         <rect key="frame" x="108" y="336" width="144" height="44"/>
                                         <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                         <state key="normal" title="I am a New Chef!">
-                                            <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
+                                            <color key="titleColor" red="0.19607843137254902" green="0.30980392156862746" blue="0.52156862745098043" alpha="1" colorSpace="calibratedRGB"/>
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                         <state key="highlighted">
@@ -2423,9 +2429,11 @@
                     <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="blackTranslucent"/>
                     <connections>
                         <outlet property="emailField" destination="Qbx-XA-oRX" id="INH-P8-bfn"/>
+                        <outlet property="loginButton" destination="h3O-mg-5BL" id="jmX-ea-eYL"/>
                         <outlet property="loginImageView" destination="mDG-UM-dhu" id="0T8-MX-bg8"/>
                         <outlet property="passwordField" destination="XOz-Xo-oVa" id="IfF-VE-mEf"/>
                         <outlet property="scrollView" destination="kad-y3-gzM" id="X6O-lZ-NuM"/>
+                        <outlet property="signupButton" destination="brT-oe-vcy" id="E4B-qf-jzs"/>
                         <segue destination="2" kind="modal" identifier="Login" modalTransitionStyle="flipHorizontal" id="dZw-8a-rRe"/>
                     </connections>
                 </viewController>
@@ -2444,6 +2452,7 @@
         <image name="loginpage_640*1136.png" width="640" height="1136"/>
         <image name="menu_icon.png" width="20" height="20"/>
         <image name="share.png" width="2500" height="2500"/>
+        <image name="share_highlighted.png" width="2500" height="2500"/>
         <image name="thumb_highlighted.png" width="2500" height="2500"/>
         <image name="trash.png" width="44" height="44"/>
     </resources>
@@ -2464,6 +2473,9 @@
         <class className="FrecipeAddRecipeViewController" superclassName="UIViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeAddRecipeViewController.h"/>
             <relationships>
+                <relationship kind="action" name="addButtonPressed:" candidateClass="UIBarButtonItem"/>
+                <relationship kind="action" name="cancelButtonPressed:" candidateClass="UIBarButtonItem"/>
+                <relationship kind="action" name="segmentedControlPressed:" candidateClass="UISegmentedControl"/>
                 <relationship kind="outlet" name="directionField" candidateClass="UITextField"/>
                 <relationship kind="outlet" name="directionsTableView" candidateClass="UITableView"/>
                 <relationship kind="outlet" name="ingredientField" candidateClass="UITextField"/>
@@ -2532,7 +2544,6 @@
         <class className="FrecipeGroceryListViewController" superclassName="FrecipeMainViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeGroceryListViewController.h"/>
             <relationships>
-                <relationship kind="action" name="editButtonPressed:" candidateClass="UIBarButtonItem"/>
                 <relationship kind="outlet" name="deleteRecipesButton" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="groceryListTableView" candidateClass="UITableView"/>
                 <relationship kind="outlet" name="groceryListView" candidateClass="UIView"/>
@@ -2548,9 +2559,11 @@
             <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeLoginViewController.h"/>
             <relationships>
                 <relationship kind="outlet" name="emailField" candidateClass="UITextField"/>
+                <relationship kind="outlet" name="loginButton" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="loginImageView" candidateClass="UIImageView"/>
                 <relationship kind="outlet" name="passwordField" candidateClass="UITextField"/>
                 <relationship kind="outlet" name="scrollView" candidateClass="UIScrollView"/>
+                <relationship kind="outlet" name="signupButton" candidateClass="UIButton"/>
             </relationships>
         </class>
         <class className="FrecipeMainViewController" superclassName="UIViewController">
@@ -2634,6 +2647,7 @@
                 <relationship kind="outlet" name="recipeImageView" candidateClass="UIImageView"/>
                 <relationship kind="outlet" name="recipeMainView" candidateClass="UIView"/>
                 <relationship kind="outlet" name="scrollView" candidateClass="UIScrollView"/>
+                <relationship kind="outlet" name="shareButton" candidateClass="UIButton"/>
             </relationships>
         </class>
         <class className="FrecipeSendFeedbackViewController" superclassName="UIViewController">
@@ -2645,6 +2659,7 @@
         <class className="FrecipeSettingsViewController" superclassName="FrecipeMainViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeSettingsViewController.h"/>
             <relationships>
+                <relationship kind="action" name="revealMenu:" candidateClass="UIBarButtonItem"/>
                 <relationship kind="outlet" name="settingsTableView" candidateClass="UITableView"/>
             </relationships>
         </class>
@@ -2657,12 +2672,15 @@
                 <relationship kind="outlet" name="lastNameField" candidateClass="UITextField"/>
                 <relationship kind="outlet" name="passwordField" candidateClass="UITextField"/>
                 <relationship kind="outlet" name="scrollView" candidateClass="UIScrollView"/>
+                <relationship kind="outlet" name="signupButton" candidateClass="UIBarButtonItem"/>
             </relationships>
+        </class>
+        <class className="FrecipeTextField" superclassName="UITextField">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeTextField.h"/>
         </class>
         <class className="FrecipeViewController" superclassName="FrecipeMainViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeViewController.h"/>
             <relationships>
-                <relationship kind="action" name="revealMenu:" candidateClass="UIBarButtonItem"/>
                 <relationship kind="outlet" name="recipesCollectionView" candidateClass="UICollectionView"/>
             </relationships>
         </class>
@@ -2675,9 +2693,6 @@
         <class className="UICollectionViewFlowLayout" superclassName="UICollectionViewLayout">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/UICollectionViewFlowLayout.h"/>
         </class>
-        <class className="UICollectionViewLayout" superclassName="NSObject">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/UICollectionViewLayout.h"/>
-        </class>
     </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
@@ -2685,9 +2700,9 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="sIr-9w-LZ8"/>
-        <segue reference="UTp-eQ-C0H"/>
-        <segue reference="JfL-XT-BVJ"/>
+        <segue reference="FWi-4a-gi8"/>
+        <segue reference="gQH-mx-TWG"/>
         <segue reference="GxI-kH-EJd"/>
+        <segue reference="TkR-fi-IFc"/>
     </inferredMetricsTieBreakers>
 </document>

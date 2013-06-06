@@ -216,7 +216,7 @@
         }
     } else if ([textField isEqual:self.directionField]) {
         if (![textField.text isEqualToString:@""]) {
-            [self.directions addObject:textField.text];
+            [self.directions addObject:[textField.text capitalizedString]];
             textField.text = @"";
             [self.directionsTableView reloadData];
             if (self.directions.count > 0) {
@@ -284,9 +284,9 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     CGSize size;
     if ([tableView isEqual:self.ingredientsTableView]) {
-        size = [[NSString stringWithFormat:@"%u. %@", indexPath.row + 1, [self.ingredients objectAtIndex:indexPath.row]] sizeWithFont:[UIFont systemFontOfSize:18.0f] constrainedToSize:CGSizeMake(320.0f, 9999.0f) lineBreakMode:NSLineBreakByCharWrapping];
+        size = [[NSString stringWithFormat:@"%u. %@", indexPath.row + 1, [self.ingredients objectAtIndex:indexPath.row]] sizeWithFont:[UIFont systemFontOfSize:14.0f] constrainedToSize:CGSizeMake(320.0f, 9999.0f) lineBreakMode:NSLineBreakByCharWrapping];
     } else {
-        size = [[NSString stringWithFormat:@"%u. %@", indexPath.row + 1, [self.directions objectAtIndex:indexPath.row]] sizeWithFont:[UIFont systemFontOfSize:18.0f] constrainedToSize:CGSizeMake(200.0f, 9999.0f) lineBreakMode:NSLineBreakByWordWrapping];
+        size = [[NSString stringWithFormat:@"%u. %@", indexPath.row + 1, [self.directions objectAtIndex:indexPath.row]] sizeWithFont:[UIFont systemFontOfSize:14.0f] constrainedToSize:CGSizeMake(200.0f, 9999.0f) lineBreakMode:NSLineBreakByWordWrapping];
     }
     NSInteger lines = round(size.height / 18);
     if (lines < 2) {
@@ -308,6 +308,7 @@
             cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"IngredientCell"];
         }
         cell.textLabel.text = [NSString stringWithFormat:@"%u. %@", indexPath.row + 1, [self.ingredients objectAtIndex:indexPath.row]];
+        cell.textLabel.font = [UIFont boldSystemFontOfSize:14];
         return cell;
     } else {
         static NSString *CellIdentifier = @"DirectionCell";
@@ -323,7 +324,43 @@
         cell.textLabel.numberOfLines = 0;
         
         cell.textLabel.text = [NSString stringWithFormat:@"%u. %@", indexPath.row + 1, [self.directions objectAtIndex:indexPath.row]];
+        cell.textLabel.font = [UIFont boldSystemFontOfSize:14];
+        
+        // attach a long press gesture recognizer
+        UILongPressGestureRecognizer *longPressGestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPress:)];
+        [cell addGestureRecognizer:longPressGestureRecognizer];
+        
         return cell;
+        
+    }
+}
+
+- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
+    if ([tableView isEqual:self.directionsTableView]) {
+        return YES;
+    } else {
+        return NO;
+    }
+}
+
+- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath {
+    if ([tableView isEqual:self.directionsTableView]) {
+        NSString *source = [self.directions objectAtIndex:sourceIndexPath.row];
+        [self.directions removeObjectAtIndex:sourceIndexPath.row];
+        [self.directions insertObject:source atIndex:destinationIndexPath.row];
+        [self.directionsTableView reloadData];
+    }
+}
+
+- (void)handleLongPress:(UILongPressGestureRecognizer *)sender {
+    if (sender.state == UIGestureRecognizerStateBegan) {
+        if (self.directionsTableView.editing) {
+            NSLog(@"quit");
+            [self.directionsTableView setEditing:NO animated:YES];
+        } else {
+            NSLog(@"edit");
+            [self.directionsTableView setEditing:YES animated:YES];
+        }
     }
 }
 

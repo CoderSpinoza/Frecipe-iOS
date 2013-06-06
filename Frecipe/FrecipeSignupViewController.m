@@ -14,7 +14,7 @@
 @interface FrecipeSignupViewController () <UITextFieldDelegate, UIAlertViewDelegate>
 
 @property (strong, nonatomic) UITextField *currentField;
-
+@property (strong, nonatomic) FrecipeSpinnerView *spinnerView;
 @end
 
 @implementation FrecipeSignupViewController
@@ -49,6 +49,42 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (void)checkIfFacebookUserIsRegisteredWithId:(NSString *)uid Email:(NSString *)email FirstName:(NSString *)firstName LastName:(NSString *)lastName {
+    NSString *path = @"/tokens/facebook_check";
+    
+    FrecipeAPIClient *client = [FrecipeAPIClient client];
+    
+    NSArray *keys = [NSArray arrayWithObjects:@"email", @"uid", nil];
+    NSArray *values = [NSArray arrayWithObjects:email, uid, nil];
+    
+    NSDictionary *parameters = [NSDictionary dictionaryWithObjects:values forKeys:keys];
+    
+    NSURLRequest *request = [client requestWithMethod:@"POST" path:path parameters:parameters];
+    
+    
+    AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
+        NSString *message = [JSON objectForKey:@"message"];
+        if ([message isEqualToString:@"needs signup"]) {
+            self.uid = uid;
+            self.emailField.text = email;
+            self.firstNameField.text = firstName;
+            self.lastNameField.text = lastName;
+        } else {
+            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:@"You already signed up with this facebook account." delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: nil];
+            [alertView show];
+            [self.spinnerView removeFromSuperview];
+        }
+        [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
+    } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
+        NSLog(@"%@", error);
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Login Error" message:@"There was an error processing your login request." delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: nil];
+        [alertView show];
+        [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
+    }];
+    [operation start];
+}
+
+
 - (IBAction)cancelButtonPressed:(UIBarButtonItem *)sender {
     [self dismissViewControllerAnimated:YES completion:nil];
 //    [self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
@@ -60,7 +96,8 @@
     FrecipeSpinnerView *spinnerView = [[FrecipeSpinnerView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
     spinnerView.center = CGPointMake(self.view.frame.size.width / 2, self.view.frame.size.height / 2);
     [spinnerView.spinner startAnimating];
-    [self.view addSubview:spinnerView];
+    self.spinnerView = spinnerView;
+    [self.view addSubview:self.spinnerView];
     if (!FBSession.activeSession.isOpen) {
         NSArray *permissions = [[NSArray alloc] initWithObjects:
                                 @"email",
@@ -70,27 +107,27 @@
         [FBSession openActiveSessionWithReadPermissions:permissions allowLoginUI:YES completionHandler:^(FBSession *session, FBSessionState status, NSError *error) {
             [[FBRequest requestForMe] startWithCompletionHandler:^(FBRequestConnection *connection, NSDictionary<FBGraphUser> *user, NSError *error) {
                 if (!error) {
-                    self.uid = [NSString stringWithFormat:@"%@", user.id];
-                    self.emailField.text = [NSString stringWithFormat:@"%@", [user objectForKey:@"email"]];
-                    self.firstNameField.text = [NSString stringWithFormat:@"%@", [user objectForKey:@"first_name"]];
-                    self.lastNameField.text = [NSString stringWithFormat:@"%@", [user objectForKey:@"last_name"]];
+//                    self.uid = [NSString stringWithFormat:@"%@", user.id];
+//                    self.emailField.text = [NSString stringWithFormat:@"%@", [user objectForKey:@"email"]];
+//                    self.firstNameField.text = [NSString stringWithFormat:@"%@", [user objectForKey:@"first_name"]];
+//                    self.lastNameField.text = [NSString stringWithFormat:@"%@", [user objectForKey:@"last_name"]];
+                    [self checkIfFacebookUserIsRegisteredWithId:[NSString stringWithFormat:@"%@", user.id] Email:[NSString stringWithFormat:@"%@", [user objectForKey:@"email"]] FirstName:[NSString stringWithFormat:@"%@", [user objectForKey:@"first_name"]] LastName:[NSString stringWithFormat:@"%@", [user objectForKey:@"last_name"]]];
                 } else {
-                    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:@"There was an error loading your facebook info. Retry?" delegate:self cancelButtonTitle:@"Retry" otherButtonTitles:@"Cancel", nil];
+                    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:@"There was an error fetching your facebook info." delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: nil];
                     [alertView show];
                 }
-                [spinnerView removeFromSuperview];
+                [self.spinnerView removeFromSuperview];
                 
             }];
         }];
     } else {
         [[FBRequest requestForMe] startWithCompletionHandler:^(FBRequestConnection *connection, NSDictionary<FBGraphUser> *user, NSError *error) {
             if (!error) {
-                self.uid = [NSString stringWithFormat:@"%@", user.id];
-                self.emailField.text = [NSString stringWithFormat:@"%@", [user objectForKey:@"email"]];
-                self.firstNameField.text = [NSString stringWithFormat:@"%@", [user objectForKey:@"first_name"]];
-                self.lastNameField.text = [NSString stringWithFormat:@"%@", [user objectForKey:@"last_name"]];
+                [self checkIfFacebookUserIsRegisteredWithId:[NSString stringWithFormat:@"%@", user.id] Email:[NSString stringWithFormat:@"%@", [user objectForKey:@"email"]] FirstName:[NSString stringWithFormat:@"%@", [user objectForKey:@"first_name"]] LastName:[NSString stringWithFormat:@"%@", [user objectForKey:@"last_name"]]];
+                
             } else {
-                NSLog(@"error TT");
+                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:@"There was an error fetching your facebook info." delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: nil];
+                [alertView show];
             }
             [spinnerView removeFromSuperview];
         }];
@@ -142,8 +179,12 @@
     [client setParameterEncoding:AFJSONParameterEncoding];
     NSURLRequest *request = [client requestWithMethod:@"POST" path:path parameters:parameters];
     
+    FrecipeSpinnerView *spinnerView = [[FrecipeSpinnerView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
+    spinnerView.center = CGPointMake(self.view.frame.size.width / 2, self.view.frame.size.height / 2);
+    [spinnerView.spinner startAnimating];
+    [self.view addSubview:spinnerView];
     
-    
+    self.signupButton.enabled = NO;
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
         
         NSString *message = [JSON objectForKey:@"message"];
@@ -167,7 +208,7 @@
             [defaults setObject:profilePictureUrl forKey:@"profile_picture"];
             [defaults synchronize];
             
-            [self saveUserInfo:[JSON objectAtIndex:1] Token:nil ProfilePicture:nil];
+            [self saveUserInfo:[JSON objectForKey:@"user"] Token:nil ProfilePicture:nil];
             FrecipeAppDelegate *delegate = [[UIApplication sharedApplication] delegate];
             [UIView transitionWithView:delegate.window duration:0.7 options:UIViewAnimationOptionTransitionFlipFromLeft animations:^{
                 delegate.window.rootViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"Initial"];
@@ -178,6 +219,8 @@
             [alertView show];
         }
         
+        [spinnerView removeFromSuperview];
+        self.signupButton.enabled = YES;
         [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
         
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
@@ -185,6 +228,8 @@
         UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Signup Error" message:[JSON objectForKey:@"message"] delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: nil];
         [alertView show];
         [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
+        [spinnerView removeFromSuperview];
+        self.signupButton.enabled = YES;
     }];
     [operation start];
 }
@@ -210,13 +255,13 @@
 }
 
 // alert view delegate methods
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-    if ([alertView.title isEqualToString:@"Error"]) {
-        if (buttonIndex == 0) {
-            [self useYourFacebookInfoButtonPressed];
-        }
-    }
-}
+//- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+//    if ([alertView.title isEqualToString:@"Error"]) {
+//        if (buttonIndex == 0) {
+//            [self useYourFacebookInfoButtonPressed];
+//        }
+//    }
+//}
 
 // keyboard notification registration
 - (void)keyboardWillBeShown:(NSNotification *)notification {
