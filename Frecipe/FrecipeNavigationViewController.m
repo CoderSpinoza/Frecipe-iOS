@@ -117,7 +117,16 @@
         [FBSession.activeSession closeAndClearTokenInformation];
         
        [self.slidingViewController anchorTopViewOffScreenTo:ECRight animations:nil onComplete:^{
-           [self performSegueWithIdentifier:@"Login" sender:self];
+//           [self performSegueWithIdentifier:@"Login" sender:self];
+           FrecipeAppDelegate *delegate = [[UIApplication sharedApplication] delegate];
+           [UIView transitionWithView:delegate.window duration:0.7 options:UIViewAnimationOptionTransitionFlipFromRight animations:^{
+               BOOL oldState = [UIView areAnimationsEnabled];
+               [UIView setAnimationsEnabled:NO];
+               delegate.window.rootViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"Login"];
+               [UIView setAnimationsEnabled:oldState];
+           } completion:nil];
+           
+           
         }];
     } else {
         UIViewController *newTopViewController = [self.storyboard instantiateViewControllerWithIdentifier:identifier];
@@ -191,7 +200,8 @@
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         NSLog(@"%@", error);
     }];
-    [operation start];
+    FrecipeOperationQueue *queue = [FrecipeOperationQueue sharedQueue];
+    [queue addOperation:operation];
 }
 
 - (void)checkNotifications {
@@ -227,7 +237,8 @@
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         NSLog(@"%@", error);
     }];
-    [operation start];
+    FrecipeOperationQueue *queue = [FrecipeOperationQueue sharedQueue];
+    [queue addOperation:operation];
 }
 
 - (void)querySearchString:(NSString *)searchString {
@@ -250,7 +261,8 @@
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         NSLog(@"%@", error);
     }];
-    [operation start];
+    FrecipeOperationQueue *queue = [FrecipeOperationQueue sharedQueue];
+    [queue addOperation:operation];
 }
 
 // search bar and display delegate methods

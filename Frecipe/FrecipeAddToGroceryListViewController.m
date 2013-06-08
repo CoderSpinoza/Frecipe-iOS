@@ -62,9 +62,6 @@
 - (IBAction)addButtonPressed:(UIBarButtonItem *)sender {
     NSString *path = @"groceries";
     
-    [[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];
-    [[AFNetworkActivityIndicatorManager sharedManager] incrementActivityCount];
-    
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSString *authentication_token = [defaults objectForKey:@"authentication_token"];
     NSString *groceriesString = [self.groceryList componentsJoinedByString:@","];
@@ -90,17 +87,16 @@
     
     NSLog(@"%@", parameters);
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
-        [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
         [self dismissViewControllerAnimated:YES completion:nil];
         [spinner stopAnimating];
         [blockingView removeFromSuperview];
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         NSLog(@"%@", error);
-        [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
         [spinner stopAnimating];
         [blockingView removeFromSuperview];
     }];
-    [operation start];
+    FrecipeOperationQueue *queue = [FrecipeOperationQueue sharedQueue];
+    [queue addOperation:operation];
 }
 
 - (void)addGestureRecognizers {

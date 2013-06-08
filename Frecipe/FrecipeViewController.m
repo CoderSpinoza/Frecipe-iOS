@@ -8,13 +8,12 @@
 
 #import "FrecipeViewController.h"
 #import "FrecipeNavigationController.h"
-#import "FrecipeAPIClient.h"
 #import "FrecipeAppDelegate.h"
 #import "FrecipeRecipeDetailViewController.h"
 #import "FrecipeProfileViewController.h"
 #import "FrecipeBadgeView.h"
 #import "FrecipeFunctions.h"
-#import <SDWebImage/UIImageView+WebCache.h>
+#import <AFNetworking/UIImageView+AFNetworking.h>
 
 @interface FrecipeViewController () <UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, UISearchBarDelegate, UISearchDisplayDelegate>
 
@@ -29,7 +28,6 @@
 @property (strong, nonatomic) UIView *headerView;
 @property (strong, nonatomic) UISearchBar *recipeSearchBar;
 
-
 @end
 
 @implementation FrecipeViewController
@@ -40,11 +38,10 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
-    self.navigationItem.titleView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"frecipe_name.png"]];
+    self.title = @"Frecipe";
     
     self.recipesCollectionView.dataSource = self;
     self.recipesCollectionView.delegate = self;
-    
     [self addRefreshControl];
 }
 
@@ -67,6 +64,7 @@
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+    
 }
 
 - (IBAction)revealMenu:(UIBarButtonItem *)sender {
@@ -121,7 +119,8 @@
         [alertView show];
         [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
     }];
-    [operation start];
+    FrecipeOperationQueue *queue = [FrecipeOperationQueue sharedQueue];
+    [queue addOperation:operation];
 }
 
 - (void)fetchFacebookFriends {
@@ -143,7 +142,6 @@
 
 - (void)flipCell:(UITapGestureRecognizer *)tapGestureRecognizer {
     UITableViewCell *cell;
-
     UIView *view1;
     UIView *view2;
     if (tapGestureRecognizer.view.tag == 12) {
@@ -227,42 +225,18 @@
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     UICollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"RecipeCell" forIndexPath:indexPath];
+    
+    // setting the image view for the cell using AFNetworking. Does this do caching automatically?
     UIImageView *recipeImageView = (UIImageView *)[cell viewWithTag:6];
+    recipeImageView.image = nil;
+//    if (PRODUCTION) {
+//        [recipeImageView setImageWithURL:[[self.recipes objectAtIndex:indexPath.row] objectForKey:@"recipe_image"] placeholderImage:[UIImage imageNamed:@"default_recipe_picture.png"]];
+//    } else {
+//        [recipeImageView setImageWithURL:[NSString stringWithFormat:@"http://localhost:5000/%@", [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"recipe_image"]] placeholderImage:[UIImage imageNamed:@"default_recipe_picture.png"]];
+//    }
     
-    if (PRODUCTION) {
-        [recipeImageView setImageWithURL:[[self.recipes objectAtIndex:indexPath.row] objectForKey:@"recipe_image"] placeholderImage:[UIImage imageNamed:@"default_recipe_picture.png"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType) {
-            UIImageView *recipeImageView = (UIImageView *)[cell viewWithTag:6];
-            
-            if (self.alreadyLoaded == NO) {
-                recipeImageView.alpha = 0;
-                [UIView animateWithDuration:0.5 animations:^{
-                    recipeImageView.alpha = 1;
-                }];
-            }
-         
-        }];
-    } else {
-        [recipeImageView setImageWithURL:[NSString stringWithFormat:@"http://localhost:5000/%@",[[self.recipes objectAtIndex:indexPath.row] objectForKey:@"recipe_image"]] placeholderImage:[UIImage imageNamed:@"bar_red.png"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType) {
-            UIImageView *recipeImageView = (UIImageView *)[cell viewWithTag:6];
-            
-            if (self.alreadyLoaded == NO) {
-                recipeImageView.alpha = 0;
-                [UIView animateWithDuration:0.5 animations:^{
-                    recipeImageView.alpha = 1;
-                }];
-            }
-        }];
-    }
     
-    UIView *flipView1 = [cell viewWithTag:12];
-    UIView *flipView2 = [cell viewWithTag:1];
-    
-    UITapGestureRecognizer *flipGestureRecognizer1 = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(flipCell:)];
-    UITapGestureRecognizer *flipGestureRecognizer2 = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(flipCell:)];
-    
-    [flipView1 addGestureRecognizer:flipGestureRecognizer1];
-    [flipView2 addGestureRecognizer:flipGestureRecognizer2];
-    
+    // configure the back of the cell. fill all the info.
     UITextView *recipeNameView = (UITextView *)[cell viewWithTag:8];
     recipeNameView.text = [NSString stringWithFormat:@"%@", [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"recipe_name"]];
     
@@ -283,12 +257,7 @@
     UITextView *missingIngredientsView = (UITextView *)[cell viewWithTag:4];
     missingIngredientsView.text = [NSString stringWithFormat:@"%u Missing Ingredients: %@", missingIngredients.count, missingIngredientsString];
     
-    UIView *backView = [cell viewWithTag:1];
-    UIView *frontView = [cell viewWithTag:5];
-    frontView.alpha = 1.0;
-    backView.alpha = 0;
-    
-    // chef name button and missing ingredients and likes on front view
+    // configure the front of the cell. chef name button and missing ingredients and likes on front view
     UIButton *frontNameButton = (UIButton *)[cell viewWithTag:11];
     [frontNameButton setTitle:[NSString stringWithFormat:@"%@ %@", [user objectForKey:@"first_name"], [user objectForKey:@"last_name"]] forState:UIControlStateNormal];
     [frontNameButton sizeToFit];
@@ -307,6 +276,20 @@
         [missingIngredientsButton setTitle:[NSString stringWithFormat:@"%u", missingIngredients.count] forState:UIControlStateNormal];
     }
     
+    // make back view invisible.
+    UIView *backView = [cell viewWithTag:1];
+    UIView *frontView = [cell viewWithTag:5];
+    frontView.alpha = 1.0;
+    backView.alpha = 0;
+    
+    // adding flip gesture recognizers
+    UIView *flipView1 = [cell viewWithTag:12];
+    UIView *flipView2 = [cell viewWithTag:1];
+    
+    UITapGestureRecognizer *flipGestureRecognizer1 = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(flipCell:)];
+    UITapGestureRecognizer *flipGestureRecognizer2 = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(flipCell:)];
+    [flipView1 addGestureRecognizer:flipGestureRecognizer1];
+    [flipView2 addGestureRecognizer:flipGestureRecognizer2];
     
     return cell;
 }

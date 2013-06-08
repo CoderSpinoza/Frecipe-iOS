@@ -56,8 +56,6 @@
     }
     
     NSString *path = @"tokens/password";
-    [[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];
-    [[AFNetworkActivityIndicatorManager sharedManager] incrementActivityCount];
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSString *authentication_token = [defaults stringForKey:@"authentication_token"];
@@ -79,7 +77,8 @@
         }
         self.errorLabel.text = message;
     }];
-    [operation start];
+    FrecipeOperationQueue *queue = [FrecipeOperationQueue sharedQueue];
+    [queue addOperation:operation];
 }
 
 - (BOOL)checkPasswordLength {

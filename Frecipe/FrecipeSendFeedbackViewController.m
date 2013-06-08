@@ -53,8 +53,6 @@
         return;
     }
     NSString *path = @"feedbacks";
-    [[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];
-    [[AFNetworkActivityIndicatorManager sharedManager] incrementActivityCount];
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSString *authentication_token = [defaults stringForKey:@"authentication_token"];
@@ -76,7 +74,8 @@
         UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:@"There was an error sending feed back. Sorry." delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: nil];
         [alertView show];
     }];
-    [operation start];
+    FrecipeOperationQueue *queue = [FrecipeOperationQueue sharedQueue];
+    [queue addOperation:operation];
 }
 
 - (void)addGestureRecognizers {

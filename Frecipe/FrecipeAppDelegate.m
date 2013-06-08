@@ -38,10 +38,7 @@ NSString *const FBSessionStateChangedNotification = @"com.Frecipe.Frecipe:FBSess
 {
     // Override point for customization after application launch.
     
-    NSURLCache *URLCache =
-    [[NSURLCache alloc] initWithMemoryCapacity:1024 * 1024
-                                  diskCapacity:1024 * 1024 * 5
-                                      diskPath:nil];
+    NSURLCache *URLCache = [[NSURLCache alloc] initWithMemoryCapacity:1024 * 1024 diskCapacity:1024 * 1024 * 5 diskPath:nil];
     [NSURLCache setSharedURLCache:URLCache];
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSString *authentication_token = [defaults objectForKey:@"authentication_token"];
@@ -73,10 +70,28 @@ NSString *const FBSessionStateChangedNotification = @"com.Frecipe.Frecipe:FBSess
         initViewController = [storyboard instantiateViewControllerWithIdentifier:@"Login"];
     }
     
+    // start hockey app
+    [[BITHockeyManager sharedHockeyManager] configureWithIdentifier:@"8484ababc392d769df681ca04c4e7577" delegate:self];
+    [[BITHockeyManager sharedHockeyManager] configureWithBetaIdentifier:@"8484ababc392d769df681ca04c4e7577" liveIdentifier:@"8484ababc392d769df681ca04c4e7577" delegate:self];
+    [[BITHockeyManager sharedHockeyManager] startManager];
+//    [[BITHockeyManager sharedHockeyManager].updateManager setRequireAuthorization:YES];
+//    [[BITHockeyManager sharedHockeyManager].updateManager setAuthenticationSecret:@"b9c372f90ac7726f80cd2681f853f9bc"];
     [[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];
+    
     self.window.rootViewController = initViewController;
     return YES;
 }
+
+- (NSString *)customDeviceIdentifierForUpdateManager:(BITUpdateManager *)updateManager {
+#ifndef CONFIGURATION_AppStore
+    if ([[UIDevice currentDevice] respondsToSelector:@selector(uniqueIdentifier)]) {
+        NSLog(@"send device identifier to hockey app!");
+        return [[UIDevice currentDevice] performSelector:@selector(uniqueIdentifier)];
+    }
+#endif
+    return nil;
+}
+
 
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
     return [FBSession.activeSession handleOpenURL:url];
@@ -107,6 +122,10 @@ NSString *const FBSessionStateChangedNotification = @"com.Frecipe.Frecipe:FBSess
 - (void)applicationWillTerminate:(UIApplication *)application
 {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+}
+
+- (void)applicationDidReceiveMemoryWarning:(UIApplication *)application {
+    NSLog(@"warning warning TT");
 }
 
 @end

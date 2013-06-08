@@ -84,26 +84,23 @@
 
 - (void)loadFacebookUids {
     NSString *path = @"tokens/facebookAccounts";
-    [[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];
-    [[AFNetworkActivityIndicatorManager sharedManager] incrementActivityCount];
     
     FrecipeAPIClient *client = [FrecipeAPIClient client];
     
     NSURLRequest *request = [client requestWithMethod:@"GET" path:path parameters:nil];
     
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
-        [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
-        
         
         self.uids = [NSMutableArray arrayWithArray:JSON];
         if (self.facebookFriends) {
             [self.facebookFriendsTableView reloadData];
         }
+        NSLog(@"%@", self.uids);
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
-        [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
         
     }];
-    [operation start];
+    FrecipeOperationQueue *queue = [FrecipeOperationQueue sharedQueue];
+    [queue addOperation:operation];
 }
 
 - (void)loadFacebookFriends {
@@ -115,7 +112,6 @@
                 [request startWithCompletionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
                     self.facebookFriends = [NSMutableArray arrayWithArray:[result objectForKey:@"data"]];
                     NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES];
-                    NSLog(@"%u", self.facebookFriends.count);
                     NSArray *sortDescriptors = [NSArray arrayWithObjects:sortDescriptor, nil];
                     self.facebookFriends = [[self.facebookFriends sortedArrayUsingDescriptors:sortDescriptors] mutableCopy];
                     if (self.uids) {
@@ -267,6 +263,18 @@
         } else {
             cell.accessoryType = UITableViewCellAccessoryNone;
         }
+        
+        if([self.uids containsObject:[facebookFriend objectForKey:@"id"]]) {
+            UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 80, 20)];
+            label.text = @"Frecipe Member";
+            label.textColor = [UIColor greenColor];
+            label.textAlignment = NSTextAlignmentRight;
+            label.font = [label.font fontWithSize:10];
+            cell.accessoryView = label;
+        } else {
+            cell.accessoryView = nil;
+        }
+        cell.textLabel.font = [UIFont boldSystemFontOfSize:15];
         return cell;
 
     } else {
@@ -289,7 +297,18 @@
             cell.accessoryType = UITableViewCellAccessoryNone;
         }
 
-
+        if([self.uids containsObject:[facebookFriend objectForKey:@"id"]]) {
+            UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 80, 20)];
+            label.text = @"Frecipe Member";
+            label.textColor = [UIColor greenColor];
+            label.textAlignment = NSTextAlignmentRight;
+            label.font = [label.font fontWithSize:10];
+            cell.accessoryView = label;
+        } else {
+            cell.accessoryView = nil;
+        }
+        
+        cell.textLabel.font = [UIFont boldSystemFontOfSize:15];
         FBProfilePictureView *profilePictureView = [[FBProfilePictureView alloc] initWithProfileID:[NSString stringWithFormat:@"%@", [facebookFriend objectForKey:@"id"]] pictureCropping:FBProfilePictureCroppingSquare];
         profilePictureView.frame = CGRectMake(0, 0, 44, 44);
         [cell addSubview:profilePictureView];
@@ -314,7 +333,25 @@
     return [filteredFriends objectAtIndex:indexpath.row];
 }
 
-
+- (NSIndexPath *)tableView:(UITableView *)tableView willSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    if ([tableView isEqual:self.facebookFriendsTableView]) {
+        NSPredicate *filterPredicate = [NSPredicate predicateWithFormat:@"first_name beginswith[c] %@", [self.alphabets objectAtIndex:indexPath.section]];
+        NSArray *filteredFriends = [self.facebookFriends filteredArrayUsingPredicate:filterPredicate];
+        NSDictionary *facebookFriend = [filteredFriends objectAtIndex:indexPath.row];
+        if ([self.uids containsObject:[facebookFriend objectForKey:@"id"]]) {
+            return nil;
+        } else {
+            return indexPath;
+        }
+    } else {
+        NSDictionary *facebookFriend = [self.searchedFriends objectAtIndex:indexPath.row];
+        if ([self.uids containsObject:[facebookFriend objectForKey:@"id"]]) {
+            return nil;
+        } else {
+            return indexPath;
+        }
+    }
+}
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     if ([tableView isEqual:self.facebookFriendsTableView]) {
         UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];

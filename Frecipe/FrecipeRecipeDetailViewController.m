@@ -101,8 +101,8 @@
     
     self.commentsView.layer.cornerRadius = 5.0f;
     self.commentsView.layer.shadowColor = [[UIColor blackColor] CGColor];
-    self.commentsView.layer.shadowOpacity = 0.75f;
-    self.commentsView.layer.shadowRadius = 5.0f;
+    self.commentsView.layer.shadowOpacity = 0.5f;
+    self.commentsView.layer.shadowRadius = 3.0f;
     
     [self.commentButton setBackgroundImage:[UIImage imageNamed:@"button_background_image.png"] forState:UIControlStateHighlighted];
     
@@ -143,9 +143,6 @@
 
 - (void)fetchRecipeDetail {
     NSString *path = @"recipes/detail";
-    
-    [[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];
-    [[AFNetworkActivityIndicatorManager sharedManager] incrementActivityCount];
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSString *authentication_token = [defaults objectForKey:@"authentication_token"];
@@ -236,20 +233,15 @@
             self.scrollView.contentSize = CGSizeMake(self.view.frame.size.width, self.scrollView.contentSize.height + 90);
         }
         [spinner removeFromSuperview];
-        [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
-        
         [spinner removeFromSuperview];
-        
-        [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
     }];
-    [operation start];
+    FrecipeOperationQueue *queue = [FrecipeOperationQueue sharedQueue];
+    [queue addOperation:operation];
 }
 
 - (IBAction)likeButtonPressed {
     NSString *path = @"likes";
-    [[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];
-    [[AFNetworkActivityIndicatorManager sharedManager] incrementActivityCount];
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSString *authentication_token = [defaults objectForKey:@"authentication_token"];
@@ -267,12 +259,11 @@
             self.likeButton.selected = NO;
         }
         [self.likesButton setTitle:[NSString stringWithFormat:@"%@", [JSON objectForKey:@"likes"]] forState:UIControlStateNormal];
-        [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         NSLog(@"%@", error);
-        [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
     }];
-    [operation start];
+    FrecipeOperationQueue *queue = [FrecipeOperationQueue sharedQueue];
+    [queue addOperation:operation];
 }
 
 - (IBAction)shareButtonPressed {
@@ -327,9 +318,7 @@
     
     if (self.commentField.text.length > 0) {
         NSString *path = @"comments";
-        [[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];
-        [[AFNetworkActivityIndicatorManager sharedManager] incrementActivityCount];
-        
+
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
         NSString *authentication_token = [defaults stringForKey:@"authentication_token"];
         
@@ -350,14 +339,11 @@
             
             [self dismissKeyboard];
             self.commentField.text = @"";
-            
-            [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
         } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
             NSLog(@"%@", error);
-            
-            [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
         }];
-        [operation start];
+        FrecipeOperationQueue *queue = [FrecipeOperationQueue sharedQueue];
+        [queue addOperation:operation];
     }
     
 }
@@ -371,10 +357,7 @@
     NSDictionary  *comment = [[self.comments objectAtIndex:indexPath.row] objectForKey:@"comment"];
     
     NSString *path = [NSString stringWithFormat:@"comments/%@", [comment objectForKey:@"id"]];
-    
-    [[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];
-    [[AFNetworkActivityIndicatorManager sharedManager] incrementActivityCount];
-    
+
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSString *authentication_token = [defaults stringForKey:@"authentication_token"];
     NSArray *keys = [NSArray arrayWithObjects:@"authentication_token", @"recipe_id", nil];
@@ -392,25 +375,21 @@
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
         self.comments = [JSON objectForKey:@"comments"];
         [self.commentsTableView reloadData];
-        [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
+
         [spinner stopAnimating];
         [spinner removeFromSuperview];
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         [spinner stopAnimating];
         [spinner removeFromSuperview];
         NSLog(@"%@", error);
-        [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
     }];
-    [operation start];
+    FrecipeOperationQueue *queue = [FrecipeOperationQueue sharedQueue];
+    [queue addOperation:operation];
 }
 
 
 - (void)rate {
     NSString *path = @"recipes/rate";
-    
-    [[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];
-    [[AFNetworkActivityIndicatorManager sharedManager] incrementActivityCount];
-    
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSString *authentication_token = [defaults stringForKey:@"authentication_token"];
@@ -428,13 +407,12 @@
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         NSLog(@"%@", error);
     }];
-    [operation start];
+    FrecipeOperationQueue *queue = [FrecipeOperationQueue sharedQueue];
+    [queue addOperation:operation];
 }
 
 - (IBAction)addToGroceryList {
     NSString *path = @"groceries";
-    [[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];
-    [[AFNetworkActivityIndicatorManager sharedManager] incrementActivityCount];
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSString *authentication_token = [defaults objectForKey:@"authentication_token"];
@@ -471,8 +449,6 @@
     [self.view addSubview:spinner];
     
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
-        [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
-        NSLog(@"%@", self.missingIngredients);
         [self.missingIngredients removeObjectsInArray:self.selectedIngredients];
         [spinner stopAnimating];
         [spinner removeFromSuperview];
@@ -481,11 +457,11 @@
         [alertView show];
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         NSLog(@"%@", error);
-        [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
         [spinner stopAnimating];
         [spinner removeFromSuperview];
     }];
-    [operation start];
+    FrecipeOperationQueue *queue = [FrecipeOperationQueue sharedQueue];
+    [queue addOperation:operation];
 }
 
 
@@ -495,10 +471,6 @@
 
 - (void)deleteRecipe {
     NSString *path = [NSString stringWithFormat:@"recipes/%@", self.recipeId];
-    
-    [[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];
-    [[AFNetworkActivityIndicatorManager sharedManager] incrementActivityCount];
-    
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSString *authentication_token = [defaults objectForKey:@"authentication_token"];
@@ -514,7 +486,8 @@
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         NSLog(@"%@", error);
     }];
-    [operation start];
+    FrecipeOperationQueue *queue = [FrecipeOperationQueue sharedQueue];
+    [queue addOperation:operation];
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {

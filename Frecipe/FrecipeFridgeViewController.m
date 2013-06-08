@@ -22,6 +22,7 @@
 @property (strong, nonatomic) NSMutableArray *ingredients;
 @property (strong, nonatomic) NSMutableArray *selectedIngredients;
 
+@property (strong, nonatomic) AFNetworkActivityIndicatorManager *currentManager;
 
 @end
 
@@ -97,6 +98,8 @@
     UIView *backgroundView = [[UIView alloc] initWithFrame:CGRectMake(self.ingredientsCollectionView.bounds.origin.x, - self.ingredientsCollectionView.frame.size.height, self.ingredientsCollectionView.bounds.size.width, self.ingredientsCollectionView.bounds.size.height)];
     backgroundView.backgroundColor = [UIColor blackColor];
     [self.ingredientsCollectionView insertSubview:backgroundView atIndex:0];
+    
+//    self.collectionViewRefreshControl.attributedTitle = [[NSAttributedString alloc] initWithString:@"Pull down to refresh"];
 }
 
 - (void)fetchIngredients {
@@ -105,14 +108,14 @@
     NSString *path = [NSString stringWithFormat:@"user_ingredients/%@", authentication_token];
     
     FrecipeAPIClient *client = [FrecipeAPIClient client];
-    [[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];
-    [[AFNetworkActivityIndicatorManager sharedManager] incrementActivityCount];
     NSURLRequest *request = [client requestWithMethod:@"GET" path:path parameters:nil];
     
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
         self.ingredients = [NSMutableArray arrayWithArray:JSON];
         if (userIsInTheMiddleOfEditingIngredientsList) {
-            NSDictionary *addRow = [NSDictionary dictionaryWithObject:@"Add Ingredients" forKey:@"name"];
+            NSArray *keys = [NSArray arrayWithObjects:@"name", @"image", nil];
+            NSArray *values = [NSArray arrayWithObjects:@"Add Ingredients", @"https://s3.amazonaws.com/Frecipe/public/image/ingredients/plus.png", nil];
+            NSDictionary *addRow = [NSDictionary dictionaryWithObjects:values forKeys:keys];
             [self.ingredients insertObject:addRow atIndex:0];
         }
         
@@ -123,7 +126,6 @@
         
         [self.tableViewRefreshControl endRefreshing];
         [self.collectionViewRefreshControl endRefreshing];
-        [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         
         UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:@"There was an error loading your fridge info. Retry?" delegate:self cancelButtonTitle:@"Retry" otherButtonTitles:@"Cancel", nil];
@@ -132,10 +134,9 @@
         
         [self.tableViewRefreshControl endRefreshing];
         [self.collectionViewRefreshControl endRefreshing];
-        
-        [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
     }];
-    [operation start];
+    FrecipeOperationQueue *queue = [FrecipeOperationQueue sharedQueue];
+    [queue addOperation:operation];
 }
 
 - (IBAction)deleteButtonPressed:(UIBarButtonItem *)sender {
@@ -168,7 +169,8 @@
         NSLog(@"%@", error);
         self.deleteButton.enabled = YES;
     }];
-    [operation start];
+    FrecipeOperationQueue *queue = [FrecipeOperationQueue sharedQueue];
+    [queue addOperation:operation];
 }
 
 - (IBAction)segmentedControlPressed:(UISegmentedControl *)sender {
@@ -186,8 +188,9 @@
 }
 
 - (void)openAddIngredientsActionSheet {
-    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"Add Ingredients" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"With Receipt", @"Manually", nil];
-    [actionSheet showInView:[UIApplication sharedApplication].keyWindow];
+//    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"Add Ingredients" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"With Receipt", @"Manually", nil];
+//    [actionSheet showInView:[UIApplication sharedApplication].keyWindow];
+    [self openAddIngredientsModal];
 }
 
 - (void)openImagePickerController {
@@ -329,11 +332,11 @@
     [cell setShadowWithColor:[UIColor blackColor] Radius:1.0f Offset:CGSizeMake(1.0f, 1.0f) Opacity:0.4f];
     
     UIView *coverView = [cell viewWithTag:4];
+    coverView.backgroundColor = [[UIColor whiteColor] colorWithAlphaComponent:0.5f];
     if ([self.selectedIngredients containsObject:ingredient]) {
-//        cell.selected = YES;
+        
         coverView.hidden = NO;
     } else {
-//        cell.selected = NO;
         coverView.hidden = YES;
     }
     if (userIsInTheMiddleOfEditingIngredientsList && indexPath.row == 0) {

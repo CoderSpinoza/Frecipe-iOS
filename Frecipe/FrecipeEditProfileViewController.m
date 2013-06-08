@@ -102,7 +102,8 @@
         [alertView show];
         [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
     }];
-    [operation start];
+    FrecipeOperationQueue *queue = [FrecipeOperationQueue sharedQueue];
+    [queue addOperation:operation];
 }
 
 // text field delegate methods

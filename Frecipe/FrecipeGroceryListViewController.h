@@ -17,4 +17,5 @@
 @property (weak, nonatomic) IBOutlet UILabel *recipeNameLabel;
 @property (weak, nonatomic) IBOutlet UIButton *trashButton;
 @property (weak, nonatomic) IBOutlet UIButton *deleteRecipesButton;
+@property (weak, nonatomic) IBOutlet UIButton *doneShoppingButton;
 @end

@@ -46,8 +46,6 @@
 - (IBAction)sendButtonPressed:(UIBarButtonItem *)sender {
     if ([self validateEmail:self.emailField.text]) {
         NSString *path = @"tokens/reset";
-        [[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];
-        [[AFNetworkActivityIndicatorManager sharedManager] incrementActivityCount];
         
         NSDictionary *parameters = [NSDictionary dictionaryWithObjectsAndKeys:self.emailField.text, @"email", nil];
         
@@ -55,7 +53,6 @@
         NSURLRequest *request = [client requestWithMethod:@"POST" path:path parameters:parameters];
         
         AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
-            NSLog(@"%@", JSON);
             [self dismissViewControllerAnimated:YES completion:nil];
         } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
             UIAlertView *alertView;
@@ -66,7 +63,8 @@
             }
             [alertView show];
         }];
-        [operation start];
+        FrecipeOperationQueue *queue = [FrecipeOperationQueue sharedQueue];
+        [queue addOperation:operation];
         
     } else {
         UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:@"You have to input a valid email address!" delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: nil];

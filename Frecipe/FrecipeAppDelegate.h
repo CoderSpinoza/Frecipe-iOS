@@ -10,7 +10,7 @@
 #import <FacebookSDK/FacebookSDK.h>
 #define PRODUCTION YES
 #define STAGING YES
-@interface FrecipeAppDelegate : UIResponder <UIApplicationDelegate>
+@interface FrecipeAppDelegate : UIResponder <UIApplicationDelegate, BITHockeyManagerDelegate, BITUpdateManagerDelegate, BITCrashManagerDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
 extern NSString *const FBSessionStateChangedNotification;

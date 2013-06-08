@@ -64,8 +64,6 @@
 - (IBAction)addButtonPressed:(UIBarButtonItem *)sender {
     NSString *path = @"/user_ingredients";
     FrecipeAPIClient *client = [FrecipeAPIClient client];
-    [[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];
-    [[AFNetworkActivityIndicatorManager sharedManager] incrementActivityCount];
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSString *authentication_token = [defaults objectForKey:@"authentication_token"];
@@ -83,16 +81,15 @@
     [spinner startAnimating];
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
         [spinner stopAnimating];
-        [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
         [self dismissViewControllerAnimated:YES completion:nil];
         
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         NSLog(@"%@", error);
         [spinner stopAnimating];
-        [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
         
     }];
-    [operation start];
+    FrecipeOperationQueue *queue = [FrecipeOperationQueue sharedQueue];
+    [queue addOperation:operation];
 }
 
 - (void)addGestureRecognizers {

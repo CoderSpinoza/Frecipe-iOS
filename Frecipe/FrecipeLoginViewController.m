@@ -68,8 +68,6 @@
 
 - (IBAction)loginButtonPressed {
     FrecipeAPIClient *client = [FrecipeAPIClient client];
-    [[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];
-    [[AFNetworkActivityIndicatorManager sharedManager] incrementActivityCount];
     
     NSString *path = @"tokens";
     NSArray *keys = [NSArray arrayWithObjects:@"email", @"password",  nil];
@@ -104,16 +102,15 @@
         [self performSegueWithIdentifier:@"Login" sender:self];
         
         [spinnerView removeFromSuperview];
-        [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
         
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         NSLog(@"%@", error);
         [spinnerView removeFromSuperview];
         UIAlertView *errorView = [[UIAlertView alloc] initWithTitle:@"Login Error" message:[JSON objectForKey:@"message"] delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: nil];
         [errorView show];
-        [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
     }];
-    [operation start];
+    FrecipeOperationQueue *queue = [FrecipeOperationQueue sharedQueue];
+    [queue addOperation:operation];
 }
 - (IBAction)loginWithFacebookButtonPressed {
     NSArray *permissions = [[NSArray alloc] initWithObjects:
@@ -141,8 +138,6 @@
 
 - (void)checkIfFacebookUserIsRegisteredWithId:(NSString *)uid Email:(NSString *)email FirstName:(NSString *)firstName LastName:(NSString *)lastName {
     NSString *path = @"/tokens/facebook_check";
-    [[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];
-    [[AFNetworkActivityIndicatorManager sharedManager] incrementActivityCount];
     
     FrecipeAPIClient *client = [FrecipeAPIClient client];
     
@@ -187,15 +182,14 @@
             [spinnerView removeFromSuperview];
             [self performSegueWithIdentifier:@"Login" sender:self];
         }
-        [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         NSLog(@"%@", error);
         [spinnerView removeFromSuperview];
         UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Login Error" message:@"There was an error processing your login request." delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: nil];
         [alertView show];
-        [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
     }];
-    [operation start];
+    FrecipeOperationQueue *queue = [FrecipeOperationQueue sharedQueue];
+    [queue addOperation:operation];
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {

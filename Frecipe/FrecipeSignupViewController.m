@@ -74,14 +74,13 @@
             [alertView show];
             [self.spinnerView removeFromSuperview];
         }
-        [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         NSLog(@"%@", error);
         UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Login Error" message:@"There was an error processing your login request." delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: nil];
         [alertView show];
-        [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
     }];
-    [operation start];
+    FrecipeOperationQueue *queue = [FrecipeOperationQueue sharedQueue];
+    [queue addOperation:operation];
 }
 
 
@@ -210,8 +209,11 @@
             
             [self saveUserInfo:[JSON objectForKey:@"user"] Token:nil ProfilePicture:nil];
             FrecipeAppDelegate *delegate = [[UIApplication sharedApplication] delegate];
-            [UIView transitionWithView:delegate.window duration:0.7 options:UIViewAnimationOptionTransitionFlipFromLeft animations:^{
+            [UIView transitionWithView:delegate.window duration:0.7 options:UIViewAnimationOptionTransitionFlipFromRight animations:^{
+                BOOL oldState = [UIView areAnimationsEnabled];
+                [UIView setAnimationsEnabled:NO];
                 delegate.window.rootViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"Initial"];
+                [UIView setAnimationsEnabled:oldState];
             } completion:nil];
             
         } else {
@@ -221,17 +223,16 @@
         
         [spinnerView removeFromSuperview];
         self.signupButton.enabled = YES;
-        [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
         
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         NSLog(@"%@", error);
         UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Signup Error" message:[JSON objectForKey:@"message"] delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: nil];
         [alertView show];
-        [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
         [spinnerView removeFromSuperview];
         self.signupButton.enabled = YES;
     }];
-    [operation start];
+    FrecipeOperationQueue *queue = [FrecipeOperationQueue sharedQueue];
+    [queue addOperation:operation];
 }
 
 - (void)addGestureRecognizer {

@@ -87,7 +87,7 @@
     
     UIView *view1;
     UIView *view2;
-    if (tapGestureRecognizer.view.tag == 7) {
+    if (tapGestureRecognizer.view.tag == 12) {
         cell = (UITableViewCell *)tapGestureRecognizer.view.superview.superview.superview;
         
         view1 = [cell viewWithTag:1];
@@ -115,9 +115,6 @@
 - (void)fetchUserInfo {
     NSString *path = @"tokens/profile";
     
-    [[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];
-    [[AFNetworkActivityIndicatorManager sharedManager] incrementActivityCount];
-    
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSString *authentication_token = [defaults objectForKey:@"authentication_token"];
     
@@ -142,7 +139,7 @@
         NSDictionary *user = [JSON objectForKey:@"user"];
         self.user = user;
     
-        [self saveUserInfo:self.user Token:nil ProfilePicture:nil];
+//        [self saveUserInfo:self.user Token:nil ProfilePicture:nil];
         
         self.title = [NSString stringWithFormat:@"%@ %@", [user objectForKey:@"first_name"], [user objectForKey:@"last_name"]];
         
@@ -240,9 +237,7 @@
         [self.websiteAndAboutView setBasicShadow];
         [spinner stopAnimating];
         [spinner removeFromSuperview];
-        [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
-        
-        NSLog(@"%@", self.user);
+
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         
         [spinner stopAnimating];
@@ -251,9 +246,9 @@
         UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Profile load error" message:@"There was an error loading profile. Retry?" delegate:self cancelButtonTitle:@"Retry" otherButtonTitles:@"Cancel", nil];
         [alertView show];
         NSLog(@"%@", error);
-        [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
     }];
-    [operation start];
+    FrecipeOperationQueue *queue = [FrecipeOperationQueue sharedQueue];
+    [queue addOperation:operation];
 }
 
 - (void)showFacebookFriendPicker {
@@ -274,15 +269,12 @@
 }
 
 - (IBAction)inviteButtonPressed {
-    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"How to Invite?" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Facebook", @"Contacts",nil];
-    [actionSheet showInView:self.view];
+//    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"How to Invite?" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Facebook", @"Contacts",nil];
+//    [actionSheet showInView:self.view];
+    [self showFacebookFriendPicker];
 }
 - (IBAction)followButtonPressed:(UIButton *)sender {
     NSString *path = @"follows";
-    [[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];
-    [[AFNetworkActivityIndicatorManager sharedManager] incrementActivityCount];
-    
-    
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSString *authentication_token = [defaults stringForKey:@"authentication_token"];
@@ -303,7 +295,8 @@
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         NSLog(@"%@", error);
     }];
-    [operation start];
+    FrecipeOperationQueue *queue = [FrecipeOperationQueue sharedQueue];
+    [queue addOperation:operation];
 }
 
 - (void)goToRecipeDetail {
@@ -423,7 +416,7 @@
     UITapGestureRecognizer *flipGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(flipCell:)];
     [flipView addGestureRecognizer:flipGestureRecognizer];
     //
-    UIView *flipView2 = [cell viewWithTag:7];
+    UIView *flipView2 = [cell viewWithTag:12];
     UITapGestureRecognizer *flipGestureRecognizer2 = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(flipCell:)];
     [flipView2 addGestureRecognizer:flipGestureRecognizer2];
     

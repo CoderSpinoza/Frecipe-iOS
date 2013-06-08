@@ -136,6 +136,7 @@
         [cell addSubview:fbProfilePictreView];
         cell.imageView.hidden = YES;
     } else {
+        cell.imageView.image = nil;
         [cell.imageView setImageWithURL:[NSString stringWithFormat:@"%@", [notification objectForKey:@"profile_picture"]] placeholderImage:[UIImage imageNamed:@"default_profile_picture.png"]];
     }
     

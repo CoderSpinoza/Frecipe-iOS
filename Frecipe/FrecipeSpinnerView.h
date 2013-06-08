@@ -11,4 +11,6 @@
 @interface FrecipeSpinnerView : UIView
 @property (strong, nonatomic) UIActivityIndicatorView *spinner;
 @property (strong, nonatomic) UILabel *label;
+
+//+ (FrecipeSpinnerView *)spinnerViewWithFrame:(CGRect)frame 
 @end

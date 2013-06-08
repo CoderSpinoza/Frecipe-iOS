@@ -127,8 +127,6 @@
 
 - (void)fetchGroceryList {
     NSString *path = @"groceries/list";
-    [[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];
-    [[AFNetworkActivityIndicatorManager sharedManager] incrementActivityCount];
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSString *authentication_token = [defaults objectForKey:@"authentication_token"];
@@ -142,23 +140,19 @@
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
         [self processGroceryListInformation:[JSON objectForKey:@"grocery_list"]];
 
-        [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         NSLog(@"%@", error);
         UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:@"There was an error loading your grocery list. Retry?" delegate:self cancelButtonTitle:@"Retry" otherButtonTitles:@"Cancel", nil];
         [alertView show];
-        [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
         
     }];
-    [operation start];
+    FrecipeOperationQueue *queue = [FrecipeOperationQueue sharedQueue];
+    [queue addOperation:operation];
 }
 
 - (void)deleteSelectedRecipe {
     NSString *groceryRecipeId = [NSString stringWithFormat:@"%@", [self.selectedRecipe objectForKey:@"id"]];
     NSString *path = [NSString stringWithFormat:@"grocery_recipes/%@", groceryRecipeId];
-    
-    [[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];
-    [[AFNetworkActivityIndicatorManager sharedManager] incrementActivityCount];
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSString *authentication_token = [defaults stringForKey:@"authentication_token"];
@@ -174,12 +168,11 @@
         NSDictionary *groceryListInfo = [JSON objectForKey:@"grocery_list"];
         [self processGroceryListInformation:groceryListInfo];
         
-        [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         NSLog(@"%@", error);
-        [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
     }];
-    [operation start];
+    FrecipeOperationQueue *queue = [FrecipeOperationQueue sharedQueue];
+    [queue addOperation:operation];
     
 }
 
@@ -187,7 +180,6 @@
     self.recipes = [NSMutableArray arrayWithArray:[groceryListInfo objectForKey:@"recipes"]];
     
     self.groceryList = [NSMutableArray arrayWithArray:[groceryListInfo objectForKey:@"groceries"]];
-    NSLog(@"%@", self.recipes);
     for (NSDictionary *recipe in self.recipes) {
         NSArray *missing_ingredients = [recipe objectForKey:@"missing_ingredients"];
         NSArray *groceries = [recipe objectForKey:@"groceries"];
@@ -204,8 +196,7 @@
     NSDictionary *all = [NSDictionary dictionaryWithObjectsAndKeys:@"0", @"id", @"All Recipes", @"name", @"grocery_list.png", @"recipe_image", self.groceryList, @"missing_ingredients", nil];
     
     [self.recipes insertObject:all atIndex:0];
-    
-    NSLog(@"%d %d", self.currentGroceryList.count, self.currentGroceryDetailList.count);
+
     self.currentGroceryList = [[self.recipes objectAtIndex:self.displayedRecipeIndexPath.row] objectForKey:@"missing_ingredients"];
     self.currentGroceryDetailList = [[self.recipes objectAtIndex:self.displayedRecipeIndexPath.row] objectForKey:@"groceries"];
     self.recipeNameLabel.text = [NSString stringWithFormat:@"%@", [[self.recipes objectAtIndex:self.displayedRecipeIndexPath.row] objectForKey:@"name"]];
@@ -215,9 +206,6 @@
 
 - (void)recoverGrocery {
     NSString *path = @"groceries/recover";
-    
-    [[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];
-    [[AFNetworkActivityIndicatorManager sharedManager] incrementActivityCount];
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSString *authentication_token = [defaults stringForKey:@"authentication_token"];
@@ -237,7 +225,8 @@
         UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:@"There was an error updating your grocery list." delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: nil];
         [alertView show];
     }];
-    [operation start];
+    FrecipeOperationQueue *queue = [FrecipeOperationQueue sharedQueue];
+    [queue addOperation:operation];
                             
     
     
@@ -245,9 +234,6 @@
 
 - (IBAction)addToFridgeButtonPressed:(UIBarButtonItem *)sender {
     NSString *path = @"groceries/fridge";
-    
-    [[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];
-    [[AFNetworkActivityIndicatorManager sharedManager] incrementActivityCount];
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     
@@ -281,7 +267,8 @@
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         NSLog(@"%@", error);
     }];
-    [operation start];
+    FrecipeOperationQueue *queue = [FrecipeOperationQueue sharedQueue];
+    [queue addOperation:operation];
 }
 
 - (IBAction)deleteButtonPressed {
@@ -302,17 +289,18 @@
     
     NSURLRequest *request = [client requestWithMethod:@"POST" path:path parameters:parameters];
     
+    self.deleteRecipesButton.enabled = NO;
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
         NSDictionary *groceryListInfo = [JSON objectForKey:@"grocery_list"];
         [self.completedGroceryList removeAllObjects];
         [self processGroceryListInformation:groceryListInfo];
-        
-        [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
+        self.deleteRecipesButton.enabled = YES;
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         NSLog(@"%@", error);
-        [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
+        self.deleteRecipesButton.enabled = YES;
     }];
-    [operation start];
+    FrecipeOperationQueue *queue = [FrecipeOperationQueue sharedQueue];
+    [queue addOperation:operation];
 }
 
 - (IBAction)deleteRecipesButtonPressed {
@@ -320,8 +308,6 @@
         return;
     }
     NSString *path = @"grocery_recipes/multiple_delete";
-    [[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];
-    [[AFNetworkActivityIndicatorManager sharedManager] incrementActivityCount];
     
     NSMutableArray *ids = [[NSMutableArray alloc] initWithCapacity:self.selectedRecipes.count];
     for (NSDictionary *recipe in self.selectedRecipes) {
@@ -342,10 +328,12 @@
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
         [self processGroceryListInformation:[JSON objectForKey:@"grocery_list"]];
         self.deleteRecipesButton.enabled = YES;
+        [self.selectedRecipes removeAllObjects];
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         NSLog(@"%@", error);
     }];
-    [operation start];
+    FrecipeOperationQueue *queue = [FrecipeOperationQueue sharedQueue];
+    [queue addOperation:operation];
     
     
 }
@@ -365,9 +353,6 @@
 
 - (IBAction)doneButtonPressed {
     NSString *path = @"groceries/fridge";
-    
-    [[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];
-    [[AFNetworkActivityIndicatorManager sharedManager] incrementActivityCount];
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     
@@ -393,7 +378,8 @@
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         NSLog(@"%@", error);
     }];
-    [operation start];
+    FrecipeOperationQueue *queue = [FrecipeOperationQueue sharedQueue];
+    [queue addOperation:operation];
 
     
 }
@@ -634,6 +620,7 @@
         if (editingRecipes) {
             [UIView animateWithDuration:0.3 animations:^{
                 deleteView.alpha = 1;
+                whiteView.alpha = 0;
                 [cell startShaking];
             }];
         } else {
@@ -651,8 +638,6 @@
     } else {
         [self decolorCollectionViewCell:cell];
     }
-    
-//    [cell setShadowWithColor:[UIColor grayColor] Radius:2.0f Offset:CGSizeMake(0, 0) Opacity:0.5f];
     return cell;
 }
 

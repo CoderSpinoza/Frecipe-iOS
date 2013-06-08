@@ -60,9 +60,6 @@
 - (void)fetchNotifications {
     NSString *path = @"notifications/user";
     
-    [[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];
-    [[AFNetworkActivityIndicatorManager sharedManager] incrementActivityCount];
-    
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     
     NSString *authentication_token = [defaults stringForKey:@"authentication_token"];

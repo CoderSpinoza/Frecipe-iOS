@@ -118,8 +118,6 @@
         method = @"POST";
     }
     if (self.ingredients.count > 0 && userHasUploadedRecipePhoto) {
-        [[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];
-        [[AFNetworkActivityIndicatorManager sharedManager] incrementActivityCount];
         
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
         NSString *authentication_token = [defaults objectForKey:@"authentication_token"];
@@ -147,17 +145,16 @@
         
         AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
             [self dismissViewControllerAnimated:YES completion:nil];
-            [[AFNetworkActivityIndicatorManager sharedManager]decrementActivityCount];
             [spinner stopAnimating];
             [blockingView removeFromSuperview];
         } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
             NSLog(@"%@", error);
-            [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
             [spinner stopAnimating];
             [blockingView removeFromSuperview];
             
         }];
-        [operation start];
+        FrecipeOperationQueue *queue = [FrecipeOperationQueue sharedQueue];
+        [queue addOperation:operation];
     } else {
         UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Recipe Upload Error" message:@"You should upload image and ingredients" delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: nil];
         [alertView show];
