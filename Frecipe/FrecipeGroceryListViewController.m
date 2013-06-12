@@ -11,7 +11,7 @@
 #import "FrecipeAppDelegate.h"
 #import "FrecipeAPIClient.h"
 #import "FrecipeBadgeView.h"
-#import <SDWebImage/UIImageView+WebCache.h>
+#import <UIImageView+WebCache.h>
 
 @interface FrecipeGroceryListViewController () <UITableViewDelegate, UITableViewDataSource, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout> {
     BOOL userIsInTheMiddleOfEditingGroceryList;
@@ -253,7 +253,7 @@
     NSURLRequest *request = [client requestWithMethod:@"POST" path:path parameters:parameters];
     
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
-        NSMutableArray *deletedGroceries = [NSArray arrayWithArray:[JSON objectForKey:@"fridge"]];
+        NSMutableArray *deletedGroceries = [NSMutableArray arrayWithArray:[JSON objectForKey:@"fridge"]];
         
         for (NSDictionary *deletedGrocery in deletedGroceries) {
             if ([self.groceryList containsObject:deletedGrocery]) {
@@ -607,7 +607,7 @@
         if (PRODUCTION) {
             [imageView setImageWithURL:[recipe objectForKey:@"recipe_image"] placeholderImage:[UIImage imageNamed:@"default_recipe_image.png"]];
         } else {
-            [imageView setImageWithURL:[NSString stringWithFormat:@"http://localhost:5000/%@", [recipe objectForKey:@"recipe_image"]] placeholderImage:[UIImage imageNamed:@"default_recipe_image.png"]];
+            [imageView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://localhost:5000/%@", [recipe objectForKey:@"recipe_image"]]] placeholderImage:[UIImage imageNamed:@"default_recipe_image.png"]];
         }
     }
     

@@ -14,7 +14,7 @@
 #import "FrecipeFunctions.h"
 #import "FPPopoverController.h"
 #import "FrecipeEditDeleteViewController.h"
-#import <SDWebImage/UIImageView+WebCache.h>
+#import <AFNetworking/UIImageView+AFNetworking.h>
 #import <QuartzCore/QuartzCore.h>
 
 @interface FrecipeRecipeDetailViewController () <UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate, FrecipeRatingViewDelegate, UIAlertViewDelegate, UITextFieldDelegate, FPPopoverControllerDelegate> {
@@ -102,29 +102,25 @@
     self.commentsView.layer.cornerRadius = 5.0f;
     self.commentsView.layer.shadowColor = [[UIColor blackColor] CGColor];
     self.commentsView.layer.shadowOpacity = 0.5f;
-    self.commentsView.layer.shadowRadius = 3.0f;
-    
-    [self.commentButton setBackgroundImage:[UIImage imageNamed:@"button_background_image.png"] forState:UIControlStateHighlighted];
-    
+    self.commentsView.layer.shadowRadius = 3.0f;    
     
     self.recipeMainView.layer.cornerRadius = 2.0f;
     [self.recipeMainView setBasicShadow];
     
-    [self.likeButton setImage:[UIImage imageNamed:@"thumb.png"] forState:UIControlStateSelected];
-    [self.likeButton setImage:[UIImage imageNamed:@"thumb.png"] forState:UIControlStateHighlighted];
-    
     [self addGestureRecognizers];
-    [self registerForKeyboardNotification];
+    
     [self setupEditMenu];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     [self fetchRecipeDetail];
+    [self registerForKeyboardNotifications];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
+    [self removeForKeyboardNotifications];
 }
 
 - (void)didReceiveMemoryWarning
@@ -134,11 +130,11 @@
 }
 
 - (void)setupEditMenu {
-    self.editDeleteViewController = [[FrecipeEditDeleteViewController alloc] initWithStyle:UITableViewStylePlain];
-    self.editDeletePopoverViewController = [[FPPopoverController alloc] initWithViewController:self.editDeleteViewController];
-    self.editDeleteViewController.tableView.delegate = self;
-    self.editDeletePopoverViewController.delegate = self;
-    self.editDeletePopoverViewController.contentSize = CGSizeMake(120, 128);
+//    self.editDeleteViewController = [[FrecipeEditDeleteViewController alloc] initWithStyle:UITableViewStylePlain];
+//    self.editDeletePopoverViewController = [[FPPopoverController alloc] initWithViewController:self.editDeleteViewController];
+//    self.editDeleteViewController.tableView.delegate = self;
+//    self.editDeletePopoverViewController.delegate = self;
+//    self.editDeletePopoverViewController.contentSize = CGSizeMake(120, 128);
 }
 
 - (void)fetchRecipeDetail {
@@ -157,12 +153,12 @@
     spinner.center = self.view.center;
     [self.view addSubview:spinner];
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
-        self.title = [[JSON objectForKey:@"recipe"] objectForKey:@"name"];
+        self.title = [NSString stringWithFormat:@"%@", [[JSON objectForKey:@"recipe"] objectForKey:@"name"]];
         self.recipeImageURL = [NSString stringWithFormat:@"%@", [JSON objectForKey:@"recipe_image"]];
         if (PRODUCTION) {
-            [self.recipeImageView setImageWithURL:[JSON objectForKey:@"recipe_image"] placeholderImage:[UIImage imageNamed:@"iTunesArtwork.png"]];
+            [self.recipeImageView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@", [JSON objectForKey:@"recipe_image"]]] placeholderImage:[UIImage imageNamed:@"iTunesArtwork.png"]];
         } else {
-            [self.recipeImageView setImageWithURL:[NSString stringWithFormat:@"http://localhost:5000/%@",[JSON objectForKey:@"recipe_image"]] placeholderImage:[UIImage imageNamed:@"iTunesArtwork.png"]];
+            [self.recipeImageView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://localhost:5000/%@",[JSON objectForKey:@"recipe_image"]]] placeholderImage:[UIImage imageNamed:@"iTunesArtwork.png"]];
         }
         
         if ([[NSString stringWithFormat:@"%@", [JSON objectForKey:@"isOwner"]] isEqualToString:@"1"]) {
@@ -235,29 +231,40 @@
         [spinner removeFromSuperview];
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         [spinner removeFromSuperview];
+        if (response.statusCode == 404) {
+            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Recipe Error" message:@"The recipe was deleted or could not be found" delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: nil];
+            [alertView show];
+        }
     }];
     FrecipeOperationQueue *queue = [FrecipeOperationQueue sharedQueue];
-    [queue addOperation:operation];
-}
+    [queue addOperation:operation];    
+}   
 
 - (IBAction)likeButtonPressed {
+    if (self.likeButton.selected == NO) {
+        self.likeButton.selected = YES;
+    } else {
+        self.likeButton.selected = NO;
+    }
+    
     NSString *path = @"likes";
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSString *authentication_token = [defaults objectForKey:@"authentication_token"];
-    
     NSArray *keys = [NSArray arrayWithObjects:@"authentication_token", @"id", nil];
     NSArray *values = [NSArray arrayWithObjects:authentication_token, self.recipeId, nil];
     NSDictionary *parameters = [NSDictionary dictionaryWithObjects:values forKeys:keys];
+    
     FrecipeAPIClient *client = [FrecipeAPIClient client];
     NSURLRequest *request = [client requestWithMethod:@"POST" path:path parameters:parameters];
+    
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
 
-        if ([[NSString stringWithFormat:@"%@", [JSON objectForKey:@"message"]] isEqualToString:@"like"]) {
-            self.likeButton.selected = YES;
-        } else {
-            self.likeButton.selected = NO;
-        }
+//        if ([[NSString stringWithFormat:@"%@", [JSON objectForKey:@"message"]] isEqualToString:@"like"]) {
+//            self.likeButton.selected = YES;
+//        } else {
+//            self.likeButton.selected = NO;
+//        }
         [self.likesButton setTitle:[NSString stringWithFormat:@"%@", [JSON objectForKey:@"likes"]] forState:UIControlStateNormal];
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         NSLog(@"%@", error);
@@ -586,11 +593,12 @@
 //            self.ratingBorderView.frame = CGRectMake(self.ratingBorderView.frame.origin.x, self.ratingBorderView.frame.origin.y, self.ratingBorderView.frame.size.width, 0);
             self.ratingBorderView.alpha = 0;
         }];
+    } else if ([alertView.title isEqualToString:@"Recipe Error"]) {
+        [self.navigationController popViewControllerAnimated:YES];
     }
 }
 
-// table view delegate methods
-
+// table view dataSource methods
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     CGSize size;
@@ -629,8 +637,6 @@
         return  NO;
     }
 }
-
-
 
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated {
     userIsInTheMiddleOfEditingIngredientsList = editing;
@@ -733,7 +739,7 @@
             fbProfilePictureView.profileID = [NSString stringWithFormat:@"%@", [user objectForKey:@"uid"]];
         } else {
             fbProfilePictureView.hidden = YES;
-            [profilePictureView setImageWithURL:[NSString stringWithFormat:@"%@", [user objectForKey:@"profile_picture"]] placeholderImage:[UIImage imageNamed:@"default_profile_picture"]];
+            [profilePictureView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@", [user objectForKey:@"profile_picture"]]] placeholderImage:[UIImage imageNamed:@"default_profile_picture"]];
         }
         
         UIButton *nameButton = (UIButton *)[cell viewWithTag:3];
@@ -787,16 +793,14 @@
     }
 }
 
+// table view delegate methods
+
 - (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath {
 }
 
 // keybaord notification
-- (void)registerForKeyboardNotification {
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
-}
 
-- (void)keyboardWillShow:(NSNotification *)notification {
+- (void)keyboardWillBeShown:(NSNotification *)notification {
     self.originalHeight = self.commentsTableView.frame.size.height;
     
     NSDictionary *info = [notification userInfo];
@@ -812,7 +816,7 @@
     }];
 }
 
-- (void)keyboardWillHide:(NSNotification *)notification {
+- (void)keyboardWillBeHidden:(NSNotification *)notification {
     
     NSDictionary *info = [notification userInfo];
     CGSize keyboardSize = [[info objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;

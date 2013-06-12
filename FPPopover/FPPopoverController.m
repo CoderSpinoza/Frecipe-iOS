@@ -402,11 +402,11 @@
 {
     if(notification.object != self)
     {
-        if([self.delegate respondsToSelector:@selector(presentedNewPopoverController:shouldDismissVisiblePopover:)])
-        {
-            [self.delegate presentedNewPopoverController:notification.object
-                             shouldDismissVisiblePopover:self];
-        }
+//        if([self.delegate respondsToSelector:@selector(presentedNewPopoverController:shouldDismissVisiblePopover:)])
+//        {
+//            [self.delegate presentedNewPopoverController:notification.object
+//                             shouldDismissVisiblePopover:self];
+//        }
     }
 }
 

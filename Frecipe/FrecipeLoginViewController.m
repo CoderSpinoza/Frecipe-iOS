@@ -165,20 +165,11 @@
             [self performSegueWithIdentifier:@"Signup" sender:self];
             
         } else {
-            NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-            [defaults setObject:[JSON objectForKey:@"token"] forKey:@"authentication_token"];
-            [defaults setObject:[[JSON objectForKey:@"user"] objectForKey:@"id"] forKey:@"id"];
-            [defaults setObject:[[JSON objectForKey:@"user"] objectForKey:@"provider"] forKey:@"provider"];
-            [defaults setObject:[NSString stringWithFormat:@"%@ %@", [[JSON objectForKey:@"user"] objectForKey:@"first_name"], [[JSON objectForKey:@"user"] objectForKey:@"last_name"]] forKey:@"name"];
-            
             NSString *profilePictureUrl;
             profilePictureUrl = [NSString stringWithFormat:@"%@",[JSON objectForKey:@"profile_picture"]];
             
-            [defaults setObject:profilePictureUrl forKey:@"profile_picture"];
-            
-            [defaults setObject:uid forKey:@"uid"];
-            [defaults synchronize];
-            
+            [self saveUserInfo:[JSON objectForKey:@"user"] Token:[JSON objectForKey:@"token"] ProfilePicture:profilePictureUrl];
+
             [spinnerView removeFromSuperview];
             [self performSegueWithIdentifier:@"Login" sender:self];
         }

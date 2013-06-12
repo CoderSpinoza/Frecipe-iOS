@@ -11,7 +11,7 @@
 #import "FrecipeBadgeView.h"
 #import "FrecipeAPIClient.h"
 #import "FrecipeAppDelegate.h"
-#import <SDWebImage/UIButton+WebCache.h>
+#import <UIButton+WebCache.h>
 
 @interface FrecipeFridgeViewController () <UIActionSheetDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITableViewDataSource, UITableViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout> {
     BOOL userIsInTheMiddleOfEditingIngredientsList;

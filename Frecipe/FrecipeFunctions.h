@@ -9,9 +9,8 @@
 #import <Foundation/Foundation.h>
 
 @interface FrecipeFunctions : NSObject
-
++ (NSDateFormatter *)sharedDateFormatter;
 + (NSString *)currentDate;
-
 + (NSString *)compareWithCurrentDate:(NSString *)specifiedDate;
 
 

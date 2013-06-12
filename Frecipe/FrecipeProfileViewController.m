@@ -15,7 +15,7 @@
 #import "FrecipeEditProfileViewController.h"
 #import "FrecipeProfileDetailViewController.h"
 #import <QuartzCore/QuartzCore.h>
-#import <SDWebImage/UIImageView+WebCache.h>
+#import <UIImageView+WebCache.h>
 
 @interface FrecipeProfileViewController () <UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UIActionSheetDelegate, UIAlertViewDelegate, FrecipeRatingViewDelegate>
 
@@ -23,8 +23,6 @@
 @property (strong, nonatomic) NSMutableArray *recipes;
 @property (strong, nonatomic) NSDictionary *selectedRecipe;
 @property (strong, nonatomic) NSDictionary *mostPopularRecipe;
-//@property (strong, nonatomic) FrecipeRatingView *averageRatingView;
-
 @end
 
 @implementation FrecipeProfileViewController
@@ -84,7 +82,6 @@
 
 - (void)flipCell:(UITapGestureRecognizer *)tapGestureRecognizer {
     UITableViewCell *cell;
-    
     UIView *view1;
     UIView *view2;
     if (tapGestureRecognizer.view.tag == 12) {
@@ -105,12 +102,6 @@
     } completion:^(BOOL finished) {
     }];
 }
-
-//- (void)addAverageRatingView {
-//    self.averageRatingView = [[FrecipeRatingView alloc] initWithFrame:CGRectMake(79, 50, 140, 16)];
-//    self.averageRatingView.delegate = self;
-//    [self.view addSubview:self.averageRatingView];
-//}
 
 - (void)fetchUserInfo {
     NSString *path = @"tokens/profile";
@@ -135,11 +126,10 @@
     spinner.center = CGPointMake(self.view.frame.size.width / 2, self.view.frame.size.height / 2 - self.navigationController.navigationBar.frame.size.height / 2);
     [spinner startAnimating];
     [self.view addSubview:spinner];
+//    [AFJSONRequestOperation addAcceptableContentTypes:[NSSet setWithObject:@"text/html"]];
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
         NSDictionary *user = [JSON objectForKey:@"user"];
         self.user = user;
-    
-//        [self saveUserInfo:self.user Token:nil ProfilePicture:nil];
         
         self.title = [NSString stringWithFormat:@"%@ %@", [user objectForKey:@"first_name"], [user objectForKey:@"last_name"]];
         
@@ -269,8 +259,6 @@
 }
 
 - (IBAction)inviteButtonPressed {
-//    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"How to Invite?" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Facebook", @"Contacts",nil];
-//    [actionSheet showInView:self.view];
     [self showFacebookFriendPicker];
 }
 - (IBAction)followButtonPressed:(UIButton *)sender {
@@ -344,16 +332,15 @@
         self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"back_arrow.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(popViewControllerFromStack)];
     } else if ([segue.identifier isEqualToString:@"Profile"]) {
         FrecipeProfileViewController *profileViewController = (FrecipeProfileViewController *)segue.destinationViewController;
-        NSLog(@"here");
         NSDictionary *user = [self.selectedRecipe objectForKey:@"user"];
         profileViewController.userId  = [NSString stringWithFormat:@"%@", [user objectForKey:@"id"]];        
     } else if ([segue.identifier isEqualToString:@"EditProfile"]) {
+        NSLog(@"edit button pressed");
         FrecipeEditProfileViewController *destinationViewController = (FrecipeEditProfileViewController *)segue.destinationViewController;
         
         if (destinationViewController.view) {
             destinationViewController.profilePictureView.image = self.profilePictureView.image;
-            destinationViewController.fbProfilePictureView.profileID = [NSString stringWithFormat:@"%@", [self.user objectForKey:@"uid"]];
-            
+            destinationViewController.fbProfilePictureView.profileID = [NSString stringWithFormat:@"%@", [self.user objectForKey:@"uid"]];            
         }
     } else if ([segue.identifier isEqualToString:@"Profile2"] ) {
         FrecipeProfileViewController *destinationViewController = (FrecipeProfileViewController *)segue.destinationViewController;
@@ -406,20 +393,14 @@
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     UICollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"RecipeCell" forIndexPath:indexPath];
     UIImageView *recipeImageView = (UIImageView *)[cell viewWithTag:6];
+    recipeImageView.image = nil;
     if (PRODUCTION) {
-        [recipeImageView setImageWithURL:[[self.recipes objectAtIndex:indexPath.row] objectForKey:@"recipe_image"] placeholderImage:[UIImage imageNamed:@"placeholder.png"]];
+        [recipeImageView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@", [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"recipe_image"]]] placeholderImage:[UIImage imageNamed:@"placeholder.png"]];
     } else {
-        [recipeImageView setImageWithURL:[NSString stringWithFormat:@"http://localhost:5000/%@",[[self.recipes objectAtIndex:indexPath.row] objectForKey:@"recipe_image"]] placeholderImage:[UIImage imageNamed:@"placeholder.png"]];
+        [recipeImageView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://localhost:5000/%@",[[self.recipes objectAtIndex:indexPath.row] objectForKey:@"recipe_image"]]] placeholderImage:[UIImage imageNamed:@"placeholder.png"]];
     }
     
-    UIView *flipView = [cell viewWithTag:1];
-    UITapGestureRecognizer *flipGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(flipCell:)];
-    [flipView addGestureRecognizer:flipGestureRecognizer];
-    //
-    UIView *flipView2 = [cell viewWithTag:12];
-    UITapGestureRecognizer *flipGestureRecognizer2 = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(flipCell:)];
-    [flipView2 addGestureRecognizer:flipGestureRecognizer2];
-    
+
     UITextView *recipeNameView = (UITextView *)[cell viewWithTag:8];
     recipeNameView.text = [NSString stringWithFormat:@"%@",[[self.recipes objectAtIndex:indexPath.row] objectForKey:@"recipe_name"]];
     
@@ -450,7 +431,25 @@
     likesLabel.text = [NSString stringWithFormat:@"%@ likes", [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"likes"]];
     
     UIButton *missingIngredientsButton = (UIButton *)[cell viewWithTag:12];
-    [missingIngredientsButton setTitle:[NSString stringWithFormat:@"%u", missingIngredients.count] forState:UIControlStateNormal];
+    if (missingIngredients.count == 0) {
+        missingIngredientsButton.selected = YES;
+        [missingIngredientsButton setTitle:@"" forState:UIControlStateNormal];
+    } else {
+        missingIngredientsButton.selected = NO;
+        [missingIngredientsButton setTitle:[NSString stringWithFormat:@"%u", missingIngredients.count] forState:UIControlStateNormal];
+    }
+    
+    // add a gesture recognizer when there isn't one.
+    UIView *flipView = [cell viewWithTag:1];
+    if (flipView.gestureRecognizers.count == 0) {
+        UITapGestureRecognizer *flipGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(flipCell:)];
+        [flipView addGestureRecognizer:flipGestureRecognizer];
+    }
+    UIView *flipView2 = [cell viewWithTag:12];
+    if (flipView2.gestureRecognizers.count == 0) {
+        UITapGestureRecognizer *flipGestureRecognizer2 = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(flipCell:)];
+        [flipView2 addGestureRecognizer:flipGestureRecognizer2];
+    }
     return cell;
 }
 

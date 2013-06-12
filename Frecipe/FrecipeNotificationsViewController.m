@@ -7,7 +7,7 @@
 //
 
 #import "FrecipeNotificationsViewController.h"
-#import <SDWebImage/UIImageView+WebCache.h>
+#import <UIImageView+WebCache.h>
 #import <FacebookSDK/FacebookSDK.h>
 
 @interface FrecipeNotificationsViewController ()
@@ -137,7 +137,7 @@
         cell.imageView.hidden = YES;
     } else {
         cell.imageView.image = nil;
-        [cell.imageView setImageWithURL:[NSString stringWithFormat:@"%@", [notification objectForKey:@"profile_picture"]] placeholderImage:[UIImage imageNamed:@"default_profile_picture.png"]];
+        [cell.imageView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@", [notification objectForKey:@"profile_picture"]]] placeholderImage:[UIImage imageNamed:@"default_profile_picture.png"]];
     }
     
     return cell;

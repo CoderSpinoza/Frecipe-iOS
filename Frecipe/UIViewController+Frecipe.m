@@ -52,6 +52,11 @@
                                                  name:UIKeyboardWillHideNotification object:nil];
 }
 
+- (void)removeForKeyboardNotifications {
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:self];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:self];
+}
+
 - (void)saveUserInfo:(NSDictionary *)user Token:(NSString *)token ProfilePicture:(NSString *)profilePictureUrl {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     [defaults setObject:[user objectForKey:@"id"] forKey:@"id"];
@@ -61,7 +66,7 @@
     }
     
     if (token) {
-        [defaults setObject:token forKey:@"authenticatione_token"];
+        [defaults setObject:token forKey:@"authentication_token"];
     }
     if (profilePictureUrl) {
         [defaults setObject:profilePictureUrl forKey:@"profile_picture"];
@@ -72,15 +77,15 @@
     [defaults setObject:[NSString stringWithFormat:@"%@", [user objectForKey:@"first_name"]] forKey:@"first_name"];
     [defaults setObject:[NSString stringWithFormat:@"%@", [user objectForKey:@"last_name"]] forKey:@"last_name"];
     [defaults setObject:[NSString stringWithFormat:@"%@", [user objectForKey:@"email"]] forKey:@"email"];
-    [defaults setObject:[NSString stringWithFormat:@"%@", [user objectForKey:@"level"]] forKey:@"level"];
     [defaults setObject:[NSString stringWithFormat:@"%@", [user objectForKey:@"about"]] forKey:@"about"];
     [defaults synchronize];
 }
 
 - (NSDictionary *)loaduserInfo {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSArray *keys = [NSArray arrayWithObjects:@"id", @"email", @"first_name", @"last_name", @"level", @"provider", @"uid", @"website", @"about", nil];
-    NSArray *values = [NSArray arrayWithObjects:[defaults stringForKey:@"id"],[defaults stringForKey:@"email"], [defaults stringForKey:@"first_name"], [defaults stringForKey:@"last_name"], [defaults stringForKey:@"level"], [defaults stringForKey:@"provider"], [defaults stringForKey:@"uid"], [defaults stringForKey:@"website"], [defaults stringForKey:@"about"], nil];
+    
+    NSArray *keys = [NSArray arrayWithObjects:@"id", @"email", @"first_name", @"last_name", @"provider", @"uid", @"website", @"about", nil];
+    NSArray *values = [NSArray arrayWithObjects:[defaults stringForKey:@"id"],[defaults stringForKey:@"email"], [defaults stringForKey:@"first_name"], [defaults stringForKey:@"last_name"], [defaults stringForKey:@"provider"], [defaults stringForKey:@"uid"], [defaults stringForKey:@"website"], [defaults stringForKey:@"about"], nil];
     
     NSDictionary *user = [NSDictionary dictionaryWithObjects:values forKeys:keys];
     return user;

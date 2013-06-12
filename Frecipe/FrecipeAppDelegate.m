@@ -8,6 +8,7 @@
 
 #import "FrecipeAppDelegate.h"
 #import "FrecipeAPIClient.h"
+#import <NewRelicAgent/NewRelicAgent.h>
 
 @implementation FrecipeAppDelegate
 
@@ -38,8 +39,6 @@ NSString *const FBSessionStateChangedNotification = @"com.Frecipe.Frecipe:FBSess
 {
     // Override point for customization after application launch.
     
-    NSURLCache *URLCache = [[NSURLCache alloc] initWithMemoryCapacity:1024 * 1024 diskCapacity:1024 * 1024 * 5 diskPath:nil];
-    [NSURLCache setSharedURLCache:URLCache];
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSString *authentication_token = [defaults objectForKey:@"authentication_token"];
     
@@ -47,7 +46,6 @@ NSString *const FBSessionStateChangedNotification = @"com.Frecipe.Frecipe:FBSess
     [[UIBarButtonItem appearance] setTintColor:[[UIColor alloc] initWithRed:0.86 green:0.30 blue:0.27 alpha:1]];
     
     if ([provider isEqualToString:@"facebook"]) {
-        
         if (!FBSession.activeSession.isOpen) {
             [FBSession openActiveSessionWithReadPermissions:[NSArray arrayWithObjects:@"email", nil]allowLoginUI:NO completionHandler:^(FBSession *session, FBSessionState status, NSError *error) {
             }];
@@ -70,14 +68,18 @@ NSString *const FBSessionStateChangedNotification = @"com.Frecipe.Frecipe:FBSess
         initViewController = [storyboard instantiateViewControllerWithIdentifier:@"Login"];
     }
     
+    // register for remote notifications
+//    [[UIApplication sharedApplication] registerForRemoteNotificationTypes:UIRemoteNotificationTypeAlert | UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound];
+    
     // start hockey app
-    [[BITHockeyManager sharedHockeyManager] configureWithIdentifier:@"8484ababc392d769df681ca04c4e7577" delegate:self];
     [[BITHockeyManager sharedHockeyManager] configureWithBetaIdentifier:@"8484ababc392d769df681ca04c4e7577" liveIdentifier:@"8484ababc392d769df681ca04c4e7577" delegate:self];
     [[BITHockeyManager sharedHockeyManager] startManager];
 //    [[BITHockeyManager sharedHockeyManager].updateManager setRequireAuthorization:YES];
 //    [[BITHockeyManager sharedHockeyManager].updateManager setAuthenticationSecret:@"b9c372f90ac7726f80cd2681f853f9bc"];
     [[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];
     
+    // stat new relic
+//    [NewRelicAgent startWithApplicationToken:@"AAc3ea27dc72cade020e5d024fda602d64acf5a852"];
     self.window.rootViewController = initViewController;
     return YES;
 }
@@ -124,8 +126,31 @@ NSString *const FBSessionStateChangedNotification = @"com.Frecipe.Frecipe:FBSess
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
 
-- (void)applicationDidReceiveMemoryWarning:(UIApplication *)application {
-    NSLog(@"warning warning TT");
+
+// notification delegate methods
+
+- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
 }
 
+- (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
+    NSLog(@"Failed to register for push notifications.");
+}
+
+- (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification {
+    
+}
+
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
+    if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateActive) {
+        
+    } else if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateInactive) {
+        
+    } else if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateBackground) {
+        
+    } else {
+        
+    }
+}
+
+// custom methods for registering push notifiactions
 @end

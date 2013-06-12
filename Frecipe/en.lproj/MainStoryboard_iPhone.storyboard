@@ -1649,7 +1649,7 @@
                                     <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 </collectionViewFlowLayout>
                                 <cells>
-                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="8bL-oZ-tB1">
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="RecipeCell" id="8bL-oZ-tB1">
                                         <rect key="frame" x="0.0" y="0.0" width="160" height="160"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
@@ -2463,6 +2463,243 @@
         <image name="thumb_highlighted.png" width="2500" height="2500"/>
         <image name="trash.png" width="44" height="44"/>
     </resources>
+    <classes>
+        <class className="ECSlidingViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/ECSlidingViewController.h"/>
+        </class>
+        <class className="FBProfilePictureView" superclassName="UIView">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/FBProfilePictureView.h"/>
+        </class>
+        <class className="FrecipeAddIngredientsViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeAddIngredientsViewController.h"/>
+            <relationships>
+                <relationship kind="outlet" name="ingredientField" candidateClass="UITextField"/>
+                <relationship kind="outlet" name="ingredientsTableView" candidateClass="UITableView"/>
+            </relationships>
+        </class>
+        <class className="FrecipeAddRecipeViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeAddRecipeViewController.h"/>
+            <relationships>
+                <relationship kind="outlet" name="directionField" candidateClass="UITextField"/>
+                <relationship kind="outlet" name="directionsTableView" candidateClass="UITableView"/>
+                <relationship kind="outlet" name="ingredientField" candidateClass="UITextField"/>
+                <relationship kind="outlet" name="ingredientsTableView" candidateClass="UITableView"/>
+                <relationship kind="outlet" name="navigationBar" candidateClass="UINavigationBar"/>
+                <relationship kind="outlet" name="recipeImageButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="recipeNameField" candidateClass="UITextField"/>
+                <relationship kind="outlet" name="segmentedControl" candidateClass="UISegmentedControl"/>
+            </relationships>
+        </class>
+        <class className="FrecipeAddToGroceryListViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeAddToGroceryListViewController.h"/>
+            <relationships>
+                <relationship kind="outlet" name="groceryField" candidateClass="UITextField"/>
+                <relationship kind="outlet" name="groceryListTableView" candidateClass="UITableView"/>
+            </relationships>
+        </class>
+        <class className="FrecipeBadgeView" superclassName="UIView">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeBadgeView.h"/>
+        </class>
+        <class className="FrecipeChangePasswordViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeChangePasswordViewController.h"/>
+            <relationships>
+                <relationship kind="outlet" name="currentPasswordField" candidateClass="UITextField"/>
+                <relationship kind="outlet" name="differentPasswordField" candidateClass="UITextField"/>
+                <relationship kind="outlet" name="errorLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="passwordConfirmationField" candidateClass="UITextField"/>
+            </relationships>
+        </class>
+        <class className="FrecipeEditProfileViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeEditProfileViewController.h"/>
+            <relationships>
+                <relationship kind="outlet" name="aboutTextView" candidateClass="UITextView"/>
+                <relationship kind="outlet" name="basicInfoView" candidateClass="UIView"/>
+                <relationship kind="outlet" name="fbProfilePictureView" candidateClass="FBProfilePictureView"/>
+                <relationship kind="outlet" name="firstNameField" candidateClass="UITextField"/>
+                <relationship kind="outlet" name="lastNameField" candidateClass="UITextField"/>
+                <relationship kind="outlet" name="profilePictureView" candidateClass="UIImageView"/>
+                <relationship kind="outlet" name="scrollView" candidateClass="UIScrollView"/>
+                <relationship kind="outlet" name="userAboutView" candidateClass="UIView"/>
+                <relationship kind="outlet" name="websiteField" candidateClass="UITextField"/>
+                <relationship kind="outlet" name="websiteView" candidateClass="UIView"/>
+            </relationships>
+        </class>
+        <class className="FrecipeFacebookInviteViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeFacebookInviteViewController.h"/>
+            <relationships>
+                <relationship kind="outlet" name="facebookFriendsTableView" candidateClass="UITableView"/>
+                <relationship kind="outlet" name="searchBar" candidateClass="UISearchBar"/>
+            </relationships>
+        </class>
+        <class className="FrecipeForgotPasswordViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeForgotPasswordViewController.h"/>
+            <relationships>
+                <relationship kind="outlet" name="emailField" candidateClass="UITextField"/>
+            </relationships>
+        </class>
+        <class className="FrecipeFridgeViewController" superclassName="FrecipeMainViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeFridgeViewController.h"/>
+            <relationships>
+                <relationship kind="outlet" name="deleteButton" candidateClass="UIBarButtonItem"/>
+                <relationship kind="outlet" name="ingredientsCollectionView" candidateClass="UICollectionView"/>
+                <relationship kind="outlet" name="ingredientsTableView" candidateClass="UITableView"/>
+            </relationships>
+        </class>
+        <class className="FrecipeGroceryListViewController" superclassName="FrecipeMainViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeGroceryListViewController.h"/>
+            <relationships>
+                <relationship kind="outlet" name="deleteRecipesButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="doneShoppingButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="groceryListTableView" candidateClass="UITableView"/>
+                <relationship kind="outlet" name="groceryListView" candidateClass="UIView"/>
+                <relationship kind="outlet" name="recipeNameLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="recipesCollectionView" candidateClass="UICollectionView"/>
+                <relationship kind="outlet" name="trashButton" candidateClass="UIButton"/>
+            </relationships>
+        </class>
+        <class className="FrecipeInitViewController" superclassName="ECSlidingViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeInitViewController.h"/>
+        </class>
+        <class className="FrecipeLoginViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeLoginViewController.h"/>
+            <relationships>
+                <relationship kind="outlet" name="emailField" candidateClass="UITextField"/>
+                <relationship kind="outlet" name="loginButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="loginImageView" candidateClass="UIImageView"/>
+                <relationship kind="outlet" name="passwordField" candidateClass="UITextField"/>
+                <relationship kind="outlet" name="scrollView" candidateClass="UIScrollView"/>
+                <relationship kind="outlet" name="signupButton" candidateClass="UIButton"/>
+            </relationships>
+        </class>
+        <class className="FrecipeMainViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeMainViewController.h"/>
+        </class>
+        <class className="FrecipeNavigationController" superclassName="UINavigationController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeNavigationController.h"/>
+        </class>
+        <class className="FrecipeNavigationViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeNavigationViewController.h"/>
+            <relationships>
+                <relationship kind="outlet" name="fbProfilePictureView" candidateClass="FBProfilePictureView"/>
+                <relationship kind="outlet" name="menuCollectionView" candidateClass="UICollectionView"/>
+                <relationship kind="outlet" name="nameButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="notificationsBadgeView" candidateClass="FrecipeBadgeView"/>
+                <relationship kind="outlet" name="profilePictureView" candidateClass="UIImageView"/>
+                <relationship kind="outlet" name="searchBar" candidateClass="UISearchBar"/>
+            </relationships>
+        </class>
+        <class className="FrecipeProfileDetailViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeProfileDetailViewController.h"/>
+            <relationships>
+                <relationship kind="outlet" name="recipesCollectionView" candidateClass="UICollectionView"/>
+                <relationship kind="outlet" name="usersTableView" candidateClass="UITableView"/>
+            </relationships>
+        </class>
+        <class className="FrecipeProfileViewController" superclassName="FrecipeMainViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeProfileViewController.h"/>
+            <relationships>
+                <relationship kind="action" name="followButtonPressed:" candidateClass="UIButton"/>
+                <relationship kind="action" name="revealMenu:" candidateClass="UIBarButtonItem"/>
+                <relationship kind="outlet" name="aboutTextView" candidateClass="UITextView"/>
+                <relationship kind="outlet" name="averageRatingView" candidateClass="FrecipeRatingView"/>
+                <relationship kind="outlet" name="basicInfoView" candidateClass="UIView"/>
+                <relationship kind="outlet" name="detailInfoView" candidateClass="UIView"/>
+                <relationship kind="outlet" name="fbProfilePictureView" candidateClass="FBProfilePictureView"/>
+                <relationship kind="outlet" name="followButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="nameLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="numOfFollowersButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="numOfFollowersTitleLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="numOfFollowingButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="numOfLikedButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="numOfLikesButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="numOfLikesTitleLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="numOfRecipesButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="numOfRecipesTitleLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="popularRecipeButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="popularRecipeLikesButton" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="popularRecipeTitleLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="profilePictureView" candidateClass="UIImageView"/>
+                <relationship kind="outlet" name="recipesCollectionView" candidateClass="UICollectionView"/>
+                <relationship kind="outlet" name="scrollView" candidateClass="UIScrollView"/>
+                <relationship kind="outlet" name="separatorView" candidateClass="UIView"/>
+                <relationship kind="outlet" name="websiteAndAboutView" candidateClass="UIView"/>
+                <relationship kind="outlet" name="websiteLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="websiteTextView" candidateClass="UITextView"/>
+            </relationships>
+        </class>
+        <class className="FrecipeRatingView" superclassName="UIView">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeRatingView.h"/>
+        </class>
+        <class className="FrecipeRecipeDetailViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeRecipeDetailViewController.h"/>
+            <relationships>
+                <relationship kind="outlet" name="addToGroceryListButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="averageRatingView" candidateClass="FrecipeRatingView"/>
+                <relationship kind="outlet" name="commentButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="commentField" candidateClass="UITextField"/>
+                <relationship kind="outlet" name="commentSubmitButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="commentsTableView" candidateClass="UITableView"/>
+                <relationship kind="outlet" name="commentsView" candidateClass="UIView"/>
+                <relationship kind="outlet" name="directionsLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="directionsTableView" candidateClass="UITableView"/>
+                <relationship kind="outlet" name="directionsView" candidateClass="UIView"/>
+                <relationship kind="outlet" name="ingredientsLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="ingredientsTableView" candidateClass="UITableView"/>
+                <relationship kind="outlet" name="ingredientsView" candidateClass="UIView"/>
+                <relationship kind="outlet" name="likeButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="likesButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="nameButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="ratingBorderView" candidateClass="UIView"/>
+                <relationship kind="outlet" name="ratingView" candidateClass="FrecipeRatingView"/>
+                <relationship kind="outlet" name="recipeImageView" candidateClass="UIImageView"/>
+                <relationship kind="outlet" name="recipeMainView" candidateClass="UIView"/>
+                <relationship kind="outlet" name="scrollView" candidateClass="UIScrollView"/>
+                <relationship kind="outlet" name="shareButton" candidateClass="UIButton"/>
+            </relationships>
+        </class>
+        <class className="FrecipeSendFeedbackViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeSendFeedbackViewController.h"/>
+            <relationships>
+                <relationship kind="outlet" name="feedbackTextView" candidateClass="UITextView"/>
+            </relationships>
+        </class>
+        <class className="FrecipeSettingsViewController" superclassName="FrecipeMainViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeSettingsViewController.h"/>
+            <relationships>
+                <relationship kind="outlet" name="settingsTableView" candidateClass="UITableView"/>
+            </relationships>
+        </class>
+        <class className="FrecipeSignupViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeSignupViewController.h"/>
+            <relationships>
+                <relationship kind="outlet" name="confirmationField" candidateClass="UITextField"/>
+                <relationship kind="outlet" name="emailField" candidateClass="UITextField"/>
+                <relationship kind="outlet" name="firstNameField" candidateClass="UITextField"/>
+                <relationship kind="outlet" name="lastNameField" candidateClass="UITextField"/>
+                <relationship kind="outlet" name="passwordField" candidateClass="UITextField"/>
+                <relationship kind="outlet" name="scrollView" candidateClass="UIScrollView"/>
+                <relationship kind="outlet" name="signupButton" candidateClass="UIBarButtonItem"/>
+            </relationships>
+        </class>
+        <class className="FrecipeTextField" superclassName="UITextField">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeTextField.h"/>
+        </class>
+        <class className="FrecipeViewController" superclassName="FrecipeMainViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeViewController.h"/>
+            <relationships>
+                <relationship kind="outlet" name="recipesCollectionView" candidateClass="UICollectionView"/>
+            </relationships>
+        </class>
+        <class className="UICollectionReusableView" superclassName="UIView">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/UICollectionReusableView.h"/>
+        </class>
+        <class className="UICollectionViewCell" superclassName="UICollectionReusableView">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/UICollectionViewCell.h"/>
+        </class>
+        <class className="UICollectionViewFlowLayout" superclassName="UICollectionViewLayout">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/UICollectionViewFlowLayout.h"/>
+        </class>
+    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>

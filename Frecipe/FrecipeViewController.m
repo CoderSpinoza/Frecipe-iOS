@@ -12,34 +12,26 @@
 #import "FrecipeRecipeDetailViewController.h"
 #import "FrecipeProfileViewController.h"
 #import "FrecipeBadgeView.h"
+#import "FrecipeSpinnerView.h"
 #import "FrecipeFunctions.h"
 #import <AFNetworking/UIImageView+AFNetworking.h>
 
-@interface FrecipeViewController () <UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, UISearchBarDelegate, UISearchDisplayDelegate>
+@interface FrecipeViewController () <UICollectionViewDelegateFlowLayout, UICollectionViewDataSource>
 
 @property (strong, nonatomic) NSMutableArray *recipes;
 @property (strong, nonatomic) UIRefreshControl *refreshControl;
 @property (strong, nonatomic) NSDictionary *selectedRecipe;
 @property (strong, nonatomic) NSString *selectedUserId;
-@property (strong, nonatomic) NSMutableArray *facebookFriendsIds;
-@property (strong, nonatomic) NSMutableArray *facebookFriends;
-@property (nonatomic, assign) BOOL alreadyLoaded;
-
 @property (strong, nonatomic) UIView *headerView;
-@property (strong, nonatomic) UISearchBar *recipeSearchBar;
-
 @end
 
 @implementation FrecipeViewController
-
-@synthesize facebookFriendsIds = _facebookFriendsIds;
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
     self.title = @"Frecipe";
-    
     self.recipesCollectionView.dataSource = self;
     self.recipesCollectionView.delegate = self;
     [self addRefreshControl];
@@ -48,23 +40,12 @@
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     [self fetchRecipes];
-//    [self fetchFacebookFriends];
-    
 }
-
-- (void)viewDidDisappear:(BOOL)animated {
-    
-    [super viewDidAppear:animated];
-    self.selectedRecipe = nil;
-    self.selectedUser = nil;
-}
-
 
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-    
+    // Dispose of any resources that can be recreated.    
 }
 
 - (IBAction)revealMenu:(UIBarButtonItem *)sender {
@@ -73,10 +54,9 @@
 }
 
 - (void)setupHeaderView {
-    self.headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 44)];
-    self.recipeSearchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 44)];
-    
-    [self.headerView addSubview:self.recipeSearchBar];
+//    self.headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 44)];
+//    self.recipeSearchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 44)];
+//    [self.headerView addSubview:self.recipeSearchBar];
 //    self.recipesCollectionView.
 }
 
@@ -91,53 +71,33 @@
     FrecipeAPIClient *client = [FrecipeAPIClient client];
     NSURLRequest *request = [client requestWithMethod:@"GET" path:path parameters:parameters];
     
-    UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
+    FrecipeSpinnerView *spinner = [[FrecipeSpinnerView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
     spinner.center = self.view.center;
-    [spinner startAnimating];
+    [spinner.spinner startAnimating];
     [self.view addSubview:spinner];
     
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
-        self.recipes = JSON;
+        self.recipes = [NSMutableArray arrayWithArray:JSON];
         
         self.refreshControl.attributedTitle = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"Last updated on %@", [FrecipeFunctions currentDate]]];
         
-        [spinner stopAnimating];
         [spinner removeFromSuperview];
         [self.refreshControl endRefreshing];
-
         [self.recipesCollectionView reloadData];
         
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         NSLog(@"%@", error);
         
-        [spinner stopAnimating];
         [spinner removeFromSuperview];
         [self.refreshControl endRefreshing];
         
         UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:@"There was an error loading recipes. Retry?" delegate:self cancelButtonTitle:@"Retry" otherButtonTitles:@"Cancel", nil];
         
         [alertView show];
-        [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
     }];
+    
     FrecipeOperationQueue *queue = [FrecipeOperationQueue sharedQueue];
     [queue addOperation:operation];
-}
-
-- (void)fetchFacebookFriends {
-    if (!FBSession.activeSession.isOpen) {
-        [FBSession openActiveSessionWithAllowLoginUI:NO];
-    }
-    
-    FBRequest *request = [FBRequest requestForMyFriends];
-    [request startWithCompletionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
-        self.facebookFriends = [NSMutableArray arrayWithArray:[result objectForKey:@"data"]];
-        for (NSDictionary *facebookFriend in self.facebookFriends) {
-            [self.facebookFriendsIds addObject:[NSString stringWithFormat:@"%@", [facebookFriend objectForKey:@"id"]]];
-        }
-        if (self.recipes) {
-            [self.recipesCollectionView reloadData];
-        }
-    }];
 }
 
 - (void)flipCell:(UITapGestureRecognizer *)tapGestureRecognizer {
@@ -208,12 +168,7 @@
     }
 }
 
-// collection view delegate methods
-
-- (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath {
-    UICollectionReusableView *view = [collectionView dequeueReusableSupplementaryViewOfKind:kind withReuseIdentifier:@"SearchBarHeader" forIndexPath:indexPath];
-    return view;
-}
+// collection view dataSource methods
 
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
     return 1;
@@ -229,11 +184,11 @@
     // setting the image view for the cell using AFNetworking. Does this do caching automatically?
     UIImageView *recipeImageView = (UIImageView *)[cell viewWithTag:6];
     recipeImageView.image = nil;
-//    if (PRODUCTION) {
-//        [recipeImageView setImageWithURL:[[self.recipes objectAtIndex:indexPath.row] objectForKey:@"recipe_image"] placeholderImage:[UIImage imageNamed:@"default_recipe_picture.png"]];
-//    } else {
-//        [recipeImageView setImageWithURL:[NSString stringWithFormat:@"http://localhost:5000/%@", [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"recipe_image"]] placeholderImage:[UIImage imageNamed:@"default_recipe_picture.png"]];
-//    }
+    if (PRODUCTION) {
+        [recipeImageView setImageWithURL:[NSURL URLWithString:[[self.recipes objectAtIndex:indexPath.row] objectForKey:@"recipe_image"]] placeholderImage:[UIImage imageNamed:@"default_recipe_picture.png"]];
+    } else {
+        [recipeImageView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://localhost:5000/%@", [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"recipe_image"]]] placeholderImage:[UIImage imageNamed:@"default_recipe_picture.png"]];
+    }
     
     
     // configure the back of the cell. fill all the info.
@@ -286,13 +241,19 @@
     UIView *flipView1 = [cell viewWithTag:12];
     UIView *flipView2 = [cell viewWithTag:1];
     
-    UITapGestureRecognizer *flipGestureRecognizer1 = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(flipCell:)];
-    UITapGestureRecognizer *flipGestureRecognizer2 = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(flipCell:)];
-    [flipView1 addGestureRecognizer:flipGestureRecognizer1];
-    [flipView2 addGestureRecognizer:flipGestureRecognizer2];
+    if (flipView1.gestureRecognizers.count == 0) {
+        UITapGestureRecognizer *flipGestureRecognizer1 = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(flipCell:)];
+        [flipView1 addGestureRecognizer:flipGestureRecognizer1];
+    }
     
+    if (flipView2.gestureRecognizers.count == 0) {
+        UITapGestureRecognizer *flipGestureRecognizer2 =[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(flipCell:)];
+        [flipView2 addGestureRecognizer:flipGestureRecognizer2];
+    }
     return cell;
 }
+
+// collection view delegate methods
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     self.selectedRecipe = [self.recipes objectAtIndex:indexPath.row];

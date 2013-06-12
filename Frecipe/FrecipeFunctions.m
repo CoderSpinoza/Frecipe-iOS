@@ -10,8 +10,19 @@
 
 @implementation FrecipeFunctions
 
++ (NSDateFormatter *)sharedDateFormatter {
+    static NSDateFormatter *sharedDateFormatter = nil;
+    static dispatch_once_t oncePredicate;
+    dispatch_once(&oncePredicate, ^{
+        
+        sharedDateFormatter = [[NSDateFormatter alloc] init];
+    });
+    return sharedDateFormatter;
+}
+
 + (NSString *)currentDate {
-    NSDateFormatter *formattedDate = [[NSDateFormatter alloc] init];
+    
+    NSDateFormatter *formattedDate = [self sharedDateFormatter];
     [formattedDate setDateFormat:@"MMM d, h:mm a"];
     NSString *date = [formattedDate stringFromDate:[NSDate date]];
     return date;
@@ -22,7 +33,7 @@
     
     dateString = [[dateString stringByReplacingOccurrencesOfString:@"T" withString:@" "] mutableCopy];
     dateString = [[dateString stringByReplacingOccurrencesOfString:@"Z" withString:@""] mutableCopy];
-    NSDateFormatter *localFormat = [[NSDateFormatter alloc] init];
+    NSDateFormatter *localFormat = [self sharedDateFormatter];
     
     [localFormat setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
     [localFormat setTimeZone:[NSTimeZone timeZoneWithName:@"UTC"]];

@@ -30,9 +30,8 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
-    
     self.user = [self loaduserInfo];
-    
+//
     if ([[NSString stringWithFormat:@"%@", [self.user objectForKey:@"provider"]] isEqualToString:@"facebook"]) {
         self.fbProfilePictureView.profileID = [NSString stringWithFormat:@"%@", [self.user objectForKey:@"uid"]];
         self.profilePictureView.hidden = YES;
@@ -90,7 +89,6 @@
     NSDictionary *parameters = [NSDictionary dictionaryWithObjects:values forKeys:keys];
     FrecipeAPIClient *client = [FrecipeAPIClient client];
     NSURLRequest *request = [client requestWithMethod:@"PUT" path:path parameters:parameters];
-    NSLog(@"%@", parameters);
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
         
         [self saveUserInfo:[JSON objectForKey:@"user"] Token:nil ProfilePicture:nil];

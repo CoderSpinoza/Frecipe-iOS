@@ -17,7 +17,7 @@
 #import "FrecipeSettingsViewController.h"
 #import "FrecipeNotificationsViewController.h"
 #import "FrecipeAppDelegate.h"
-#import <SDWebImage/UIImageView+WebCache.h>
+#import <UIImageView+WebCache.h>
 
 @interface FrecipeNavigationViewController () <UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UITableViewDataSource, UITableViewDelegate, FPPopoverControllerDelegate, UISearchBarDelegate, UISearchDisplayDelegate>
 
@@ -63,6 +63,8 @@
     self.menuCollectionView.delegate = self;
     self.menuCollectionView.dataSource = self;
     
+    
+    // wire up a search display controller
     self.searchBar.delegate = self;
     self.searchDisplayController.delegate = self;
     
@@ -117,7 +119,6 @@
         [FBSession.activeSession closeAndClearTokenInformation];
         
        [self.slidingViewController anchorTopViewOffScreenTo:ECRight animations:nil onComplete:^{
-//           [self performSegueWithIdentifier:@"Login" sender:self];
            FrecipeAppDelegate *delegate = [[UIApplication sharedApplication] delegate];
            [UIView transitionWithView:delegate.window duration:0.7 options:UIViewAnimationOptionTransitionFlipFromRight animations:^{
                BOOL oldState = [UIView areAnimationsEnabled];
@@ -150,7 +151,7 @@
     } else {
         self.fbProfilePictureView.hidden = YES;
         self.profilePictureView.hidden = NO;
-        [self.profilePictureView setImageWithURL:[NSString stringWithFormat:@"%@", [defaults stringForKey:@"profile_picture"]]];
+        [self.profilePictureView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@", [defaults stringForKey:@"profile_picture"]]]];
     }
 [self.nameButton setTitle:[defaults stringForKey:@"name"] forState:UIControlStateNormal];
 }
@@ -185,7 +186,7 @@
     
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
         
-        self.notifications = [NSArray arrayWithArray:[JSON objectForKey:@"notifications"]];
+        self.notifications = [NSMutableArray arrayWithArray:[JSON objectForKey:@"notifications"]];
         NSString *unseen = [NSString stringWithFormat:@"%@", [JSON objectForKey:@"unseen_count"]];
         
         self.notificationsBadgeView.text = unseen;

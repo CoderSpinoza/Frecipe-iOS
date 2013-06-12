@@ -11,7 +11,7 @@
 @protocol FrecipeRatingViewDelegate;
 
 @interface FrecipeRatingView : UIView
-@property (strong, nonatomic) id<FrecipeRatingViewDelegate> delegate;
+@property (weak, nonatomic) id<FrecipeRatingViewDelegate> delegate;
 @property (strong, nonatomic) UIButton *oneStarButton;
 @property (strong, nonatomic) UIButton *twoStarButton;
 @property (strong, nonatomic) UIButton *threeStarButton;
