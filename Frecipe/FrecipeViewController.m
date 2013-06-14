@@ -35,11 +35,12 @@
     self.recipesCollectionView.dataSource = self;
     self.recipesCollectionView.delegate = self;
     [self addRefreshControl];
+    [self fetchCachedRecipes];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    [self fetchRecipes];
+//    [self fetchRecipes];
 }
 
 - (void)didReceiveMemoryWarning
@@ -59,6 +60,22 @@
 //    [self.headerView addSubview:self.recipeSearchBar];
 //    self.recipesCollectionView.
 }
+
+- (void)fetchCachedRecipes {
+    NSString *path = @"recipes.json";
+    FrecipeAPIClient *client = [FrecipeAPIClient client];
+    NSURLRequest *request = [client requestWithMethod:@"GET" path:path parameters:nil];
+    
+    AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
+        self.recipes = [NSMutableArray arrayWithArray:JSON];
+        NSLog(@"%@", self.recipes);
+    } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
+        NSLog(@"%@", error);
+    }];
+    FrecipeOperationQueue *queue = [FrecipeOperationQueue sharedQueue];
+    [queue addOperation:operation];
+}
+
 
 
 - (void)fetchRecipes {

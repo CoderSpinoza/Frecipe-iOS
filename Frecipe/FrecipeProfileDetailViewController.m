@@ -85,15 +85,12 @@
 
 - (void)fetchUsers {
     NSString *path;
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSString *authentication_token = [defaults stringForKey:@"authentication_token"];
 
     if ([self.segueIdentifier isEqualToString:@"Followers"]) {
-        path = [NSString stringWithFormat:@"tokens/followers/%@", authentication_token];
+        path = [NSString stringWithFormat:@"tokens/followers/%@", [self.user objectForKey:@"id"]];
     } else {
-        path = [NSString stringWithFormat:@"tokens/following/%@", authentication_token];
+        path = [NSString stringWithFormat:@"tokens/following/%@", [self.user objectForKey:@"id"]];
     }
-    
     
     FrecipeAPIClient *client = [FrecipeAPIClient client];
     NSURLRequest *request = [client requestWithMethod:@"GET" path:path parameters:nil];
@@ -111,16 +108,17 @@
 }
 
 - (void)fetchRecipes {
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSString *authentication_token = [defaults stringForKey:@"authentication_token"];
     NSString *path;
     if ([self.segueIdentifier isEqualToString:@"Likes"]) {
-        path = [NSString stringWithFormat:@"tokens/likes/%@", authentication_token];
+        path = [NSString stringWithFormat:@"tokens/likes/%@", [self.user objectForKey:@"id"]];
     } else {
-        path = [NSString stringWithFormat:@"tokens/liked/%@", authentication_token];
+        path = [NSString stringWithFormat:@"tokens/liked/%@", [self.user objectForKey:@"id"]];
     }
     
-        NSDictionary *parameters = [NSDictionary dictionaryWithObjectsAndKeys:authentication_token, @"authentication_token", nil];
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSString *authentication_token = [defaults stringForKey:@"authentication_token"];
+    
+    NSDictionary *parameters = [NSDictionary dictionaryWithObjectsAndKeys:authentication_token, @"authentication_token", nil];
     
     FrecipeAPIClient *client = [FrecipeAPIClient client];
     NSURLRequest *request = [client requestWithMethod:@"GET" path:path parameters:parameters];
@@ -135,6 +133,12 @@
     [queue addOperation:operation];
 }
 
+- (void)segueToProfile:(UIButton *)sender {
+    UICollectionViewCell *cell = (UICollectionViewCell *)sender.superview.superview.superview;
+    NSDictionary *user = [[self.recipes objectAtIndex:[self.recipesCollectionView indexPathForCell:cell].row] objectForKey:@"user"];
+    self.selectedUser = user;
+    [self performSegueWithIdentifier:@"Profile" sender:self];
+}
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([segue.identifier isEqualToString:@"Profile"]) {
         FrecipeProfileViewController *destinationViewController = (FrecipeProfileViewController *)segue.destinationViewController;
@@ -240,6 +244,8 @@
     [frontNameButton setTitle:[NSString stringWithFormat:@"%@ %@", [user objectForKey:@"first_name"], [user objectForKey:@"last_name"]] forState:UIControlStateNormal];
     [frontNameButton sizeToFit];
     frontNameButton.frame = CGRectMake(160 - [frontNameButton.titleLabel.text sizeWithFont:[UIFont boldSystemFontOfSize:13]].width - 7, frontNameButton.frame.origin.y, frontNameButton.frame.size.width, frontNameButton.frame.size.height);
+    
+    [frontNameButton addTarget:self action:@selector(segueToProfile:) forControlEvents:UIControlEventTouchUpInside];
     
     UILabel *likesLabel = (UILabel *)[cell viewWithTag:9];
     likesLabel.text = [NSString stringWithFormat:@"%@ likes", [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"likes"]];

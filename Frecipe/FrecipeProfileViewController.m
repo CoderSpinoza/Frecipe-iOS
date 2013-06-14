@@ -353,16 +353,15 @@
         
         FrecipeProfileDetailViewController *destinationViewController = segue.destinationViewController;
         destinationViewController.segueIdentifier = segue.identifier;
+        destinationViewController.user = self.user;
         destinationViewController.title = [NSString stringWithFormat:@"%@ %@'s %@", [self.user objectForKey:@"first_name"], [self.user objectForKey:@"last_name"], segue.identifier];
         destinationViewController.navigationItem.leftBarButtonItem = nil;
         self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"back_arrow.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(popViewControllerFromStack)];
         if ([segue.identifier isEqualToString:@"Recipes"]) {
         } else if ([segue.identifier isEqualToString:@"Followers"]) {
-            
         } else if ([segue.identifier isEqualToString:@"Likes"]) {
             
         } else if ([segue.identifier isEqualToString:@"Following"]) {
-            
         } else if ([segue.identifier isEqualToString:@"Liked"]) {
             
         }

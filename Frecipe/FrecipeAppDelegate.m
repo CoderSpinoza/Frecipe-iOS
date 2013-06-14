@@ -11,6 +11,22 @@
 #import <NewRelicAgent/NewRelicAgent.h>
 
 @implementation FrecipeAppDelegate
+@synthesize ingredients = _ingredients;
+@synthesize recipes = _recipes;
+
+- (NSMutableArray *)ingredients {
+    if (_ingredients == nil) {
+        
+    }
+    return _ingredients;
+}
+
+- (NSMutableArray *)recipes {
+    if (_recipes == nil) {
+        
+    }
+    return _recipes;
+}
 
 NSString *const FBSessionStateChangedNotification = @"com.Frecipe.Frecipe:FBSessionStateChangedNotification";
 
@@ -151,6 +167,11 @@ NSString *const FBSessionStateChangedNotification = @"com.Frecipe.Frecipe:FBSess
         
     }
 }
+
+- (void)fetchIngredients {
+    
+}
+
 
 // custom methods for registering push notifiactions
 @end
