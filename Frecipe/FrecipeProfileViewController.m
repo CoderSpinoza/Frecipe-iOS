@@ -335,7 +335,6 @@
         NSDictionary *user = [self.selectedRecipe objectForKey:@"user"];
         profileViewController.userId  = [NSString stringWithFormat:@"%@", [user objectForKey:@"id"]];        
     } else if ([segue.identifier isEqualToString:@"EditProfile"]) {
-        NSLog(@"edit button pressed");
         FrecipeEditProfileViewController *destinationViewController = (FrecipeEditProfileViewController *)segue.destinationViewController;
         
         if (destinationViewController.view) {
@@ -344,7 +343,6 @@
         }
     } else if ([segue.identifier isEqualToString:@"Profile2"] ) {
         FrecipeProfileViewController *destinationViewController = (FrecipeProfileViewController *)segue.destinationViewController;
-        NSLog(@"selected user: %@", self.selectedUser);
         destinationViewController.userId = [NSString stringWithFormat:@"%@", [self.selectedUser objectForKey:@"id"]];
         destinationViewController.fromSegue = YES;
         

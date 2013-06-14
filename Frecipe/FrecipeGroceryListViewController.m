@@ -605,7 +605,7 @@
         [imageView setImage:[UIImage imageNamed:@"grocery_list.png"]];
     } else {
         if (PRODUCTION) {
-            [imageView setImageWithURL:[recipe objectForKey:@"recipe_image"] placeholderImage:[UIImage imageNamed:@"default_recipe_image.png"]];
+            [imageView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@",[recipe objectForKey:@"recipe_image"]]] placeholderImage:[UIImage imageNamed:@"default_recipe_image.png"]];
         } else {
             [imageView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://localhost:5000/%@", [recipe objectForKey:@"recipe_image"]]] placeholderImage:[UIImage imageNamed:@"default_recipe_image.png"]];
         }

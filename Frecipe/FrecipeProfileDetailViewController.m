@@ -9,10 +9,14 @@
 #import "FrecipeProfileDetailViewController.h"
 #import "FrecipeAPIClient.h"
 #import "FrecipeAppDelegate.h"
+#import "FrecipeProfileViewController.h"
+#import "FrecipeRecipeDetailViewController.h"
 #import <FacebookSDK/FacebookSDK.h>
 #import <AFNetworking/UIImageView+AFNetworking.h>
 
 @interface FrecipeProfileDetailViewController () <UITableViewDataSource, UITableViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout>
+@property (strong, nonatomic) NSDictionary *selectedRecipe;
+@property (strong, nonatomic) NSDictionary *selectedUser;
 
 @end
 
@@ -54,6 +58,29 @@
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)flipCell:(UITapGestureRecognizer *)tapGestureRecognizer {
+    UITableViewCell *cell;
+    UIView *view1;
+    UIView *view2;
+    if (tapGestureRecognizer.view.tag == 12) {
+        cell = (UITableViewCell *)tapGestureRecognizer.view.superview.superview.superview;
+        
+        view1 = [cell viewWithTag:1];
+        view2 = [cell viewWithTag:5];
+        
+    } else {
+        cell = (UITableViewCell *)tapGestureRecognizer.view.superview.superview;
+        view1 = [cell viewWithTag:5];
+        view2 = [cell viewWithTag:1];
+    }
+    
+    [UIView animateWithDuration:0.5 animations:^{
+        view1.alpha = 1.0;
+        view2.alpha = 0;
+    } completion:^(BOOL finished) {
+    }];
 }
 
 - (void)fetchUsers {
@@ -108,6 +135,20 @@
     [queue addOperation:operation];
 }
 
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    if ([segue.identifier isEqualToString:@"Profile"]) {
+        FrecipeProfileViewController *destinationViewController = (FrecipeProfileViewController *)segue.destinationViewController;
+        destinationViewController.userId = [NSString stringWithFormat:@"%@", [self.selectedUser objectForKey:@"id"]];
+        destinationViewController.navigationItem.leftBarButtonItem = nil;
+    } else if ([segue.identifier isEqualToString:@"RecipeDetail"]) {
+        FrecipeRecipeDetailViewController *destinationViewCotnroller = (FrecipeRecipeDetailViewController *)segue.destinationViewController;
+        destinationViewCotnroller.recipeId = [self.selectedRecipe objectForKey:@"id"];
+        destinationViewCotnroller.navigationItem.leftBarButtonItem = nil;
+    }
+    
+    self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"back_arrow.png"] style:UIBarButtonItemStyleBordered target:segue.destinationViewController action:@selector(popViewControllerAnimated:)];
+}
+
 // table view dataSource methods
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 1;
@@ -133,16 +174,22 @@
         cell.imageView.hidden = YES;
         FBProfilePictureView *fbProfilePictureView = (FBProfilePictureView *)[cell viewWithTag:1];
         fbProfilePictureView.profileID = [user objectForKey:@"uid"];
-        
     } else {
         fbProfilePictureView.hidden = YES;
-        [cell.imageView setImageWithURL:[user objectForKey:@"profile_picture"] placeholderImage:[UIImage imageNamed:@"default_profile_picture.png"]];
+        [cell.imageView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@", [user objectForKey:@"profile_picture"]]] placeholderImage:[UIImage imageNamed:@"default_profile_picture.png"]];
     }
     return cell;
 }
 
 // table view delegate methods
-
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    self.selectedUser = [self.users objectAtIndex:indexPath.row];
+    
+    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+    cell.selected = NO;
+    
+    [self performSegueWithIdentifier:@"Profile" sender:self];
+}
 
 // collection view dataSource methods
 
@@ -161,7 +208,7 @@
     UIImageView *recipeImageView = (UIImageView *)[cell viewWithTag:6];
     recipeImageView.image = nil;
     if (PRODUCTION) {
-        [recipeImageView setImageWithURL:[[self.recipes objectAtIndex:indexPath.row] objectForKey:@"recipe_image"] placeholderImage:[UIImage imageNamed:@"default_recipe_picture.png"]];
+        [recipeImageView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@", [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"recipe_image"]]] placeholderImage:[UIImage imageNamed:@"default_recipe_picture.png"]];
     } else {
         [recipeImageView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://localhost:5000/%@", [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"recipe_image"]]] placeholderImage:[UIImage imageNamed:@"default_recipe_picture.png"]];
     }
@@ -231,4 +278,12 @@
 
 // collection view delegate methods
 
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+    self.selectedRecipe = [self.recipes objectAtIndex:indexPath.row];
+    
+    UICollectionViewCell *cell = [collectionView cellForItemAtIndexPath:indexPath];
+    cell.selected = NO;
+    
+    [self performSegueWithIdentifier:@"RecipeDetail" sender:self];
+}
 @end
