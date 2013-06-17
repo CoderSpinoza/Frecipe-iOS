@@ -12,8 +12,7 @@
 #import "FrecipeProfileViewController.h"
 #import "FrecipeAddRecipeViewController.h"
 #import "FrecipeFunctions.h"
-#import "FPPopoverController.h"
-#import "FrecipeEditDeleteViewController.h"
+
 #import <AFNetworking/UIImageView+AFNetworking.h>
 #import <QuartzCore/QuartzCore.h>
 
@@ -31,8 +30,7 @@
 @property (strong, nonatomic) UIView *blockingView;
 @property (nonatomic, assign) CGFloat originalHeight;
 
-@property (strong,nonatomic) FPPopoverController *editDeletePopoverViewController;
-@property (strong, nonatomic) FrecipeEditDeleteViewController *editDeleteViewController;
+
 
 @property (strong, nonatomic) NSString *recipeImageURL;
 
@@ -108,8 +106,8 @@
     [self.recipeMainView setBasicShadow];
     
     [self addGestureRecognizers];
-    
     [self setupEditMenu];
+    
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -130,18 +128,18 @@
 }
 
 - (void)setupEditMenu {
-//    self.editDeleteViewController = [[FrecipeEditDeleteViewController alloc] initWithStyle:UITableViewStylePlain];
-//    self.editDeletePopoverViewController = [[FPPopoverController alloc] initWithViewController:self.editDeleteViewController];
-//    self.editDeleteViewController.tableView.delegate = self;
-//    self.editDeletePopoverViewController.delegate = self;
-//    self.editDeletePopoverViewController.contentSize = CGSizeMake(120, 128);
+    self.editDeleteViewController = [[FrecipeEditDeleteViewController alloc] initWithStyle:UITableViewStylePlain];
+    self.editDeletePopoverViewController = [[FPPopoverController alloc] initWithViewController:self.editDeleteViewController];
+    self.editDeleteViewController.tableView.delegate = self;
+    self.editDeletePopoverViewController.delegate = self;
+    self.editDeletePopoverViewController.contentSize = CGSizeMake(120, 128);
 }
 
 - (void)fetchRecipeDetail {
     NSString *path = @"recipes/detail";
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSString *authentication_token = [defaults objectForKey:@"authentication_token"];
+    NSString *authentication_token = [defaults stringForKey:@"authentication_token"];
     NSArray *keys = [NSArray arrayWithObjects:@"id", @"authentication_token", nil];
     NSArray *values = [NSArray arrayWithObjects:self.recipeId, authentication_token, nil];
     NSDictionary *parameters = [NSDictionary dictionaryWithObjects:values forKeys:keys];
@@ -156,9 +154,9 @@
         self.title = [NSString stringWithFormat:@"%@", [[JSON objectForKey:@"recipe"] objectForKey:@"name"]];
         self.recipeImageURL = [NSString stringWithFormat:@"%@", [JSON objectForKey:@"recipe_image"]];
         if (PRODUCTION) {
-            [self.recipeImageView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@", [JSON objectForKey:@"recipe_image"]]] placeholderImage:[UIImage imageNamed:@"iTunesArtwork.png"]];
+            [self.recipeImageView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@", [JSON objectForKey:@"recipe_image"]]] placeholderImage:[UIImage imageNamed:@"default_recipe_picture.png"]];
         } else {
-            [self.recipeImageView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://localhost:5000/%@",[JSON objectForKey:@"recipe_image"]]] placeholderImage:[UIImage imageNamed:@"iTunesArtwork.png"]];
+            [self.recipeImageView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://localhost:5000/%@",[JSON objectForKey:@"recipe_image"]]] placeholderImage:[UIImage imageNamed:@"default_recipe_picture.png"]];
         }
         
         if ([[NSString stringWithFormat:@"%@", [JSON objectForKey:@"isOwner"]] isEqualToString:@"1"]) {
@@ -260,11 +258,12 @@
     
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
 
-//        if ([[NSString stringWithFormat:@"%@", [JSON objectForKey:@"message"]] isEqualToString:@"like"]) {
-//            self.likeButton.selected = YES;
-//        } else {
-//            self.likeButton.selected = NO;
-//        }
+        if ([[NSString stringWithFormat:@"%@", [JSON objectForKey:@"message"]] isEqualToString:@"like"]) {
+            self.likeButton.selected = YES;
+        } else {
+            self.likeButton.selected = NO;
+        }
+        
         [self.likesButton setTitle:[NSString stringWithFormat:@"%@", [JSON objectForKey:@"likes"]] forState:UIControlStateNormal];
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         NSLog(@"%@", error);
@@ -356,7 +355,8 @@
 }
 
 - (void)editMenuButtonPressed {
-    [self.editDeletePopoverViewController presentPopoverFromPoint:CGPointMake(self.view.frame.size.width- 30, 40)];
+    
+    [self.editDeletePopoverViewController presentPopoverFromPoint:CGPointMake(self.view.frame.size.width - 30, 40)];
 }
 
 - (IBAction)commentDeleteButtonPressed:(UIButton *)sender {
@@ -436,8 +436,6 @@
             [inFridgeArray addObject:@"0"];
         }
     }
-    
-    NSLog(@"%@", inFridgeArray);
     
     NSString *groceriesString = [ingredientsArray componentsJoinedByString:@","];
     
@@ -783,8 +781,9 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
+    
     if ([tableView isEqual:self.editDeleteViewController.tableView]) {
-        [self.editDeletePopoverViewController dismissPopoverAnimated:YES];
+        [self.editDeletePopoverViewController dismissPopoverAnimated:NO];
         if (indexPath.row == 0) {
             [self goToEditRecipe];
         } else {

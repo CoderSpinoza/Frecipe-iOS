@@ -11,6 +11,7 @@
 #import "FrecipeBadgeView.h"
 #import "FrecipeAPIClient.h"
 #import "FrecipeAppDelegate.h"
+#import "FrecipeFunctions.h"
 #import <UIButton+WebCache.h>
 
 @interface FrecipeFridgeViewController () <UIActionSheetDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITableViewDataSource, UITableViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout> {
@@ -21,7 +22,6 @@
 @property (strong, nonatomic) UIRefreshControl *collectionViewRefreshControl;
 @property (strong, nonatomic) NSMutableArray *ingredients;
 @property (strong, nonatomic) NSMutableArray *selectedIngredients;
-
 @property (strong, nonatomic) AFNetworkActivityIndicatorManager *currentManager;
 
 @end
@@ -88,6 +88,10 @@
     [collectionViewRefreshControl addTarget:self action:@selector(fetchIngredients) forControlEvents:UIControlEventValueChanged];
     collectionViewRefreshControl.tintColor = [UIColor grayColor];
     
+    collectionViewRefreshControl.attributedTitle = [[NSAttributedString alloc] initWithString:@"Pull down to Refresh!"];
+    
+    tableViewRefreshControl.attributedTitle = [[NSAttributedString alloc] initWithString:@"Pull down to Refresh!"];
+    
     [self.ingredientsTableView addSubview:tableViewRefreshControl];
     [self.ingredientsCollectionView addSubview:collectionViewRefreshControl];
     self.ingredientsTableView.alwaysBounceVertical = YES;
@@ -95,11 +99,13 @@
     self.tableViewRefreshControl = tableViewRefreshControl;
     self.collectionViewRefreshControl = collectionViewRefreshControl;
     
-    UIView *backgroundView = [[UIView alloc] initWithFrame:CGRectMake(self.ingredientsCollectionView.bounds.origin.x, - self.ingredientsCollectionView.frame.size.height, self.ingredientsCollectionView.bounds.size.width, self.ingredientsCollectionView.bounds.size.height)];
-    backgroundView.backgroundColor = [UIColor blackColor];
-    [self.ingredientsCollectionView insertSubview:backgroundView atIndex:0];
+//    [self.collectionViewRefreshControl endRefreshing];
+//    [self.tableViewRefreshControl endRefreshing];    
     
-//    self.collectionViewRefreshControl.attributedTitle = [[NSAttributedString alloc] initWithString:@"Pull down to refresh"];
+    // this code is used to insert a background for refresh view
+//    UIView *backgroundView = [[UIView alloc] initWithFrame:CGRectMake(self.ingredientsCollectionView.bounds.origin.x, - self.ingredientsCollectionView.frame.size.height, self.ingredientsCollectionView.bounds.size.width, self.ingredientsCollectionView.bounds.size.height)];
+//    backgroundView.backgroundColor = [UIColor blackColor];
+//    [self.ingredientsCollectionView insertSubview:backgroundView atIndex:0];
 }
 
 - (void)fetchIngredients {
@@ -121,11 +127,24 @@
         
         self.navigationItem.rightBarButtonItem.enabled = YES;
         
+        
+                
+        if (self.tableViewRefreshControl.isRefreshing) {
+            [self.tableViewRefreshControl endRefreshing];
+            self.tableViewRefreshControl.attributedTitle = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"Last updated on %@", [FrecipeFunctions currentDate]]];
+            self.collectionViewRefreshControl.attributedTitle = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"Last updated on %@", [FrecipeFunctions currentDate]]];
+        }
+        
+        if (self.collectionViewRefreshControl.isRefreshing) {
+            self.tableViewRefreshControl.attributedTitle = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"Last updated on %@", [FrecipeFunctions currentDate]]];
+            self.collectionViewRefreshControl.attributedTitle = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"Last updated on %@", [FrecipeFunctions currentDate]]];
+            [self.collectionViewRefreshControl endRefreshing];
+        }
+        
         [self.ingredientsTableView reloadData];
         [self.ingredientsCollectionView reloadData];
         
-        [self.tableViewRefreshControl endRefreshing];
-        [self.collectionViewRefreshControl endRefreshing];
+        
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         
         UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:@"There was an error loading your fridge info. Retry?" delegate:self cancelButtonTitle:@"Retry" otherButtonTitles:@"Cancel", nil];
@@ -188,8 +207,6 @@
 }
 
 - (void)openAddIngredientsActionSheet {
-//    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"Add Ingredients" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"With Receipt", @"Manually", nil];
-//    [actionSheet showInView:[UIApplication sharedApplication].keyWindow];
     [self openAddIngredientsModal];
 }
 

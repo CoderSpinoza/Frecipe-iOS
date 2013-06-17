@@ -15,9 +15,9 @@
     NSString *url;
     if (PRODUCTION) {
         if (STAGING) {
-            url = @"http://fast-ravine-6720.herokuapp.com";
+            url = @"http://frecipe-staging.herokuapp.com";
         } else {
-            url = @"http://intense-cove-3838.herokuapp.com";
+            url = @"http://frecipe.herokuapp.com";
         }
     } else {
         url = @"http://localhost:5000";

@@ -20,6 +20,8 @@
 		C256F6761759446D00D44A84 /* FrecipeForgotPasswordViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C256F6751759446D00D44A84 /* FrecipeForgotPasswordViewController.m */; };
 		C256F6791759909400D44A84 /* FrecipeChangePasswordViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C256F6781759909400D44A84 /* FrecipeChangePasswordViewController.m */; };
 		C2670305174170FD00BBBDD6 /* iPadLoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C2670304174170FD00BBBDD6 /* iPadLoginViewController.m */; };
+		C26C73E4176D4ECE00369462 /* 5757.png in Resources */ = {isa = PBXBuildFile; fileRef = C26C73E3176D4ECE00369462 /* 5757.png */; };
+		C26C73E6176D4F0800369462 /* 114114.png in Resources */ = {isa = PBXBuildFile; fileRef = C26C73E5176D4F0800369462 /* 114114.png */; };
 		C27674C9175F0DB400828EEF /* NSString+Frecipe.m in Sources */ = {isa = PBXBuildFile; fileRef = C27674C8175F0DB300828EEF /* NSString+Frecipe.m */; };
 		C27674CC175F208600828EEF /* FrecipeSpinnerView.m in Sources */ = {isa = PBXBuildFile; fileRef = C27674CB175F208600828EEF /* FrecipeSpinnerView.m */; };
 		C27674CE175F29ED00828EEF /* badge_green.png in Resources */ = {isa = PBXBuildFile; fileRef = C27674CD175F29EC00828EEF /* badge_green.png */; };
@@ -135,9 +137,6 @@
 		C2E668D8173C738F00D1975D /* default_recipe_picture.png in Resources */ = {isa = PBXBuildFile; fileRef = C2E668D7173C738F00D1975D /* default_recipe_picture.png */; };
 		C2E668DA173C73D500D1975D /* star_half.png in Resources */ = {isa = PBXBuildFile; fileRef = C2E668D9173C73D500D1975D /* star_half.png */; };
 		C2E668DC173C73DA00D1975D /* default_profile_picture.png in Resources */ = {isa = PBXBuildFile; fileRef = C2E668DB173C73DA00D1975D /* default_profile_picture.png */; };
-		C2E668E8173DBA4400D1975D /* FPPopoverController.m in Sources */ = {isa = PBXBuildFile; fileRef = C2E668E3173DBA4400D1975D /* FPPopoverController.m */; };
-		C2E668E9173DBA4400D1975D /* FPPopoverView.m in Sources */ = {isa = PBXBuildFile; fileRef = C2E668E5173DBA4400D1975D /* FPPopoverView.m */; };
-		C2E668EA173DBA4400D1975D /* FPTouchView.m in Sources */ = {isa = PBXBuildFile; fileRef = C2E668E7173DBA4400D1975D /* FPTouchView.m */; };
 		C2E668ED173DBD8500D1975D /* FrecipeNotificationsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C2E668EC173DBD8400D1975D /* FrecipeNotificationsViewController.m */; };
 		C2E668F0173EE28D00D1975D /* FrecipeEditDeleteViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C2E668EF173EE28C00D1975D /* FrecipeEditDeleteViewController.m */; };
 		C2E668F9173F06EE00D1975D /* comment_highlighted.png in Resources */ = {isa = PBXBuildFile; fileRef = C2E668F1173F06EE00D1975D /* comment_highlighted.png */; };
@@ -181,6 +180,8 @@
 		C256F6781759909400D44A84 /* FrecipeChangePasswordViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FrecipeChangePasswordViewController.m; sourceTree = "<group>"; };
 		C2670303174170FD00BBBDD6 /* iPadLoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iPadLoginViewController.h; sourceTree = "<group>"; };
 		C2670304174170FD00BBBDD6 /* iPadLoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iPadLoginViewController.m; sourceTree = "<group>"; };
+		C26C73E3176D4ECE00369462 /* 5757.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 5757.png; sourceTree = "<group>"; };
+		C26C73E5176D4F0800369462 /* 114114.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 114114.png; sourceTree = "<group>"; };
 		C27674C7175F0DB300828EEF /* NSString+Frecipe.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Frecipe.h"; sourceTree = "<group>"; };
 		C27674C8175F0DB300828EEF /* NSString+Frecipe.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Frecipe.m"; sourceTree = "<group>"; };
 		C27674CA175F208600828EEF /* FrecipeSpinnerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrecipeSpinnerView.h; sourceTree = "<group>"; };
@@ -350,13 +351,6 @@
 		C2E668D7173C738F00D1975D /* default_recipe_picture.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = default_recipe_picture.png; sourceTree = "<group>"; };
 		C2E668D9173C73D500D1975D /* star_half.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = star_half.png; sourceTree = "<group>"; };
 		C2E668DB173C73DA00D1975D /* default_profile_picture.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = default_profile_picture.png; sourceTree = "<group>"; };
-		C2E668E1173DBA4400D1975D /* ARCMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARCMacros.h; sourceTree = "<group>"; };
-		C2E668E2173DBA4400D1975D /* FPPopoverController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FPPopoverController.h; sourceTree = "<group>"; };
-		C2E668E3173DBA4400D1975D /* FPPopoverController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FPPopoverController.m; sourceTree = "<group>"; };
-		C2E668E4173DBA4400D1975D /* FPPopoverView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FPPopoverView.h; sourceTree = "<group>"; };
-		C2E668E5173DBA4400D1975D /* FPPopoverView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FPPopoverView.m; sourceTree = "<group>"; };
-		C2E668E6173DBA4400D1975D /* FPTouchView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FPTouchView.h; sourceTree = "<group>"; };
-		C2E668E7173DBA4400D1975D /* FPTouchView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FPTouchView.m; sourceTree = "<group>"; };
 		C2E668EB173DBD8300D1975D /* FrecipeNotificationsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrecipeNotificationsViewController.h; sourceTree = "<group>"; };
 		C2E668EC173DBD8400D1975D /* FrecipeNotificationsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FrecipeNotificationsViewController.m; sourceTree = "<group>"; };
 		C2E668EE173EE28B00D1975D /* FrecipeEditDeleteViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrecipeEditDeleteViewController.h; sourceTree = "<group>"; };
@@ -454,6 +448,8 @@
 		C2A327CA172DFAAD00EBB23B = {
 			isa = PBXGroup;
 			children = (
+				C26C73E5176D4F0800369462 /* 114114.png */,
+				C26C73E3176D4ECE00369462 /* 5757.png */,
 				C23358D11765DCFB00AF0CE2 /* libz.dylib */,
 				C23358CF1765DCEC00AF0CE2 /* CoreTelephony.framework */,
 				C27674F6176184C600828EEF /* CoreText.framework */,
@@ -463,7 +459,6 @@
 				C2A32853172E02A800EBB23B /* favicon_114*114.png */,
 				C2A32851172E02A600EBB23B /* favicon_57*57.png */,
 				C2A3284F172E01DF00EBB23B /* libsqlite3.dylib */,
-				C2E668E0173DBA4400D1975D /* FPPopover */,
 				C2A32848172DFFDA00EBB23B /* ECSlidingViewController */,
 				C2A32844172DFFC900EBB23B /* FacebookSDK.framework */,
 				C2A3282E172DFFBC00EBB23B /* Accounts.framework */,
@@ -713,20 +708,6 @@
 			path = SDWebImage;
 			sourceTree = "<group>";
 		};
-		C2E668E0173DBA4400D1975D /* FPPopover */ = {
-			isa = PBXGroup;
-			children = (
-				C2E668E1173DBA4400D1975D /* ARCMacros.h */,
-				C2E668E2173DBA4400D1975D /* FPPopoverController.h */,
-				C2E668E3173DBA4400D1975D /* FPPopoverController.m */,
-				C2E668E4173DBA4400D1975D /* FPPopoverView.h */,
-				C2E668E5173DBA4400D1975D /* FPPopoverView.m */,
-				C2E668E6173DBA4400D1975D /* FPTouchView.h */,
-				C2E668E7173DBA4400D1975D /* FPTouchView.m */,
-			);
-			path = FPPopover;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -853,6 +834,8 @@
 				C27674D0175F332E00828EEF /* plus.png in Resources */,
 				C27674F51761849800828EEF /* HockeySDKResources.bundle in Resources */,
 				C2009095176331DD009D3259 /* frecipe_name_high.png in Resources */,
+				C26C73E4176D4ECE00369462 /* 5757.png in Resources */,
+				C26C73E6176D4F0800369462 /* 114114.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -936,9 +919,6 @@
 				C294413117332BC800FDD542 /* UIViewController+Frecipe.m in Sources */,
 				C294413817349AE000FDD542 /* FrecipeBadgeView.m in Sources */,
 				C2E08EFA17389DAA00C1C705 /* FrecipeMainViewController.m in Sources */,
-				C2E668E8173DBA4400D1975D /* FPPopoverController.m in Sources */,
-				C2E668E9173DBA4400D1975D /* FPPopoverView.m in Sources */,
-				C2E668EA173DBA4400D1975D /* FPTouchView.m in Sources */,
 				C2E668ED173DBD8500D1975D /* FrecipeNotificationsViewController.m in Sources */,
 				C2E668F0173EE28D00D1975D /* FrecipeEditDeleteViewController.m in Sources */,
 				C2670305174170FD00BBBDD6 /* iPadLoginViewController.m in Sources */,

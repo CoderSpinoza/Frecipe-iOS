@@ -252,9 +252,9 @@
     
     UIButton *missingIngredientsButton = (UIButton *)[cell viewWithTag:12];
     if (missingIngredients.count == 0) {
-        missingIngredientsButton.selected = YES;
-        [missingIngredientsButton setTitle:@"" forState:UIControlStateNormal];
+        missingIngredientsButton.hidden = YES;
     } else {
+        missingIngredientsButton.hidden = NO;
         missingIngredientsButton.selected = NO;
         [missingIngredientsButton setTitle:[NSString stringWithFormat:@"%u", missingIngredients.count] forState:UIControlStateNormal];
     }

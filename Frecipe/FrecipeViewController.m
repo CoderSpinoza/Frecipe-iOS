@@ -19,13 +19,34 @@
 @interface FrecipeViewController () <UICollectionViewDelegateFlowLayout, UICollectionViewDataSource>
 
 @property (strong, nonatomic) NSMutableArray *recipes;
+@property (strong, nonatomic) NSMutableArray *ingredients;
+@property (strong, nonatomic) NSMutableArray *recipe_ingredients;
+
 @property (strong, nonatomic) UIRefreshControl *refreshControl;
 @property (strong, nonatomic) NSDictionary *selectedRecipe;
 @property (strong, nonatomic) NSString *selectedUserId;
 @property (strong, nonatomic) UIView *headerView;
+
+
 @end
 
 @implementation FrecipeViewController
+@synthesize recipes = _recipes;
+@synthesize recipe_ingredients = _recipe_ingredients;
+
+- (NSMutableArray *)recipes {
+    if (_recipes == nil) {
+        _recipes = [[NSMutableArray alloc] init];
+    }
+    return _recipes;
+    
+}
+- (NSMutableArray *)recipe_ingredients {
+    if (_recipe_ingredients == nil) {
+        _recipe_ingredients = [[NSMutableArray alloc] init];
+    }
+    return _recipe_ingredients;
+}
 
 - (void)viewDidLoad
 {
@@ -35,12 +56,12 @@
     self.recipesCollectionView.dataSource = self;
     self.recipesCollectionView.delegate = self;
     [self addRefreshControl];
-    [self fetchCachedRecipes];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-//    [self fetchRecipes];
+    
+    [self fetchRecipes];
 }
 
 - (void)didReceiveMemoryWarning
@@ -61,16 +82,73 @@
 //    self.recipesCollectionView.
 }
 
-- (void)fetchCachedRecipes {
+- (void)fetchRecipes {
     NSString *path = @"recipes.json";
     FrecipeAPIClient *client = [FrecipeAPIClient client];
-    NSURLRequest *request = [client requestWithMethod:@"GET" path:path parameters:nil];
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    
+    NSString *authentication_token = [defaults stringForKey:@"authentication_token"];
+    NSDictionary *parameters = [NSDictionary dictionaryWithObjectsAndKeys:authentication_token, @"authentication_token", nil];
+    NSURLRequest *request = [client requestWithMethod:@"GET" path:path parameters:parameters];
+    
+    FrecipeSpinnerView *spinner = [[FrecipeSpinnerView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
+    spinner.center = self.view.center;
+    [spinner.spinner startAnimating];
+    [self.view addSubview:spinner];
     
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
-        self.recipes = [NSMutableArray arrayWithArray:JSON];
-        NSLog(@"%@", self.recipes);
+        
+        self.ingredients = [NSMutableArray arrayWithArray:[JSON objectForKey:@"ingredients"]];
+        [self.recipes removeAllObjects];
+        NSMutableArray *recipes = [NSMutableArray arrayWithArray:[JSON objectForKey:@"recipes"]];
+        [recipes enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+            NSMutableDictionary *recipe = (NSMutableDictionary *)obj;
+            
+            NSMutableArray *recipeIngredients = [[[NSString stringWithFormat:@"%@", [recipe objectForKey:@"ingredients_string"]] componentsSeparatedByString:@","] mutableCopy];
+            [recipeIngredients removeObjectsInArray:self.ingredients];
+            
+            NSArray *keys = [NSArray arrayWithObjects:@"id", @"name", @"user_id", @"username", @"likes", @"ingredients", @"recipe_image",  nil];
+            NSArray *values = [NSArray arrayWithObjects:[NSString stringWithFormat:@"%@", [recipe objectForKey:@"recipe_id"]], [NSString stringWithFormat:@"%@", [recipe objectForKey:@"name"]], [NSString stringWithFormat:@"%@", [recipe objectForKey:@"user_id"]], [NSString stringWithFormat:@"%@ %@", [recipe objectForKey:@"first_name"], [recipe objectForKey:@"last_name"]], [NSString stringWithFormat:@"%@", [recipe objectForKey:@"likes_count"]], recipeIngredients, [NSString stringWithFormat:@"%@", [recipe objectForKey:@"recipe_image_file_name"]], nil];
+            NSDictionary *recipe2 = [NSDictionary dictionaryWithObjects:values forKeys:keys];
+            
+            
+            [self.recipes addObject:recipe2];
+        }];
+        
+        [self.recipes sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+            NSDictionary *recipe1 = [obj1 objectForKey:@"ingredients"];
+            NSDictionary *recipe2 = [obj2 objectForKey:@"ingredients"];
+            
+            if (recipe1.count > recipe2.count) {
+                return (NSComparisonResult)NSOrderedDescending;
+            } else if (recipe1.count < recipe2.count) {
+                return (NSComparisonResult)NSOrderedAscending;
+            } else {
+                return (NSComparisonResult)NSOrderedSame;
+            }
+        }];
+        
+        self.refreshControl.attributedTitle = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"Last updated on %@", [FrecipeFunctions currentDate]]];
+        
+        [self.refreshControl endRefreshing];
+        [self.recipesCollectionView reloadData];
+        
+        [spinner.spinner stopAnimating];
+        [spinner removeFromSuperview];
+        
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         NSLog(@"%@", error);
+        [self.refreshControl endRefreshing];
+        
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:@"There was an error loading recipes. Retry?" delegate:self cancelButtonTitle:@"Retry" otherButtonTitles:@"Cancel", nil];
+        
+        [self.refreshControl endRefreshing];
+        [spinner.spinner stopAnimating];
+        [spinner removeFromSuperview];
+        
+        [alertView show];
+        
     }];
     FrecipeOperationQueue *queue = [FrecipeOperationQueue sharedQueue];
     [queue addOperation:operation];
@@ -78,7 +156,7 @@
 
 
 
-- (void)fetchRecipes {
+- (void)fetchCachedRecipes {
     NSString *path = @"/recipes/possible";
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -166,8 +244,11 @@
             UICollectionViewCell *cell = (UICollectionViewCell *)button.superview.superview.superview;
             NSDictionary *user = [[self.recipes objectAtIndex:[self.recipesCollectionView indexPathForCell:cell].row] objectForKey:@"user"];
             self.selectedUser = user;
+            destinationViewController.userId = [NSString stringWithFormat:@"%@", [[self.recipes objectAtIndex:[self.recipesCollectionView indexPathForCell:cell].row] objectForKey:@"user_id"]];
+        } else {
+            destinationViewController.userId = [NSString stringWithFormat:@"%@", [self.selectedUser objectForKey:@"id"]];
         }
-        destinationViewController.userId = [NSString stringWithFormat:@"%@", [self.selectedUser objectForKey:@"id"]];
+        
         destinationViewController.fromSegue = YES;
         
         destinationViewController.navigationItem.leftBarButtonItem = nil;
@@ -202,48 +283,44 @@
     UIImageView *recipeImageView = (UIImageView *)[cell viewWithTag:6];
     recipeImageView.image = nil;
     if (PRODUCTION) {
-        [recipeImageView setImageWithURL:[NSURL URLWithString:[[self.recipes objectAtIndex:indexPath.row] objectForKey:@"recipe_image"]] placeholderImage:[UIImage imageNamed:@"default_recipe_picture.png"]];
+        [recipeImageView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://s3.amazonaws.com/Frecipe/public/image/recipes/%@/%@", [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"id"], [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"recipe_image"]]] placeholderImage:[UIImage imageNamed:@"default_recipe_picture.png"]];
     } else {
-        [recipeImageView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://localhost:5000/%@", [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"recipe_image"]]] placeholderImage:[UIImage imageNamed:@"default_recipe_picture.png"]];
+        [recipeImageView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://localhost:5000/image/recipes/%@/%@",[[self.recipes objectAtIndex:indexPath.row] objectForKey:@"id"], [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"recipe_image"]]] placeholderImage:[UIImage imageNamed:@"default_recipe_picture.png"]];
     }
     
     
     // configure the back of the cell. fill all the info.
     UITextView *recipeNameView = (UITextView *)[cell viewWithTag:8];
-    recipeNameView.text = [NSString stringWithFormat:@"%@", [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"recipe_name"]];
+    recipeNameView.text = [NSString stringWithFormat:@"%@", [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"name"]];
     
     UILabel *recipeNameLabel = (UILabel *)[cell viewWithTag:2];
-    recipeNameLabel.text = [NSString stringWithFormat:@"%@", [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"recipe_name"]];
+    recipeNameLabel.text = [NSString stringWithFormat:@"%@", [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"name"]];
     
-    NSDictionary *user = [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"user"];
+//    NSDictionary *user = [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"user"];
     UIButton *chefNameButton = (UIButton *)[cell viewWithTag:3];
-    [chefNameButton setTitle:[NSString stringWithFormat:@"%@ %@", [user objectForKey:@"first_name"], [user objectForKey:@"last_name"]] forState:UIControlStateNormal];
-    
-    NSMutableArray *missingIngredientsStringArray = [[NSMutableArray alloc] init];
-    NSArray *missingIngredients = [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"missing_ingredients"];
-    for (NSDictionary *missingIngredient in missingIngredients) {
-        [missingIngredientsStringArray addObject:[missingIngredient objectForKey:@"name"]];
-    }
-    NSString *missingIngredientsString = [missingIngredientsStringArray componentsJoinedByString:@","];
-    
-    UITextView *missingIngredientsView = (UITextView *)[cell viewWithTag:4];
-    missingIngredientsView.text = [NSString stringWithFormat:@"%u Missing Ingredients: %@", missingIngredients.count, missingIngredientsString];
+    [chefNameButton setTitle:[NSString stringWithFormat:@"%@", [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"username"]] forState:UIControlStateNormal];
+//
     
     // configure the front of the cell. chef name button and missing ingredients and likes on front view
     UIButton *frontNameButton = (UIButton *)[cell viewWithTag:11];
-    [frontNameButton setTitle:[NSString stringWithFormat:@"%@ %@", [user objectForKey:@"first_name"], [user objectForKey:@"last_name"]] forState:UIControlStateNormal];
+    [frontNameButton setTitle:[NSString stringWithFormat:@"%@", [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"username"]] forState:UIControlStateNormal];
     [frontNameButton sizeToFit];
     frontNameButton.frame = CGRectMake(160 - [frontNameButton.titleLabel.text sizeWithFont:[UIFont boldSystemFontOfSize:13]].width - 7, frontNameButton.frame.origin.y, frontNameButton.frame.size.width, frontNameButton.frame.size.height);
-    
+
     UILabel *likesLabel = (UILabel *)[cell viewWithTag:9];
     likesLabel.text = [NSString stringWithFormat:@"%@ likes", [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"likes"]];
-    
+
     UIButton *missingIngredientsButton = (UIButton *)[cell viewWithTag:12];
-    [missingIngredientsButton setBackgroundImage:[UIImage imageNamed:@"badge_green.png"] forState:UIControlStateSelected];
+    NSArray *missingIngredients = [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"ingredients"];
+    
+    UITextView *missingIngredientsView = (UITextView *)[cell viewWithTag:4];
+    missingIngredientsView.text = [NSString stringWithFormat:@"%u Missing Ingredients: %@", missingIngredients.count, [missingIngredients componentsJoinedByString:@","]];
+
     if (missingIngredients.count == 0) {
-        missingIngredientsButton.selected = YES;
-        [missingIngredientsButton setTitle:@"" forState:UIControlStateNormal];
+        missingIngredientsButton.hidden = YES;
+//        [missingIngredientsButton setTitle:@"" forState:UIControlStateNormal];
     } else {
+        missingIngredientsButton.hidden = NO;
         missingIngredientsButton.selected = NO;
         [missingIngredientsButton setTitle:[NSString stringWithFormat:@"%u", missingIngredients.count] forState:UIControlStateNormal];
     }

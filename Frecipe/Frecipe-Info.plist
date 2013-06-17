@@ -14,9 +14,11 @@
 		<dict>
 			<key>CFBundleIconFiles</key>
 			<array>
-				<string>favicon_57*57.png</string>
-				<string>favicon_114*114.png</string>
+				<string>5757.png</string>
+				<string>114114.png</string>
 			</array>
+			<key>UIPrerenderedIcon</key>
+			<true/>
 		</dict>
 	</dict>
 	<key>CFBundleIdentifier</key>
@@ -52,6 +54,8 @@
 	<string>MainStoryboard_iPhone</string>
 	<key>UIMainStoryboardFile~ipad</key>
 	<string>MainStoryboard_iPad</string>
+	<key>UIPrerenderedIcon</key>
+	<true/>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>

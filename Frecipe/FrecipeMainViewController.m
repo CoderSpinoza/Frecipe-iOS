@@ -101,6 +101,7 @@
     self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"back_arrow.png"] style:UIBarButtonItemStyleBordered target:segue.destinationViewController action:@selector(popViewControllerAnimated:)];
     if ([segue.identifier isEqualToString:@"RecipeDetail"]) {
         FrecipeRecipeDetailViewController *recipeDetailViewController = (FrecipeRecipeDetailViewController *) segue.destinationViewController;
+        
         recipeDetailViewController.recipeId = [self.selectedRecipe objectForKey:@"id"];
 
     } else if ([segue.identifier isEqualToString:@"Profile"] || [segue.identifier isEqualToString:@"Profile2"]) {

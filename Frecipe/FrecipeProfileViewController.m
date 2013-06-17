@@ -17,15 +17,21 @@
 #import <QuartzCore/QuartzCore.h>
 #import <UIImageView+WebCache.h>
 
-@interface FrecipeProfileViewController () <UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UIActionSheetDelegate, UIAlertViewDelegate, FrecipeRatingViewDelegate>
+@interface FrecipeProfileViewController () <UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UIActionSheetDelegate, UIAlertViewDelegate, FrecipeRatingViewDelegate, UIScrollViewDelegate> {
+    int shownRecipes;
+}
 
 @property (strong, nonatomic) NSDictionary *user;
 @property (strong, nonatomic) NSMutableArray *recipes;
 @property (strong, nonatomic) NSDictionary *selectedRecipe;
 @property (strong, nonatomic) NSDictionary *mostPopularRecipe;
+@property (strong, nonatomic) NSMutableArray *ingredients;
+
 @end
 
 @implementation FrecipeProfileViewController
+
+@synthesize recipes = _recipes;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -50,6 +56,7 @@
     self.detailInfoView.clipsToBounds = YES;
     
     self.averageRatingView.delegate = self;
+    self.scrollView.delegate = self;
     
     
 }
@@ -121,12 +128,11 @@
     FrecipeAPIClient *client = [FrecipeAPIClient client];
     
     NSURLRequest *request = [client requestWithMethod:@"POST" path:path parameters:parameters];
-    
+
     UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
     spinner.center = CGPointMake(self.view.frame.size.width / 2, self.view.frame.size.height / 2 - self.navigationController.navigationBar.frame.size.height / 2);
     [spinner startAnimating];
     [self.view addSubview:spinner];
-//    [AFJSONRequestOperation addAcceptableContentTypes:[NSSet setWithObject:@"text/html"]];
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
         NSDictionary *user = [JSON objectForKey:@"user"];
         self.user = user;
@@ -139,7 +145,14 @@
             self.fbProfilePictureView.profileID = [NSString stringWithFormat:@"%@", [[JSON objectForKey:@"user"] objectForKey:@"uid"]];
         } else {
             self.fbProfilePictureView.hidden = YES;
-            [self.profilePictureView setImageWithURL:[JSON objectForKey:@"profile_image"]];
+            if (PRODUCTION) {
+                [self.profilePictureView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@", [JSON objectForKey:@"profile_image"]]] placeholderImage:[UIImage imageNamed:@"default_profile_picture.png"]];
+                
+            } else {
+                [self.profilePictureView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://localhost:5000/%@", [JSON objectForKey:@"profile_image"]]] placeholderImage:[UIImage imageNamed:@"default_profile_picture.png"]];
+            }
+            
+//            [self.profilePictureView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"https:/s3.amazonaws.com/Frecipe/image/users/%@/%@", [self.user objectForKey:@"id"], [JSON objectForKey:@"profile_image"]]]];
             self.profilePictureView.alpha = 0;
             [UIView animateWithDuration:0.5 animations:^{
                 self.profilePictureView.alpha = 1;
@@ -150,10 +163,7 @@
         self.nameLabel.text = [NSString stringWithFormat:@"%@ %@", [user objectForKey:@"first_name"], [user objectForKey:@"last_name"]];
         
         self.averageRatingView.rating = [[NSString stringWithFormat:@"%@", [JSON objectForKey:@"rating"]] floatValue];
-        self.averageRatingView.editable = NO;
-        
-        self.recipes = [JSON objectForKey:@"recipes"];
-        
+        self.averageRatingView.editable = NO;        
         
         if ([[NSString stringWithFormat:@"%@", [JSON objectForKey:@"follow"]] isEqualToString:@"You"]) {
             self.followButton.enabled = NO;
@@ -165,11 +175,11 @@
         [self.followButton setTitle:[NSString stringWithFormat:@"%@", [JSON objectForKey:@"follow"]] forState:UIControlStateNormal];
         
         NSDictionary *followers = [JSON objectForKey:@"followers"];
-        NSDictionary *mostPopularRecipe = [JSON objectForKey:@"most"];
-        
+        NSArray *mostPopularRecipe = [NSArray arrayWithArray:[JSON objectForKey:@"most"]];
         self.popularRecipeTitleLabel.text = [NSString stringWithFormat:@"%@'s BEST", [user objectForKey:@"first_name"]];
         
-        [self.numOfRecipesButton setTitle:[NSString stringWithFormat:@"%u", self.recipes.count] forState:UIControlStateNormal];
+        NSMutableArray *recipes = [NSMutableArray arrayWithArray:[JSON objectForKey:@"recipes"]];
+        [self.numOfRecipesButton setTitle:[NSString stringWithFormat:@"%u", recipes.count] forState:UIControlStateNormal];
         [self.numOfFollowersButton setTitle:[NSString stringWithFormat:@"%u", followers.count] forState:UIControlStateNormal];
         [self.numOfLikesButton setTitle:[NSString stringWithFormat:@"%@", [JSON objectForKey:@"likes"]] forState:UIControlStateNormal];
         
@@ -178,11 +188,12 @@
         [self.numOfFollowingButton setTitle:[NSString stringWithFormat:@"%u", following.count] forState:UIControlStateNormal];
         [self.numOfLikedButton setTitle:[NSString stringWithFormat:@"%u", liked.count] forState:UIControlStateNormal];
         
-        if ([mostPopularRecipe respondsToSelector:@selector(objectForKey:)]) {
-            [self.popularRecipeButton setTitle:[NSString stringWithFormat:@"%@", [mostPopularRecipe objectForKey:@"name"]] forState:UIControlStateNormal];
-            self.popularRecipeLikesButton.text = [NSString stringWithFormat:@"%@ likes", [JSON objectForKey:@"mostLikes"]];
+        if (mostPopularRecipe.count > 0) {
+            NSDictionary *popularRecipe = [mostPopularRecipe objectAtIndex:0];
+            [self.popularRecipeButton setTitle:[NSString stringWithFormat:@"%@", [popularRecipe objectForKey:@"name"]] forState:UIControlStateNormal];
+            self.popularRecipeLikesButton.text = [NSString stringWithFormat:@"%@ likes", [popularRecipe objectForKey:@"likes_count"]];
             
-            self.mostPopularRecipe = mostPopularRecipe;
+            self.mostPopularRecipe = popularRecipe;
             [self.popularRecipeButton addTarget:self action:@selector(goToRecipeDetail) forControlEvents:UIControlEventTouchUpInside];
         } else {
             [self.popularRecipeButton setTitle:@"No recipes yet" forState:UIControlStateNormal];
@@ -206,11 +217,30 @@
         self.websiteAndAboutView.frame = CGRectMake(self.websiteAndAboutView.frame.origin.x, self.websiteAndAboutView.frame.origin.y, self.websiteAndAboutView.frame.size.width, self.websiteTextView.frame.origin.y + self.websiteTextView.frame.size.height + 10);
         
         self.detailInfoView.frame = CGRectMake(self.detailInfoView.frame.origin.x, self.websiteAndAboutView.frame.origin.y + self.websiteAndAboutView.frame.size.height + 10, self.detailInfoView.frame.size.width, self.detailInfoView.frame.size.height);
+        
+        
+        // recipes
+        self.ingredients = [NSMutableArray arrayWithArray:[JSON objectForKey:@"ingredients"]];
+        
+        self.recipes = [[NSMutableArray alloc] initWithCapacity:recipes.count];
+        [recipes enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+            NSMutableDictionary *recipe = (NSMutableDictionary *)obj;
+            
+            NSMutableArray *recipeIngredients = [[[NSString stringWithFormat:@"%@", [recipe objectForKey:@"ingredients_string"]] componentsSeparatedByString:@","] mutableCopy];
+            [recipeIngredients removeObjectsInArray:self.ingredients];
+            
+            NSArray *keys = [NSArray arrayWithObjects:@"id", @"name", @"user_id", @"username", @"likes", @"ingredients", @"recipe_image",  nil];
+            NSArray *values = [NSArray arrayWithObjects:[NSString stringWithFormat:@"%@", [recipe objectForKey:@"recipe_id"]], [NSString stringWithFormat:@"%@", [recipe objectForKey:@"name"]], [NSString stringWithFormat:@"%@", [recipe objectForKey:@"user_id"]], [NSString stringWithFormat:@"%@ %@", [recipe objectForKey:@"first_name"], [recipe objectForKey:@"last_name"]], [NSString stringWithFormat:@"%@", [recipe objectForKey:@"likes_count"]], recipeIngredients, [NSString stringWithFormat:@"%@", [recipe objectForKey:@"recipe_image_file_name"]], nil];
+            NSDictionary *recipe2 = [NSDictionary dictionaryWithObjects:values forKeys:keys];
+            
+            [self.recipes addObject:recipe2];
+        }];
         [self.recipesCollectionView reloadData];
         
-        
+        //ceil((float)self.recipes.count / 2
         if (self.recipes.count > 0) {
-            self.recipesCollectionView.frame = CGRectMake(self.recipesCollectionView.frame.origin.x, self.detailInfoView.frame.origin.y + self.detailInfoView.frame.size.height + 10, self.recipesCollectionView.frame.size.width, 150 * ceil((float)self.recipes.count / 2));
+            self.recipesCollectionView.frame = CGRectMake(self.recipesCollectionView.frame.origin.x, self.detailInfoView.frame.origin.y + self.detailInfoView.frame.size.height + 10, self.recipesCollectionView.frame.size.width, 150 * MIN(ceil((float)self.recipes.count / 2), 3));
+            shownRecipes = 2;
             [self.recipesCollectionView setBasicShadow];
             if ([self isTall]) {
                 self.scrollView.contentSize = CGSizeMake(self.scrollView.contentSize.width, self.recipesCollectionView.frame.origin.y + self.recipesCollectionView.frame.size.height + 30);
@@ -248,14 +278,16 @@
 - (IBAction)recipesButtonPressed {
     
     CGPoint point;
-    if (self.recipes.count > 4) {
-        point = CGPointMake(0, self.recipesCollectionView.frame.origin.y - 20);
-    } else {
-        point = CGPointMake(0, self.scrollView.contentSize.height - self.scrollView.bounds.size.height);
+    if (self.recipes.count > 0) {
+        if (self.recipes.count > 4) {
+            point = CGPointMake(0, self.recipesCollectionView.frame.origin.y - 20);
+        } else {
+            point = CGPointMake(0, self.scrollView.contentSize.height - self.scrollView.bounds.size.height);
+        }
+        [UIView animateWithDuration:0.5 animations:^{
+            self.scrollView.contentOffset = point;
+        }];
     }
-    [UIView animateWithDuration:0.5 animations:^{
-        self.scrollView.contentOffset = point;
-    }];
 }
 
 - (IBAction)inviteButtonPressed {
@@ -392,46 +424,39 @@
     UIImageView *recipeImageView = (UIImageView *)[cell viewWithTag:6];
     recipeImageView.image = nil;
     if (PRODUCTION) {
-        [recipeImageView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@", [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"recipe_image"]]] placeholderImage:[UIImage imageNamed:@"placeholder.png"]];
+        [recipeImageView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://s3.amazonaws.com/Frecipe/public/image/recipes/%@/%@", [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"id"], [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"recipe_image"]]] placeholderImage:[UIImage imageNamed:@"placeholder.png"]];
     } else {
-        [recipeImageView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://localhost:5000/%@",[[self.recipes objectAtIndex:indexPath.row] objectForKey:@"recipe_image"]]] placeholderImage:[UIImage imageNamed:@"placeholder.png"]];
+        [recipeImageView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://localhost:5000/image/recipes/%@/%@",[[self.recipes objectAtIndex:indexPath.row] objectForKey:@"id"], [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"recipe_image"]]] placeholderImage:[UIImage imageNamed:@"placeholder.png"]];
     }
     
 
     UITextView *recipeNameView = (UITextView *)[cell viewWithTag:8];
-    recipeNameView.text = [NSString stringWithFormat:@"%@",[[self.recipes objectAtIndex:indexPath.row] objectForKey:@"recipe_name"]];
-    
+    recipeNameView.text = [NSString stringWithFormat:@"%@",[[self.recipes objectAtIndex:indexPath.row] objectForKey:@"name"]];
     UILabel *recipeNameLabel = (UILabel *)[cell viewWithTag:2];
-    UIButton *chefNameButton = (UIButton *)[cell viewWithTag:3];
-    UITextView *missingIngredientsView = (UITextView *)[cell viewWithTag:4];
     recipeNameLabel.text = [NSString stringWithFormat:@"%@",[[self.recipes objectAtIndex:indexPath.row] objectForKey:@"recipe_name"]];
-    NSArray *missingIngredients = [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"missing_ingredients"];
-    NSDictionary *user = [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"user"];
     
-    [chefNameButton setTitle:[NSString stringWithFormat:@"%@ %@", [user objectForKey:@"first_name"], [user objectForKey:@"last_name"]] forState:UIControlStateNormal];
-    
-    NSMutableArray *missingIngredientsStringArray = [[NSMutableArray alloc] init];
-    for (NSDictionary *missIng in missingIngredients) {
-        [missingIngredientsStringArray addObject:[missIng objectForKey:@"name"]];
-    }
-    NSString *missingIngredientsString = [missingIngredientsStringArray componentsJoinedByString:@", "];
-    missingIngredientsView.text = [NSString stringWithFormat:@"%u Missing Ingredients: %@", missingIngredients.count, missingIngredientsString];
+    UIButton *chefNameButton = (UIButton *)[cell viewWithTag:3];
+    [chefNameButton setTitle:[NSString stringWithFormat:@"%@", [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"name"]] forState:UIControlStateNormal];
     
     // chef name button, missing ingredients, and likes on front view
     
     UIButton *frontNameButton = (UIButton *)[cell viewWithTag:11];
-    [frontNameButton setTitle:[NSString stringWithFormat:@"%@ %@", [user objectForKey:@"first_name"], [user objectForKey:@"last_name"]] forState:UIControlStateNormal];
+    [frontNameButton setTitle:[NSString stringWithFormat:@"%@", [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"name"]] forState:UIControlStateNormal];
     [frontNameButton sizeToFit];
     frontNameButton.frame = CGRectMake(cell.frame.size.width - [frontNameButton.titleLabel.text sizeWithFont:[UIFont boldSystemFontOfSize:13]].width - 7, frontNameButton.frame.origin.y, frontNameButton.frame.size.width, frontNameButton.frame.size.height);
     
     UILabel *likesLabel = (UILabel *)[cell viewWithTag:9];
     likesLabel.text = [NSString stringWithFormat:@"%@ likes", [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"likes"]];
     
+    UITextView *missingIngredientsView = (UITextView *)[cell viewWithTag:4];
     UIButton *missingIngredientsButton = (UIButton *)[cell viewWithTag:12];
+    NSArray *missingIngredients = [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"ingredients"];
+    missingIngredientsView.text = [NSString stringWithFormat:@"%u Missing Ingredients: %@", missingIngredients.count, [missingIngredients componentsJoinedByString:@","]];
+    
     if (missingIngredients.count == 0) {
-        missingIngredientsButton.selected = YES;
-        [missingIngredientsButton setTitle:@"" forState:UIControlStateNormal];
+        missingIngredientsButton.hidden = YES;
     } else {
+        missingIngredientsButton.hidden = NO;
         missingIngredientsButton.selected = NO;
         [missingIngredientsButton setTitle:[NSString stringWithFormat:@"%u", missingIngredients.count] forState:UIControlStateNormal];
     }
@@ -453,6 +478,18 @@
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     self.selectedRecipe = [self.recipes objectAtIndex:indexPath.row];
     [self performSegueWithIdentifier:@"RecipeDetail" sender:self];
+}
+
+// scroll view delegate methods
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    if ([scrollView isEqual:self.scrollView]) {
+        if (scrollView.contentOffset.y + self.view.frame.size.height + 10 > scrollView.contentSize.height && scrollView.contentSize.height < self.recipesCollectionView.frame.origin.y + 150 * ceil((float)self.recipes.count / 2) + 10) {
+            
+            scrollView.contentSize = CGSizeMake(scrollView.contentSize.width, self.view.frame.size.height + scrollView.contentOffset.y + 30);
+            self.recipesCollectionView.frame = CGRectMake(self.recipesCollectionView.frame.origin.x, self.recipesCollectionView.frame.origin.y, self.recipesCollectionView.frame.size.width, self.scrollView.contentSize.height - self.recipesCollectionView.frame.origin.y - 10);
+        }
+    }
 }
 
 @end

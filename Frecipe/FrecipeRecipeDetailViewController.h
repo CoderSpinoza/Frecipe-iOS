@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 #import "FrecipeRatingView.h"
+#import "FPPopoverController.h"
+#import "FrecipeEditDeleteViewController.h"
 
 @interface FrecipeRecipeDetailViewController : UIViewController
 
@@ -36,5 +38,8 @@
 @property (weak, nonatomic) IBOutlet UIView *directionsView;
 
 @property (weak, nonatomic) IBOutlet UIButton *addToGroceryListButton;
+
+@property (strong,nonatomic) FPPopoverController *editDeletePopoverViewController;
+@property (strong, nonatomic) FrecipeEditDeleteViewController *editDeleteViewController;
 
 @end

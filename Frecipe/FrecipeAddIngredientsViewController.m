@@ -14,6 +14,7 @@
 }
 
 @property (strong, nonatomic) NSMutableArray *ingredients;
+@property (strong, nonatomic) NSMutableArray *allIngredients;
 
 @end
 
@@ -45,8 +46,7 @@
     self.ingredientsTableView.delegate = self;
     self.ingredientsTableView.dataSource = self;
     
-    
-    NSLog(@"%f", self.ingredientsTableView.frame.size.height);
+    [self fetchAllIngredients];
     [self addGestureRecognizers];
     [self registerForKeyboardNotification];
 }
@@ -55,6 +55,19 @@
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)fetchAllIngredients {
+    NSString *path = @"ingredients.json";
+    FrecipeAPIClient *client = [FrecipeAPIClient client];
+    NSURLRequest *request = [client requestWithMethod:@"GET" path:path parameters:nil];
+    AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
+        self.allIngredients = [NSMutableArray arrayWithArray:JSON];
+    } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
+        
+    }];
+    FrecipeOperationQueue *queue = [FrecipeOperationQueue sharedQueue];
+    [queue addOperation:operation];
 }
 
 - (IBAction)cancelButtonPressed:(UIBarButtonItem *)sender {

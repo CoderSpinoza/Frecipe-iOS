@@ -1,11 +1,13 @@
-
 PODS:
-- AFNetworking (1.2.1)
+  - AFNetworking (1.2.1)
+  - FPPopover (1.4.1)
 
 DEPENDENCIES:
-- AFNetworking
+  - AFNetworking
+  - FPPopover
 
 SPEC CHECKSUMS:
-  AFNetworking: 616da0028916ce296f5c3cef74e5552eb4e10e13
+  AFNetworking: a44069e3c9c89867544f6639482f155c7e5f9b41
+  FPPopover: 0289b796c031d8f27bd221d93d282ffe23619893
 
-COCOAPODS: 0.16.2
+COCOAPODS: 0.20.2
