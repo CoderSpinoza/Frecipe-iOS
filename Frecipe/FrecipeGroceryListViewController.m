@@ -137,11 +137,21 @@
     FrecipeAPIClient *client = [FrecipeAPIClient client];
     NSURLRequest *request = [client requestWithMethod:@"POST" path:path parameters:parameters];
     
+    // add a spinner view
+    
+    FrecipeSpinnerView *spinnerView = [[FrecipeSpinnerView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
+    [spinnerView.spinner startAnimating];
+    spinnerView.center = self.view.center;
+    [self.view addSubview:spinnerView];
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
         [self processGroceryListInformation:[JSON objectForKey:@"grocery_list"]];
+        [spinnerView.spinner stopAnimating];
+        [spinnerView removeFromSuperview];
 
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         NSLog(@"%@", error);
+        [spinnerView.spinner stopAnimating];
+        [spinnerView removeFromSuperview];
         UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:@"There was an error loading your grocery list. Retry?" delegate:self cancelButtonTitle:@"Retry" otherButtonTitles:@"Cancel", nil];
         [alertView show];
         

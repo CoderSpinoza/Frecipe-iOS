@@ -151,6 +151,7 @@
     spinner.center = self.view.center;
     [self.view addSubview:spinner];
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
+        
         self.title = [NSString stringWithFormat:@"%@", [[JSON objectForKey:@"recipe"] objectForKey:@"name"]];
         self.recipeImageURL = [NSString stringWithFormat:@"%@", [JSON objectForKey:@"recipe_image"]];
         if (PRODUCTION) {
@@ -206,7 +207,16 @@
         
         self.directionsLabel.frame = CGRectMake(self.directionsLabel.frame.origin.x, 5, self.directionsLabel.frame.size.width, self.directionsLabel.frame.size.height);
         
-        self.directionsTableView.frame = CGRectMake(self.directionsTableView.frame.origin.x, self.directionsLabel.frame.size.height + 10, self.directionsTableView.frame.size.width, self.directions.count * 44);
+        
+        CGFloat totalHeight = 0;
+        
+        for (int i = 0; i < self.directions.count; i++) {
+            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:i inSection:0];
+            CGFloat currentHeight = [self tableView:self.directionsTableView heightForRowAtIndexPath:indexPath];
+            totalHeight += currentHeight;
+            
+        }
+        self.directionsTableView.frame = CGRectMake(self.directionsTableView.frame.origin.x, self.directionsLabel.frame.size.height + 10, self.directionsTableView.frame.size.width, totalHeight);
         
         if (self.directions.count > 0) {
             self.directionsView.frame = CGRectMake(self.directionsView.frame.origin.x, self.ingredientsView.frame.origin.y + self.ingredientsView.frame.size.height + 20, self.directionsView.frame.size.width, self.directionsLabel.frame.size.height + self.directionsTableView.frame.size.height + 10);
@@ -273,20 +283,26 @@
 }
 
 - (IBAction)shareButtonPressed {
+    
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Facebook Share" message:@"Share this recipe on your facebook wall?" delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: @"Cancel", nil];
+    [alertView show];
+    }
+
+- (void)publishToFacebook {
     if (FBSession.activeSession.isOpen) {
         [FBSession.activeSession requestNewPublishPermissions:[NSArray arrayWithObject:@"publish_actions"] defaultAudience:FBSessionDefaultAudienceOnlyMe completionHandler:^(FBSession *session, NSError *error) {
             
             [FBRequestConnection startForPostOpenGraphObjectWithType:@"website" title:[NSString stringWithFormat:@"%@ has shared a recipe!", [[NSUserDefaults standardUserDefaults] stringForKey:@"name"]]image:self.recipeImageURL url:@"https://itunes.apple.com/us/app/itunes-u/id490217893" description:@"Go to this link to download Frecipe!" objectProperties:nil completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
                 UIAlertView *alertView;
                 if (!error) {
-                    alertView = [[UIAlertView alloc] initWithTitle:@"Facebook Share" message:@"Successfully shared a recipe!" delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: nil];
+                    alertView = [[UIAlertView alloc] initWithTitle:@"Facebook Share Successful" message:@"Successfully shared a recipe!" delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: nil];
                 } else {
                     alertView = [[UIAlertView alloc] initWithTitle:@"Facebook share error" message:@"There was an error sharing a recipe on facebook" delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: nil];
                 }
                 [alertView show];
-            }];        
+            }];
         }];
-    }
+    }    
 }
 
 - (IBAction)commentButtonPressed {
@@ -340,7 +356,8 @@
             [self.commentsTableView reloadData];
             
             if (self.comments.count) {
-                [self.commentsTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.comments.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionNone animated:YES];
+//                [self.commentsTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.comments.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+                UITableViewCell *cell = [self.commentsTableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:self.comments.count - 1 inSection:0]];
             }
             
             [self dismissKeyboard];
@@ -361,10 +378,12 @@
 
 - (IBAction)commentDeleteButtonPressed:(UIButton *)sender {
     NSIndexPath *indexPath = [self.commentsTableView indexPathForCell:(UITableViewCell *)sender.superview.superview];
-    NSDictionary  *comment = [[self.comments objectAtIndex:indexPath.row] objectForKey:@"comment"];
+//    NSDictionary  *comment = [self.comments objectAtIndex:indexPath.row] objectForKey:@"comment"];
+    NSDictionary *userAndComment = [self.comments objectAtIndex:indexPath.row];
     
-    NSString *path = [NSString stringWithFormat:@"comments/%@", [comment objectForKey:@"id"]];
+    NSString *path = [NSString stringWithFormat:@"comments/%@", [userAndComment objectForKey:@"comment_id"]];
 
+    
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSString *authentication_token = [defaults stringForKey:@"authentication_token"];
     NSArray *keys = [NSArray arrayWithObjects:@"authentication_token", @"recipe_id", nil];
@@ -588,11 +607,14 @@
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     if ([alertView.title isEqualToString:@"Rating"]) {
         [UIView animateWithDuration:0.5 animations:^{
-//            self.ratingBorderView.frame = CGRectMake(self.ratingBorderView.frame.origin.x, self.ratingBorderView.frame.origin.y, self.ratingBorderView.frame.size.width, 0);
             self.ratingBorderView.alpha = 0;
         }];
     } else if ([alertView.title isEqualToString:@"Recipe Error"]) {
         [self.navigationController popViewControllerAnimated:YES];
+    } else if ([alertView.title isEqualToString:@"Facebook Share"]) {
+        if (buttonIndex == 0) {
+            [self publishToFacebook];
+        }
     }
 }
 
@@ -601,17 +623,17 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     CGSize size;
     if ([tableView isEqual:self.commentsTableView]) {
-        NSDictionary *comment = [[self.comments objectAtIndex:indexPath.row] objectForKey:@"comment"];
+        NSDictionary *comment = [self.comments objectAtIndex:indexPath.row];
         
         NSString *text = [NSString stringWithFormat:@"%@",[comment objectForKey:@"text"]];
         
-        CGSize constraintSize = CGSizeMake(220, MAXFLOAT);
-        CGSize textSize = [text sizeWithFont:[UIFont systemFontOfSize:14] constrainedToSize:constraintSize lineBreakMode:NSLineBreakByWordWrapping];
+        CGSize constraintSize = CGSizeMake(260, MAXFLOAT);
+        CGSize textSize = [text sizeWithFont:[UIFont systemFontOfSize:13] constrainedToSize:constraintSize lineBreakMode:NSLineBreakByWordWrapping];
         
         return 50 + textSize.height;
     } else if ([tableView isEqual:self.directionsTableView]){
-        size = [[NSString stringWithFormat:@"%u. %@", indexPath.row + 1, [self.directions objectAtIndex:indexPath.row]] sizeWithFont:[UIFont systemFontOfSize:18.0f] constrainedToSize:CGSizeMake(220.0f, MAXFLOAT) lineBreakMode:NSLineBreakByWordWrapping];
-        NSInteger lines = round(size.height / 18);
+        size = [[NSString stringWithFormat:@"%u. %@", indexPath.row + 1, [self.directions objectAtIndex:indexPath.row]] sizeWithFont:[UIFont systemFontOfSize:15.0f] constrainedToSize:CGSizeMake(150.0f, MAXFLOAT) lineBreakMode:NSLineBreakByWordWrapping];
+        NSInteger lines = round(size.height / 15);
         if (lines < 2) {
             return 44;
         } else {
@@ -719,6 +741,7 @@
         
         cell.textLabel.text = [NSString stringWithFormat:@"%u. %@", indexPath.row + 1, [self.directions objectAtIndex:indexPath.row]];
         cell.textLabel.font = [UIFont systemFontOfSize:15];
+        cell.textLabel.numberOfLines = 0;
         return cell;
     } else if ([tableView isEqual:self.commentsTableView]) {
         static NSString *CellIdentifier = @"CommentCell";
@@ -728,44 +751,44 @@
         }
         
         NSDictionary *userAndComment = [self.comments objectAtIndex:indexPath.row];
-        NSDictionary *user = [userAndComment objectForKey:@"user"];
-        NSDictionary *comment = [userAndComment objectForKey:@"comment"];
+//        NSDictionary *user = [userAndComment objectForKey:@"user"];
+//        NSDictionary *comment = [userAndComment objectForKey:@"comment"];
         FBProfilePictureView *fbProfilePictureView = (FBProfilePictureView *)[cell viewWithTag:1];
         UIImageView *profilePictureView = (UIImageView *)[cell viewWithTag:2];
-        if ([[NSString stringWithFormat:@"%@", [user objectForKey:@"provider"]] isEqualToString:@"facebook"]) {
+        if ([[NSString stringWithFormat:@"%@", [userAndComment objectForKey:@"provider"]] isEqualToString:@"facebook"]) {
             profilePictureView.hidden = YES;
-            fbProfilePictureView.profileID = [NSString stringWithFormat:@"%@", [user objectForKey:@"uid"]];
+            fbProfilePictureView.profileID = [NSString stringWithFormat:@"%@", [userAndComment objectForKey:@"uid"]];
         } else {
             fbProfilePictureView.hidden = YES;
-            [profilePictureView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@", [user objectForKey:@"profile_picture"]]] placeholderImage:[UIImage imageNamed:@"default_profile_picture"]];
+            [profilePictureView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://s3.amazonaws.com/Frecipe/public/image/users/%@/%@", [userAndComment objectForKey:@"user_id"], [userAndComment objectForKey:@"profile_picture"]]] placeholderImage:[UIImage imageNamed:@"default_profile_picture"]];
         }
         
         UIButton *nameButton = (UIButton *)[cell viewWithTag:3];
-        [nameButton setTitle:[NSString stringWithFormat:@"%@ %@", [user objectForKey:@"first_name"], [user objectForKey:@"last_name"]] forState:UIControlStateNormal];
+        [nameButton setTitle:[NSString stringWithFormat:@"%@ %@", [userAndComment objectForKey:@"first_name"], [userAndComment objectForKey:@"last_name"]] forState:UIControlStateNormal];
         [nameButton sizeToFit];
         
         UITextView *textView = (UITextView *)[cell viewWithTag:4];
-        textView.text = [NSString stringWithFormat:@"%@", [comment objectForKey:@"text"]];
+        textView.text = [NSString stringWithFormat:@"%@", [userAndComment objectForKey:@"text"]];
         
         CGSize constraintSize = CGSizeMake(280, MAXFLOAT);
         
         CGSize textSize = [textView.text sizeWithFont:[UIFont systemFontOfSize:14] constrainedToSize:constraintSize lineBreakMode:NSLineBreakByWordWrapping];
-        textView.frame = CGRectMake(textView.frame.origin.x, textView.frame.origin.y, textView.frame.size.width, textSize.height + 20);
+        textView.frame = CGRectMake(textView.frame.origin.x, textView.frame.origin.y, textView.frame.size.width, textSize.height + 6);
         
         UILabel *timeLabel = (UILabel *)[cell viewWithTag:5];
-        timeLabel.text = [FrecipeFunctions compareWithCurrentDate:[comment objectForKey:@"created_at"]];
+        timeLabel.text = [FrecipeFunctions compareWithCurrentDate:[userAndComment objectForKey:@"created_at"]];
         
         [timeLabel sizeToFit];
         UIButton *deleteButton = (UIButton *)[cell viewWithTag:6];
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
         NSString *userId = [NSString stringWithFormat:@"%@", [defaults objectForKey:@"id"]];
-        if (![userId isEqualToString:[NSString stringWithFormat:@"%@", [user objectForKey:@"id"]]]) {
+        if (![userId isEqualToString:[NSString stringWithFormat:@"%@", [userAndComment objectForKey:@"user_id"]]]) {
             deleteButton.hidden = YES;
         } else {
             
             deleteButton.frame = CGRectMake(timeLabel.frame.origin.x + timeLabel.frame.size.width - 5, deleteButton.frame.origin.y, deleteButton.frame.size.width, deleteButton.frame.size.height);
         }
-        cell.textLabel.font = [UIFont boldSystemFontOfSize:14];
+        textView.font = [UIFont systemFontOfSize:13];
         return cell;
 
     } else {
@@ -825,7 +848,10 @@
         self.commentField.frame = CGRectMake(self.commentField.frame.origin.x, self.commentField.frame.origin.y + keyboardSize.height - 25, self.commentField.frame.size.width, self.commentField.frame.size.height);
         
         self.commentSubmitButton.frame = CGRectMake(self.commentSubmitButton.frame.origin.x, self.commentSubmitButton.frame.origin.y + keyboardSize.height - 25, self.commentSubmitButton.frame.size.width, self.commentSubmitButton.frame.size.height);
+    } completion:^(BOOL finished) {
+        [self.commentsTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.comments.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
     }];
+    
 }
 
 @end

@@ -79,7 +79,6 @@ NSString *const FBSessionStateChangedNotification = @"com.Frecipe.Frecipe:FBSess
 
     if (authentication_token) {
         initViewController = [storyboard instantiateViewControllerWithIdentifier:@"Initial"];
-        
     } else {
         initViewController = [storyboard instantiateViewControllerWithIdentifier:@"Login"];
     }
@@ -167,11 +166,6 @@ NSString *const FBSessionStateChangedNotification = @"com.Frecipe.Frecipe:FBSess
         
     }
 }
-
-- (void)fetchIngredients {
-    
-}
-
 
 // custom methods for registering push notifiactions
 @end

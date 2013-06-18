@@ -9,6 +9,7 @@
 #import "AFHTTPClient.h"
 #import "AFNetworkActivityIndicatorManager.h"
 #import "AFJSONRequestOperation.h"
+#import "FrecipeSpinnerView.h"
 
 @interface FrecipeAPIClient : AFHTTPClient
 

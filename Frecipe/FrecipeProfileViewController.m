@@ -129,14 +129,14 @@
     
     NSURLRequest *request = [client requestWithMethod:@"POST" path:path parameters:parameters];
 
-    UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-    spinner.center = CGPointMake(self.view.frame.size.width / 2, self.view.frame.size.height / 2 - self.navigationController.navigationBar.frame.size.height / 2);
-    [spinner startAnimating];
-    [self.view addSubview:spinner];
+    FrecipeSpinnerView *spinnerView = [[FrecipeSpinnerView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
+    [spinnerView.spinner startAnimating];
+    spinnerView.center = self.view.center;
+    [self.view addSubview:spinnerView];
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
         NSDictionary *user = [JSON objectForKey:@"user"];
         self.user = user;
-        
+        NSLog(@"%@", JSON);
         self.title = [NSString stringWithFormat:@"%@ %@", [user objectForKey:@"first_name"], [user objectForKey:@"last_name"]];
         
         NSString *provider = [NSString stringWithFormat:@"%@", [[JSON objectForKey:@"user"] objectForKey:@"provider"]];
@@ -151,13 +151,10 @@
             } else {
                 [self.profilePictureView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://localhost:5000/%@", [JSON objectForKey:@"profile_image"]]] placeholderImage:[UIImage imageNamed:@"default_profile_picture.png"]];
             }
-            
-//            [self.profilePictureView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"https:/s3.amazonaws.com/Frecipe/image/users/%@/%@", [self.user objectForKey:@"id"], [JSON objectForKey:@"profile_image"]]]];
             self.profilePictureView.alpha = 0;
             [UIView animateWithDuration:0.5 animations:^{
                 self.profilePictureView.alpha = 1;
             }];
-            
         }
         
         self.nameLabel.text = [NSString stringWithFormat:@"%@ %@", [user objectForKey:@"first_name"], [user objectForKey:@"last_name"]];
@@ -172,6 +169,7 @@
             // make a bar button on the left for edit profile
             self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Edit" style:UIBarButtonItemStyleBordered target:self action:@selector(segueToEditProfile)];
         }
+        
         [self.followButton setTitle:[NSString stringWithFormat:@"%@", [JSON objectForKey:@"follow"]] forState:UIControlStateNormal];
         
         NSDictionary *followers = [JSON objectForKey:@"followers"];
@@ -255,13 +253,14 @@
         [self.basicInfoView setBasicShadow];
         [self.detailInfoView setBasicShadow];
         [self.websiteAndAboutView setBasicShadow];
-        [spinner stopAnimating];
-        [spinner removeFromSuperview];
+        
+        [spinnerView.spinner stopAnimating];
+        [spinnerView removeFromSuperview];
 
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
-        
-        [spinner stopAnimating];
-        [spinner removeFromSuperview];
+
+        [spinnerView.spinner stopAnimating];
+        [spinnerView removeFromSuperview];
         
         UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Profile load error" message:@"There was an error loading profile. Retry?" delegate:self cancelButtonTitle:@"Retry" otherButtonTitles:@"Cancel", nil];
         [alertView show];

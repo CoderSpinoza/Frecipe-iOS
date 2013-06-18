@@ -99,9 +99,6 @@
     self.tableViewRefreshControl = tableViewRefreshControl;
     self.collectionViewRefreshControl = collectionViewRefreshControl;
     
-//    [self.collectionViewRefreshControl endRefreshing];
-//    [self.tableViewRefreshControl endRefreshing];    
-    
     // this code is used to insert a background for refresh view
 //    UIView *backgroundView = [[UIView alloc] initWithFrame:CGRectMake(self.ingredientsCollectionView.bounds.origin.x, - self.ingredientsCollectionView.frame.size.height, self.ingredientsCollectionView.bounds.size.width, self.ingredientsCollectionView.bounds.size.height)];
 //    backgroundView.backgroundColor = [UIColor blackColor];
@@ -116,6 +113,11 @@
     FrecipeAPIClient *client = [FrecipeAPIClient client];
     NSURLRequest *request = [client requestWithMethod:@"GET" path:path parameters:nil];
     
+    // insert a spinner view
+    FrecipeSpinnerView *spinnerView = [[FrecipeSpinnerView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
+    spinnerView.center = self.view.center;
+    [spinnerView.spinner startAnimating];
+    [self.view addSubview:spinnerView];
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
         self.ingredients = [NSMutableArray arrayWithArray:JSON];
         if (userIsInTheMiddleOfEditingIngredientsList) {
@@ -126,8 +128,6 @@
         }
         
         self.navigationItem.rightBarButtonItem.enabled = YES;
-        
-        
                 
         if (self.tableViewRefreshControl.isRefreshing) {
             [self.tableViewRefreshControl endRefreshing];
@@ -143,7 +143,8 @@
         
         [self.ingredientsTableView reloadData];
         [self.ingredientsCollectionView reloadData];
-        
+        [spinnerView.spinner stopAnimating];
+        [spinnerView removeFromSuperview];
         
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         
@@ -153,6 +154,9 @@
         
         [self.tableViewRefreshControl endRefreshing];
         [self.collectionViewRefreshControl endRefreshing];
+        
+        [spinnerView.spinner stopAnimating];
+        [spinnerView removeFromSuperview];
     }];
     FrecipeOperationQueue *queue = [FrecipeOperationQueue sharedQueue];
     [queue addOperation:operation];

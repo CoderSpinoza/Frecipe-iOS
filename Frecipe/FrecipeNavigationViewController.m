@@ -383,9 +383,10 @@
             cell.imageView.hidden = YES;
             
         } else {
-            UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(2, 2, 40, 40)];
-            [imageView setImageWithURL:[NSURL URLWithString:[user objectForKey:@"profile_picture"]] placeholderImage:[UIImage imageNamed:@"default_profile_picture.png"]];
-            cell.imageView.image = imageView.image;
+//            UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(2, 2, 40, 40)];
+//            [imageView setImageWithURL:[NSURL URLWithString:[user objectForKey:@"profile_picture"]] placeholderImage:[UIImage imageNamed:@"default_profile_picture.png"]];
+//            cell.imageView.image = imageView.image;
+            [cell.imageView setImageWithURL:[NSURL URLWithString:[user objectForKey:@"profile_picture"]] placeholderImage:[UIImage imageNamed:@"default_profile_picture.png"]];
         }
         
     }

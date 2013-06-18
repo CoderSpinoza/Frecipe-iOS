@@ -818,7 +818,7 @@
                                                                         <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                                     </state>
                                                                 </button>
-                                                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" tag="4" contentMode="scaleToFill" editable="NO" id="POE-Ry-Tpx">
+                                                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" tag="4" contentMode="scaleToFill" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" editable="NO" id="POE-Ry-Tpx">
                                                                     <rect key="frame" x="46" y="16" width="244" height="29"/>
                                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
@@ -2648,9 +2648,6 @@
         <class className="FrecipeFridgeViewController" superclassName="FrecipeMainViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeFridgeViewController.h"/>
             <relationships>
-                <relationship kind="action" name="deleteButtonPressed:" candidateClass="UIBarButtonItem"/>
-                <relationship kind="action" name="revealMenu:" candidateClass="UIBarButtonItem"/>
-                <relationship kind="action" name="segmentedControlPressed:" candidateClass="UISegmentedControl"/>
                 <relationship kind="outlet" name="deleteButton" candidateClass="UIBarButtonItem"/>
                 <relationship kind="outlet" name="ingredientsCollectionView" candidateClass="UICollectionView"/>
                 <relationship kind="outlet" name="ingredientsTableView" candidateClass="UITableView"/>
@@ -2742,6 +2739,7 @@
         <class className="FrecipeRecipeDetailViewController" superclassName="UIViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeRecipeDetailViewController.h"/>
             <relationships>
+                <relationship kind="action" name="commentDeleteButtonPressed:" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="addToGroceryListButton" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="averageRatingView" candidateClass="FrecipeRatingView"/>
                 <relationship kind="outlet" name="commentButton" candidateClass="UIButton"/>
@@ -2796,7 +2794,6 @@
         <class className="FrecipeViewController" superclassName="FrecipeMainViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeViewController.h"/>
             <relationships>
-                <relationship kind="action" name="revealMenu:" candidateClass="UIBarButtonItem"/>
                 <relationship kind="outlet" name="recipesCollectionView" candidateClass="UICollectionView"/>
             </relationships>
         </class>
@@ -2809,9 +2806,6 @@
         <class className="UICollectionViewFlowLayout" superclassName="UICollectionViewLayout">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/UICollectionViewFlowLayout.h"/>
         </class>
-        <class className="UICollectionViewLayout" superclassName="NSObject">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/UICollectionViewLayout.h"/>
-        </class>
     </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
@@ -2819,9 +2813,9 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="sIr-9w-LZ8"/>
-        <segue reference="JfL-XT-BVJ"/>
-        <segue reference="UTp-eQ-C0H"/>
         <segue reference="GxI-kH-EJd"/>
+        <segue reference="gQH-mx-TWG"/>
+        <segue reference="sIr-9w-LZ8"/>
+        <segue reference="TkR-fi-IFc"/>
     </inferredMetricsTieBreakers>
 </document>

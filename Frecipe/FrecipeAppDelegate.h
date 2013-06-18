@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import <FacebookSDK/FacebookSDK.h>
 
-#define PRODUCTION YES
+#define PRODUCTION NO
 #define STAGING YES
 @interface FrecipeAppDelegate : UIResponder <UIApplicationDelegate>
 
