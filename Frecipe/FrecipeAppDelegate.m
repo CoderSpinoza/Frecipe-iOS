@@ -99,15 +99,15 @@ NSString *const FBSessionStateChangedNotification = @"com.Frecipe.Frecipe:FBSess
     return YES;
 }
 
-- (NSString *)customDeviceIdentifierForUpdateManager:(BITUpdateManager *)updateManager {
-#ifndef CONFIGURATION_AppStore
-    if ([[UIDevice currentDevice] respondsToSelector:@selector(uniqueIdentifier)]) {
-        NSLog(@"send device identifier to hockey app!");
-        return [[UIDevice currentDevice] performSelector:@selector(uniqueIdentifier)];
-    }
-#endif
-    return nil;
-}
+//- (NSString *)customDeviceIdentifierForUpdateManager:(BITUpdateManager *)updateManager {
+//#ifndef CONFIGURATION_AppStore
+//    if ([[UIDevice currentDevice] respondsToSelector:@selector(uniqueIdentifier)]) {
+//        NSLog(@"send device identifier to hockey app!");
+//        return [[UIDevice currentDevice] performSelector:@selector(uniqueIdentifier)];
+//    }
+//#endif
+//    return nil;
+//}
 
 
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {

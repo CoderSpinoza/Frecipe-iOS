@@ -17,6 +17,7 @@
 #import "FrecipeSettingsViewController.h"
 #import "FrecipeNotificationsViewController.h"
 #import "FrecipeAppDelegate.h"
+#import "FrecipeUser.h"
 #import <UIImageView+WebCache.h>
 
 @interface FrecipeNavigationViewController () <UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UITableViewDataSource, UITableViewDelegate, FPPopoverControllerDelegate, UISearchBarDelegate, UISearchDisplayDelegate>
@@ -108,13 +109,8 @@
     
     if ([identifier isEqualToString:@"logout.png"]) {
         
-        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-        [defaults setObject:nil forKey:@"authentication_token"];
-        [defaults setObject:nil forKey:@"provider"];
-        [defaults setObject: nil forKey:@"uid"];
-        [defaults setObject:nil forKey:@"name"];
-        [defaults setObject:nil forKey:@"id"];
-        [defaults synchronize];
+//        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        [FrecipeUser clearUserInfo];
         
         [FBSession.activeSession closeAndClearTokenInformation];
         
@@ -386,7 +382,9 @@
 //            UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(2, 2, 40, 40)];
 //            [imageView setImageWithURL:[NSURL URLWithString:[user objectForKey:@"profile_picture"]] placeholderImage:[UIImage imageNamed:@"default_profile_picture.png"]];
 //            cell.imageView.image = imageView.image;
+            cell.imageView.image = nil;
             [cell.imageView setImageWithURL:[NSURL URLWithString:[user objectForKey:@"profile_picture"]] placeholderImage:[UIImage imageNamed:@"default_profile_picture.png"]];
+            cell.imageView.frame = CGRectMake(0, 0, 43, 43);
         }
         
     }

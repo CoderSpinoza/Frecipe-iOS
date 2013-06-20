@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 #import "FrecipeBadgeView.h"
+#import "FrecipeAppDelegate.h"
+
 @interface UIViewController (Frecipe)
 
 - (BOOL)isTall;
@@ -19,4 +21,6 @@
 - (NSDictionary *)loaduserInfo;
 - (NSURL *)documentDirectory;
 - (BOOL)validateEmail:(NSString *)email;
+- (NSString *)s3BucketURL;
+
 @end

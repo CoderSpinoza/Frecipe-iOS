@@ -369,7 +369,7 @@
                                 <rect key="frame" x="20" y="94" width="280" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textField>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="top" lineBreakMode="middleTruncation" id="s82-9u-Bbu">
                                 <rect key="frame" x="20" y="132" width="280" height="280"/>
@@ -1036,6 +1036,9 @@
                                                     <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
                                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                 </state>
+                                                <state key="disabled">
+                                                    <color key="titleColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                                </state>
                                                 <state key="highlighted">
                                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                 </state>
@@ -1480,6 +1483,7 @@
                         <outlet property="detailInfoView" destination="rMz-LN-qgy" id="mlX-tD-VXo"/>
                         <outlet property="fbProfilePictureView" destination="QHj-vJ-Dbh" id="hdF-9C-AyK"/>
                         <outlet property="followButton" destination="0m5-0F-f63" id="ikx-dU-akk"/>
+                        <outlet property="inviteButton" destination="Lmj-Ng-zLn" id="MpU-Vl-egI"/>
                         <outlet property="nameLabel" destination="ozA-pf-2bq" id="SwH-LR-sSw"/>
                         <outlet property="numOfFollowersButton" destination="SJv-gH-SeF" id="2r3-h0-XdO"/>
                         <outlet property="numOfFollowersTitleLabel" destination="vkb-KO-Hye" id="bf6-Iw-FPD"/>
@@ -2706,12 +2710,15 @@
         <class className="FrecipeProfileViewController" superclassName="FrecipeMainViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeProfileViewController.h"/>
             <relationships>
+                <relationship kind="action" name="followButtonPressed:" candidateClass="UIButton"/>
+                <relationship kind="action" name="revealMenu:" candidateClass="UIBarButtonItem"/>
                 <relationship kind="outlet" name="aboutTextView" candidateClass="UITextView"/>
                 <relationship kind="outlet" name="averageRatingView" candidateClass="FrecipeRatingView"/>
                 <relationship kind="outlet" name="basicInfoView" candidateClass="UIView"/>
                 <relationship kind="outlet" name="detailInfoView" candidateClass="UIView"/>
                 <relationship kind="outlet" name="fbProfilePictureView" candidateClass="FBProfilePictureView"/>
                 <relationship kind="outlet" name="followButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="inviteButton" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="nameLabel" candidateClass="UILabel"/>
                 <relationship kind="outlet" name="numOfFollowersButton" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="numOfFollowersTitleLabel" candidateClass="UILabel"/>
@@ -2739,7 +2746,6 @@
         <class className="FrecipeRecipeDetailViewController" superclassName="UIViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeRecipeDetailViewController.h"/>
             <relationships>
-                <relationship kind="action" name="commentDeleteButtonPressed:" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="addToGroceryListButton" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="averageRatingView" candidateClass="FrecipeRatingView"/>
                 <relationship kind="outlet" name="commentButton" candidateClass="UIButton"/>
@@ -2773,6 +2779,7 @@
         <class className="FrecipeSettingsViewController" superclassName="FrecipeMainViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/FrecipeSettingsViewController.h"/>
             <relationships>
+                <relationship kind="action" name="revealMenu:" candidateClass="UIBarButtonItem"/>
                 <relationship kind="outlet" name="settingsTableView" candidateClass="UITableView"/>
             </relationships>
         </class>
@@ -2806,6 +2813,9 @@
         <class className="UICollectionViewFlowLayout" superclassName="UICollectionViewLayout">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/UICollectionViewFlowLayout.h"/>
         </class>
+        <class className="UICollectionViewLayout" superclassName="NSObject">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/UICollectionViewLayout.h"/>
+        </class>
     </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
@@ -2813,9 +2823,9 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="GxI-kH-EJd"/>
         <segue reference="gQH-mx-TWG"/>
-        <segue reference="sIr-9w-LZ8"/>
+        <segue reference="FWi-4a-gi8"/>
         <segue reference="TkR-fi-IFc"/>
+        <segue reference="GxI-kH-EJd"/>
     </inferredMetricsTieBreakers>
 </document>

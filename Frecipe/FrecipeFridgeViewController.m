@@ -122,7 +122,7 @@
         self.ingredients = [NSMutableArray arrayWithArray:JSON];
         if (userIsInTheMiddleOfEditingIngredientsList) {
             NSArray *keys = [NSArray arrayWithObjects:@"name", @"image", nil];
-            NSArray *values = [NSArray arrayWithObjects:@"Add Ingredients", @"https://s3.amazonaws.com/Frecipe/public/image/ingredients/plus.png", nil];
+            NSArray *values = [NSArray arrayWithObjects:@"Add Ingredients", [NSString stringWithFormat:@"%@/ingredients/plus.png", [self s3BucketURL]], nil];
             NSDictionary *addRow = [NSDictionary dictionaryWithObjects:values forKeys:keys];
             [self.ingredients insertObject:addRow atIndex:0];
         }
@@ -253,7 +253,7 @@
     userIsInTheMiddleOfEditingIngredientsList = editing;
     if (editing) {
         NSArray *keys = [NSArray arrayWithObjects:@"name", @"image", nil];
-        NSArray *values = [NSArray arrayWithObjects:@"Add Ingredients", @"https://s3.amazonaws.com/Frecipe/public/image/ingredients/plus.png", nil];
+        NSArray *values = [NSArray arrayWithObjects:@"Add Ingredients", [NSString stringWithFormat:@"%@/ingredients/plus.png", [self s3BucketURL]], nil];
         NSDictionary *addRow = [NSDictionary dictionaryWithObjects:values forKeys:keys];
         [self.ingredients insertObject:addRow atIndex:0];
         [self.ingredientsTableView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:0 inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
@@ -339,7 +339,7 @@
     
     NSString *url;
     
-    if (PRODUCTION || [[NSString stringWithFormat:@"%@", [ingredient objectForKey:@"image"]] isEqualToString:@"https://s3.amazonaws.com/Frecipe/public/image/ingredients/default_ingredient_image.png"]) {
+    if (PRODUCTION || [[NSString stringWithFormat:@"%@", [ingredient objectForKey:@"image"]] isEqualToString:[NSString stringWithFormat:@"%@/ingredients/default_ingredient_image.png", [self s3BucketURL]]]) {
         url = [NSString stringWithFormat:@"%@", [ingredient objectForKey:@"image"]];
     } else {
         url = [NSString stringWithFormat:@"http://localhost:5000/%@", [ingredient objectForKey:@"image"]];

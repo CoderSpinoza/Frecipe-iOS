@@ -155,6 +155,7 @@
         self.title = [NSString stringWithFormat:@"%@", [[JSON objectForKey:@"recipe"] objectForKey:@"name"]];
         self.recipeImageURL = [NSString stringWithFormat:@"%@", [JSON objectForKey:@"recipe_image"]];
         if (PRODUCTION) {
+            NSLog(@"%@", [NSString stringWithFormat:@"%@", [JSON objectForKey:@"recipe_image"]]);
             [self.recipeImageView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@", [JSON objectForKey:@"recipe_image"]]] placeholderImage:[UIImage imageNamed:@"default_recipe_picture.png"]];
         } else {
             [self.recipeImageView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://localhost:5000/%@",[JSON objectForKey:@"recipe_image"]]] placeholderImage:[UIImage imageNamed:@"default_recipe_picture.png"]];
@@ -355,11 +356,6 @@
             self.comments = [JSON objectForKey:@"comments"];
             [self.commentsTableView reloadData];
             
-            if (self.comments.count) {
-//                [self.commentsTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.comments.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
-                UITableViewCell *cell = [self.commentsTableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:self.comments.count - 1 inSection:0]];
-            }
-            
             [self dismissKeyboard];
             self.commentField.text = @"";
         } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
@@ -533,12 +529,11 @@
             [destinationController.ingredients addObject:[ingredient objectForKey:@"name"]];
         }
         
-        [destinationController.ingredients removeObjectAtIndex:destinationController.ingredients.count - 1];
-        
         for (NSDictionary *step in self.directions) {
             [destinationController.directions addObject:step];
         }
         
+        NSLog(@"%@", destinationController.directions);
         destinationController.editing = @"1";
         
         if (destinationController.view) {
@@ -760,7 +755,7 @@
             fbProfilePictureView.profileID = [NSString stringWithFormat:@"%@", [userAndComment objectForKey:@"uid"]];
         } else {
             fbProfilePictureView.hidden = YES;
-            [profilePictureView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://s3.amazonaws.com/Frecipe/public/image/users/%@/%@", [userAndComment objectForKey:@"user_id"], [userAndComment objectForKey:@"profile_picture"]]] placeholderImage:[UIImage imageNamed:@"default_profile_picture"]];
+            [profilePictureView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@/users/%@/%@", [self s3BucketURL], [userAndComment objectForKey:@"user_id"], [userAndComment objectForKey:@"profile_picture"]]] placeholderImage:[UIImage imageNamed:@"default_profile_picture"]];
         }
         
         UIButton *nameButton = (UIButton *)[cell viewWithTag:3];
@@ -839,7 +834,6 @@
 }
 
 - (void)keyboardWillBeHidden:(NSNotification *)notification {
-    
     NSDictionary *info = [notification userInfo];
     CGSize keyboardSize = [[info objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
     self.commentsTableView.frame = CGRectMake(self.commentsTableView.frame.origin.x, self.commentsTableView.frame.origin.y, self.commentsTableView.frame.size.width, self.originalHeight);
@@ -849,7 +843,9 @@
         
         self.commentSubmitButton.frame = CGRectMake(self.commentSubmitButton.frame.origin.x, self.commentSubmitButton.frame.origin.y + keyboardSize.height - 25, self.commentSubmitButton.frame.size.width, self.commentSubmitButton.frame.size.height);
     } completion:^(BOOL finished) {
-        [self.commentsTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.comments.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+        if (self.comments.count > 0) {
+            [self.commentsTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.comments.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+        }
     }];
     
 }

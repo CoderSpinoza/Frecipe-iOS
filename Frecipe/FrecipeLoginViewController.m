@@ -90,6 +90,7 @@
         if ([[NSString stringWithFormat:@"%@", [[JSON objectForKey:@"user"] objectForKey:@"provider"]] isEqualToString:@"facebook"]) {
             [defaults setObject:[[JSON objectForKey:@"user"] objectForKey:@"provider"] forKey:@"provider"];
             [defaults setObject:[[JSON objectForKey:@"user"] objectForKey:@"uid"] forKey:@"uid"];
+        } else {
         }
         
         [defaults setObject:[NSString stringWithFormat:@"%@ %@", [[JSON objectForKey:@"user"] objectForKey:@"first_name"], [[JSON objectForKey:@"user"] objectForKey:@"last_name"]] forKey:@"name"];
@@ -97,6 +98,8 @@
         NSString *profilePictureUrl = [NSString stringWithFormat:@"%@",[JSON objectForKey:@"profile_picture"]];
         
         [defaults setObject:profilePictureUrl forKey:@"profile_picture"];
+        [defaults setObject:[[JSON objectForKey:@"user"] objectForKey:@"website"] forKey:@"website"];
+        [defaults setObject:[[JSON objectForKey:@"user"] objectForKey:@"about"] forKey:@"about"];
         [defaults synchronize];
         
         [self performSegueWithIdentifier:@"Login" sender:self];

@@ -9,8 +9,8 @@
 #import <UIKit/UIKit.h>
 #import <FacebookSDK/FacebookSDK.h>
 
-#define PRODUCTION NO
-#define STAGING YES
+#define PRODUCTION YES
+#define STAGING NO
 @interface FrecipeAppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;

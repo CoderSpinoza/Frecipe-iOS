@@ -205,6 +205,8 @@
             profilePictureUrl = [NSString stringWithFormat:@"%@", [JSON objectForKey:@"profile_picture"]];
             
             [defaults setObject:profilePictureUrl forKey:@"profile_picture"];
+            [defaults setObject:[[JSON objectForKey:@"user"] objectForKey:@"about"] forKey:@"about"];
+            [defaults setObject:[[JSON objectForKey:@"user"] objectForKey:@"website"] forKey:@"website"];
             [defaults synchronize];
             
             [self saveUserInfo:[JSON objectForKey:@"user"] Token:nil ProfilePicture:nil];

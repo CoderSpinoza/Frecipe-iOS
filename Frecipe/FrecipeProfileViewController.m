@@ -136,7 +136,6 @@
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
         NSDictionary *user = [JSON objectForKey:@"user"];
         self.user = user;
-        NSLog(@"%@", JSON);
         self.title = [NSString stringWithFormat:@"%@ %@", [user objectForKey:@"first_name"], [user objectForKey:@"last_name"]];
         
         NSString *provider = [NSString stringWithFormat:@"%@", [[JSON objectForKey:@"user"] objectForKey:@"provider"]];
@@ -144,6 +143,7 @@
             self.profilePictureView.hidden = YES;
             self.fbProfilePictureView.profileID = [NSString stringWithFormat:@"%@", [[JSON objectForKey:@"user"] objectForKey:@"uid"]];
         } else {
+            self.inviteButton.enabled = NO;
             self.fbProfilePictureView.hidden = YES;
             if (PRODUCTION) {
                 [self.profilePictureView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@", [JSON objectForKey:@"profile_image"]]] placeholderImage:[UIImage imageNamed:@"default_profile_picture.png"]];
@@ -151,10 +151,11 @@
             } else {
                 [self.profilePictureView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://localhost:5000/%@", [JSON objectForKey:@"profile_image"]]] placeholderImage:[UIImage imageNamed:@"default_profile_picture.png"]];
             }
-            self.profilePictureView.alpha = 0;
-            [UIView animateWithDuration:0.5 animations:^{
-                self.profilePictureView.alpha = 1;
-            }];
+            
+//            self.profilePictureView.alpha = 0;
+//            [UIView animateWithDuration:0.5 animations:^{
+//                self.profilePictureView.alpha = 1;
+//            }];
         }
         
         self.nameLabel.text = [NSString stringWithFormat:@"%@ %@", [user objectForKey:@"first_name"], [user objectForKey:@"last_name"]];
@@ -369,7 +370,9 @@
         FrecipeEditProfileViewController *destinationViewController = (FrecipeEditProfileViewController *)segue.destinationViewController;
         
         if (destinationViewController.view) {
+            
             destinationViewController.profilePictureView.image = self.profilePictureView.image;
+            NSLog(@"done");
             destinationViewController.fbProfilePictureView.profileID = [NSString stringWithFormat:@"%@", [self.user objectForKey:@"uid"]];            
         }
     } else if ([segue.identifier isEqualToString:@"Profile2"] ) {
@@ -423,7 +426,7 @@
     UIImageView *recipeImageView = (UIImageView *)[cell viewWithTag:6];
     recipeImageView.image = nil;
     if (PRODUCTION) {
-        [recipeImageView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://s3.amazonaws.com/Frecipe/public/image/recipes/%@/%@", [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"id"], [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"recipe_image"]]] placeholderImage:[UIImage imageNamed:@"placeholder.png"]];
+        [recipeImageView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@/recipes/%@/%@",[self s3BucketURL], [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"id"], [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"recipe_image"]]] placeholderImage:[UIImage imageNamed:@"placeholder.png"]];
     } else {
         [recipeImageView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://localhost:5000/image/recipes/%@/%@",[[self.recipes objectAtIndex:indexPath.row] objectForKey:@"id"], [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"recipe_image"]]] placeholderImage:[UIImage imageNamed:@"placeholder.png"]];
     }

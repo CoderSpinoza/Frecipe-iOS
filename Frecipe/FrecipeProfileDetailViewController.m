@@ -173,7 +173,7 @@
     
     FBProfilePictureView *fbProfilePictureView = (FBProfilePictureView *)[cell viewWithTag:1];
     NSString *provider = [user objectForKey:@"provider"];
-    if ([provider isEqualToString:@"facebook"]) {
+    if ([[NSString stringWithFormat:@"%@", provider] isEqualToString:@"facebook"]) {
         cell.imageView.image = [UIImage imageNamed:@"default_profile_picture.png"];
         cell.imageView.hidden = YES;
         FBProfilePictureView *fbProfilePictureView = (FBProfilePictureView *)[cell viewWithTag:1];

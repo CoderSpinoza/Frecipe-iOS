@@ -17,6 +17,7 @@
     BOOL userIsInTheMiddleOfEditingGroceryList;
     BOOL editingRecipes;
     BOOL displayingSpecificRecipe;
+    BOOL firstTimeDisplayingAll;
 }
 
 @property (strong, nonatomic) NSMutableArray *groceryList;
@@ -71,6 +72,8 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
+    
+    firstTimeDisplayingAll = YES;
     self.groceryListTableView.dataSource = self;
     self.groceryListTableView.delegate = self;
     
@@ -190,6 +193,8 @@
     self.recipes = [NSMutableArray arrayWithArray:[groceryListInfo objectForKey:@"recipes"]];
     
     self.groceryList = [NSMutableArray arrayWithArray:[groceryListInfo objectForKey:@"groceries"]];
+    
+    NSDictionary *others = [NSDictionary dictionaryWithObjectsAndKeys:@"0", @"id", @"Others", @"name", @"others.png", @"recipe_image", [self.groceryList mutableCopy], @"missing_ingredients", nil];
     for (NSDictionary *recipe in self.recipes) {
         NSArray *missing_ingredients = [recipe objectForKey:@"missing_ingredients"];
         NSArray *groceries = [recipe objectForKey:@"groceries"];
@@ -206,7 +211,9 @@
     NSDictionary *all = [NSDictionary dictionaryWithObjectsAndKeys:@"0", @"id", @"All Recipes", @"name", @"grocery_list.png", @"recipe_image", self.groceryList, @"missing_ingredients", nil];
     
     [self.recipes insertObject:all atIndex:0];
-
+    [self.recipes addObject:others];
+    
+    NSLog(@"%@", [self.recipes objectAtIndex:self.displayedRecipeIndexPath.row]);
     self.currentGroceryList = [[self.recipes objectAtIndex:self.displayedRecipeIndexPath.row] objectForKey:@"missing_ingredients"];
     self.currentGroceryDetailList = [[self.recipes objectAtIndex:self.displayedRecipeIndexPath.row] objectForKey:@"groceries"];
     self.recipeNameLabel.text = [NSString stringWithFormat:@"%@", [[self.recipes objectAtIndex:self.displayedRecipeIndexPath.row] objectForKey:@"name"]];
@@ -477,8 +484,8 @@
         NSArray *values = [NSArray arrayWithObjects:@"Add to Grocery List", @"plus.png", nil];
         NSDictionary *addRow = [NSDictionary dictionaryWithObjects:values forKeys:keys];
         [self.groceryList insertObject:addRow atIndex:0];
+        
         [self.groceryListTableView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:0 inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
-//        [self.groceryListTableView reloadData];
         
         [self.groceryListTableView setEditing:YES animated:YES];
         
@@ -593,7 +600,7 @@
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
     if (!editingRecipes) {
-        self.navigationItem.rightBarButtonItem.enabled = self.recipes.count > 1;
+        self.navigationItem.rightBarButtonItem.enabled = self.recipes.count > 2;
     }
     
     return self.recipes.count;
@@ -613,11 +620,13 @@
     
     if (indexPath.row == 0) {
         [imageView setImage:[UIImage imageNamed:@"grocery_list.png"]];
+    } else if (indexPath.row == self.recipes.count - 1) {
+        [imageView setImage:[UIImage imageNamed:@"others.png"]];
     } else {
         if (PRODUCTION) {
-            [imageView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@",[recipe objectForKey:@"recipe_image"]]] placeholderImage:[UIImage imageNamed:@"default_recipe_image.png"]];
+            [imageView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@",[recipe objectForKey:@"recipe_image"]]] placeholderImage:[UIImage imageNamed:@"default_recipe_picture.png"]];
         } else {
-            [imageView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://localhost:5000/%@", [recipe objectForKey:@"recipe_image"]]] placeholderImage:[UIImage imageNamed:@"default_recipe_image.png"]];
+            [imageView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://localhost:5000/%@", [recipe objectForKey:@"recipe_image"]]] placeholderImage:[UIImage imageNamed:@"default_recipe_picture.png"]];
         }
     }
     
@@ -626,7 +635,7 @@
     UIView *whiteView = [cell viewWithTag:3];
     
     cell.clipsToBounds = NO;
-    if (indexPath.row != 0) {
+    if (indexPath.row != 0 && indexPath.row != self.recipes.count - 1) {
         if (editingRecipes) {
             [UIView animateWithDuration:0.3 animations:^{
                 deleteView.alpha = 1;
@@ -648,13 +657,20 @@
     } else {
         [self decolorCollectionViewCell:cell];
     }
+    
+    if (firstTimeDisplayingAll && indexPath.row == 0 && !editingRecipes) {
+        [self colorCollectionViewCell:cell];
+        [collectionView selectItemAtIndexPath:indexPath animated:YES scrollPosition:UICollectionViewScrollPositionBottom];
+    }
+    
     return cell;
 }
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     UICollectionViewCell *cell = [collectionView cellForItemAtIndexPath:indexPath];
+    firstTimeDisplayingAll = NO;
     if (editingRecipes) {
-        if (indexPath.row != 0) {
+        if (indexPath.row != 0 && indexPath.row != self.recipes.count - 1) {
             self.selectedRecipe = [self.recipes objectAtIndex:indexPath.row];
             UIView *view = [cell viewWithTag:3];
             if ([self.selectedRecipes containsObject:self.selectedRecipe]) {

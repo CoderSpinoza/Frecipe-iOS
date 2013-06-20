@@ -85,10 +85,28 @@
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     
     NSArray *keys = [NSArray arrayWithObjects:@"id", @"email", @"first_name", @"last_name", @"provider", @"uid", @"website", @"about", nil];
-    NSArray *values = [NSArray arrayWithObjects:[defaults stringForKey:@"id"],[defaults stringForKey:@"email"], [defaults stringForKey:@"first_name"], [defaults stringForKey:@"last_name"], [defaults stringForKey:@"provider"], [defaults stringForKey:@"uid"], [defaults stringForKey:@"website"], [defaults stringForKey:@"about"], nil];
+    
+    NSString *provider = [defaults stringForKey:@"provider"];
+    NSString *uid = [defaults stringForKey:@"uid"];
+    if (provider == nil) {
+        provider = @"";
+        uid = @"";
+    }
+    
+    NSArray *values = [NSArray arrayWithObjects:[defaults stringForKey:@"id"],[defaults stringForKey:@"email"], [defaults stringForKey:@"first_name"], [defaults stringForKey:@"last_name"], provider, uid, [defaults stringForKey:@"website"], [defaults stringForKey:@"about"], nil];
     
     NSDictionary *user = [NSDictionary dictionaryWithObjects:values forKeys:keys];
     return user;
+}
+
+- (NSString *)s3BucketURL {
+    NSString *url;
+    if (STAGING) {
+        url = @"https://s3.amazonaws.com/Frecipe/public/image";
+    } else {
+        url = @"https://s3.amazonaws.com/FrecipeProduction/public/image";
+    }
+    return url;
 }
 
 

@@ -33,10 +33,11 @@
     self.user = [self loaduserInfo];
 //
     if ([[NSString stringWithFormat:@"%@", [self.user objectForKey:@"provider"]] isEqualToString:@"facebook"]) {
-        self.fbProfilePictureView.profileID = [NSString stringWithFormat:@"%@", [self.user objectForKey:@"uid"]];
         self.profilePictureView.hidden = YES;
         
     } else {
+        self.profilePictureView.hidden = NO;
+        self.profilePictureView.alpha = 1;
         self.fbProfilePictureView.hidden = YES;
     }
     
