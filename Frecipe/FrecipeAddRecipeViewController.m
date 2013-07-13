@@ -213,7 +213,7 @@
         }
     } else if ([textField isEqual:self.directionField]) {
         if (![textField.text isEqualToString:@""]) {
-            [self.directions addObject:[textField.text capitalizedString]];
+            [self.directions addObject:textField.text];
             textField.text = @"";
             [self.directionsTableView reloadData];
             if (self.directions.count > 0) {

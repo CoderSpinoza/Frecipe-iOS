@@ -42,4 +42,6 @@
 @property (strong,nonatomic) FPPopoverController *editDeletePopoverViewController;
 @property (strong, nonatomic) FrecipeEditDeleteViewController *editDeleteViewController;
 
+@property (strong, nonatomic) FPPopoverController *commentsPopoverViewController;
+
 @end

@@ -172,15 +172,21 @@
     cell.textLabel.text = [NSString stringWithFormat:@"%@ %@", [user objectForKey:@"first_name"], [user objectForKey:@"last_name"]];
     
     FBProfilePictureView *fbProfilePictureView = (FBProfilePictureView *)[cell viewWithTag:1];
+    UIImageView *imageView = (UIImageView *)[cell viewWithTag:2];
     NSString *provider = [user objectForKey:@"provider"];
     if ([[NSString stringWithFormat:@"%@", provider] isEqualToString:@"facebook"]) {
+        fbProfilePictureView.hidden = NO;
         cell.imageView.image = [UIImage imageNamed:@"default_profile_picture.png"];
         cell.imageView.hidden = YES;
-        FBProfilePictureView *fbProfilePictureView = (FBProfilePictureView *)[cell viewWithTag:1];
+        imageView.hidden = YES;
         fbProfilePictureView.profileID = [user objectForKey:@"uid"];
     } else {
+        cell.imageView.image = [UIImage imageNamed:@"default_profile_picture.png"];
+        cell.imageView.hidden = YES;
         fbProfilePictureView.hidden = YES;
-        [cell.imageView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@", [user objectForKey:@"profile_picture"]]] placeholderImage:[UIImage imageNamed:@"default_profile_picture.png"]];
+        imageView.hidden = NO;
+        [imageView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@", [user objectForKey:@"profile_picture"]]] placeholderImage:[UIImage imageNamed:@"default_profile_picture.png"]];
+        
     }
     return cell;
 }

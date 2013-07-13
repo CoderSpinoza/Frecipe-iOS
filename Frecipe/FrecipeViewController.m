@@ -14,7 +14,7 @@
 #import "FrecipeBadgeView.h"
 #import "FrecipeSpinnerView.h"
 #import "FrecipeFunctions.h"
-#import <AFNetworking/UIImageView+AFNetworking.h>
+#import "UIImageView+WebCache.h"
 
 @interface FrecipeViewController () <UICollectionViewDelegateFlowLayout, UICollectionViewDataSource>
 
@@ -281,11 +281,27 @@
     
     // setting the image view for the cell using AFNetworking. Does this do caching automatically?
     UIImageView *recipeImageView = (UIImageView *)[cell viewWithTag:6];
-    recipeImageView.image = nil;
+    recipeImageView.alpha = 0;
     if (PRODUCTION) {
         [recipeImageView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@/recipes/%@/%@", [self s3BucketURL],[[self.recipes objectAtIndex:indexPath.row] objectForKey:@"id"], [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"recipe_image"]]] placeholderImage:[UIImage imageNamed:@"default_recipe_picture.png"]];
+        [recipeImageView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@/recipes/%@/%@", [self s3BucketURL],[[self.recipes objectAtIndex:indexPath.row] objectForKey:@"id"], [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"recipe_image"]]] placeholderImage:[UIImage imageNamed:@"default_recipe_picture.png"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType) {
+            UIImageView *recipeImageView = (UIImageView *)[cell viewWithTag:6];
+            [UIView animateWithDuration:0.2 animations:^{
+                recipeImageView.alpha = 1;
+            }];
+            
+        }];
+//        [recipeImageView setImageWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@/recipes/%@/%@", [self s3BucketURL],[[self.recipes objectAtIndex:indexPath.row] objectForKey:@"id"], [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"recipe_image"]]]] placeholderImage:[UIImage imageNamed:@"default_recipe_picture.png"] success:^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image) {
+//            [UIView animateWithDuration:0.2 animations:^{
+//                UIImageView *recipeImageView2 = (UIImageView *)[cell viewWithTag:6];
+//                recipeImageView2.alpha = 1;
+//            }];
+//        } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error) {
+//            
+//        }];
     } else {
         [recipeImageView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://localhost:5000/image/recipes/%@/%@",[[self.recipes objectAtIndex:indexPath.row] objectForKey:@"id"], [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"recipe_image"]]] placeholderImage:[UIImage imageNamed:@"default_recipe_picture.png"]];
+        recipeImageView.alpha = 1;
     }
     
     

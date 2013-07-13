@@ -14,6 +14,7 @@
 		C23358D01765DCEC00AF0CE2 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C23358CF1765DCEC00AF0CE2 /* CoreTelephony.framework */; };
 		C23358D21765DCFB00AF0CE2 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C23358D11765DCFB00AF0CE2 /* libz.dylib */; };
 		C23A133617712114003BCEE6 /* FrecipeUser.m in Sources */ = {isa = PBXBuildFile; fileRef = C23A133517712114003BCEE6 /* FrecipeUser.m */; };
+		C24CE794177E72B200A47455 /* FrecipeCommentsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C24CE793177E72B200A47455 /* FrecipeCommentsViewController.m */; };
 		C251F006175D839C00DF956F /* FrecipeSendFeedbackViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C251F005175D839B00DF956F /* FrecipeSendFeedbackViewController.m */; };
 		C25651AB174D95AA005755A9 /* fridge_background.png in Resources */ = {isa = PBXBuildFile; fileRef = C25651AA174D95AA005755A9 /* fridge_background.png */; };
 		C25651AE174F6132005755A9 /* UIColor+Frecipe.m in Sources */ = {isa = PBXBuildFile; fileRef = C25651AD174F6132005755A9 /* UIColor+Frecipe.m */; };
@@ -171,6 +172,8 @@
 		C23358D11765DCFB00AF0CE2 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		C23A133417712114003BCEE6 /* FrecipeUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrecipeUser.h; sourceTree = "<group>"; };
 		C23A133517712114003BCEE6 /* FrecipeUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FrecipeUser.m; sourceTree = "<group>"; };
+		C24CE792177E72B200A47455 /* FrecipeCommentsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrecipeCommentsViewController.h; sourceTree = "<group>"; };
+		C24CE793177E72B200A47455 /* FrecipeCommentsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FrecipeCommentsViewController.m; sourceTree = "<group>"; };
 		C251F004175D839B00DF956F /* FrecipeSendFeedbackViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrecipeSendFeedbackViewController.h; sourceTree = "<group>"; };
 		C251F005175D839B00DF956F /* FrecipeSendFeedbackViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FrecipeSendFeedbackViewController.m; sourceTree = "<group>"; };
 		C25651AA174D95AA005755A9 /* fridge_background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = fridge_background.png; sourceTree = "<group>"; };
@@ -539,6 +542,8 @@
 				C2E4771B172F7E0000EC3660 /* FrecipeSettingsViewController.m */,
 				C2A32879172E048D00EBB23B /* FrecipeRecipeDetailViewController.h */,
 				C2A3287A172E048D00EBB23B /* FrecipeRecipeDetailViewController.m */,
+				C24CE792177E72B200A47455 /* FrecipeCommentsViewController.h */,
+				C24CE793177E72B200A47455 /* FrecipeCommentsViewController.m */,
 				C2A3287C172E049800EBB23B /* FrecipeAddIngredientsViewController.h */,
 				C2A3287D172E049800EBB23B /* FrecipeAddIngredientsViewController.m */,
 				C2A3287F172E04A100EBB23B /* FrecipeAddRecipeViewController.h */,
@@ -952,6 +957,7 @@
 				C27674D917601E1500828EEF /* FrecipeTextField.m in Sources */,
 				C27674DC17608BB200828EEF /* FrecipeOperationQueue.m in Sources */,
 				C23A133617712114003BCEE6 /* FrecipeUser.m in Sources */,
+				C24CE794177E72B200A47455 /* FrecipeCommentsViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

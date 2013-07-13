@@ -94,7 +94,6 @@
     }
     
     NSArray *values = [NSArray arrayWithObjects:[defaults stringForKey:@"id"],[defaults stringForKey:@"email"], [defaults stringForKey:@"first_name"], [defaults stringForKey:@"last_name"], provider, uid, [defaults stringForKey:@"website"], [defaults stringForKey:@"about"], nil];
-    
     NSDictionary *user = [NSDictionary dictionaryWithObjects:values forKeys:keys];
     return user;
 }

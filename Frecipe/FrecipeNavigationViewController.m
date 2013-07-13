@@ -86,10 +86,11 @@
 // fetch notifications every time this view appears
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    
+    [self reloadProfilePicture];
     [self fetchNotifications];
     
 }
-
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
@@ -136,6 +137,13 @@
 }
 
 - (IBAction)notificationButtonPressed {
+}
+
+- (void)reloadProfilePicture {
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    
+    NSString *profilePictureUrl = [defaults stringForKey:@"profile_picture"];
+    [self.profilePictureView setImageWithURL:[NSURL URLWithString:profilePictureUrl]];
 }
 
 - (void)fetchUserInfo {
@@ -375,16 +383,20 @@
             cell.imageView.image = [UIImage imageNamed:@"default_profile_picture.png"];
             FBProfilePictureView *fbProfilePictureView = [[FBProfilePictureView alloc] initWithProfileID:[NSString stringWithFormat:@"%@", [user objectForKey:@"uid"]] pictureCropping:FBProfilePictureCroppingSquare];
             fbProfilePictureView.frame = CGRectMake(0, 0, 43, 43);
+            fbProfilePictureView.tag = 1;
             [cell addSubview:fbProfilePictureView];
-            cell.imageView.hidden = YES;
+//            cell.imageView.hidden = YES;
             
         } else {
-//            UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(2, 2, 40, 40)];
-//            [imageView setImageWithURL:[NSURL URLWithString:[user objectForKey:@"profile_picture"]] placeholderImage:[UIImage imageNamed:@"default_profile_picture.png"]];
-//            cell.imageView.image = imageView.image;
-            cell.imageView.image = nil;
-            [cell.imageView setImageWithURL:[NSURL URLWithString:[user objectForKey:@"profile_picture"]] placeholderImage:[UIImage imageNamed:@"default_profile_picture.png"]];
-            cell.imageView.frame = CGRectMake(0, 0, 43, 43);
+            cell.imageView.image = [UIImage imageNamed:@"default_profile_picture.png"];
+            UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 43, 43)];
+            [imageView setImageWithURL:[NSURL URLWithString:[user objectForKey:@"profile_picture"]] placeholderImage:[UIImage imageNamed:@"default_profile_picture.png"]];
+            FBProfilePictureView *previousView = (FBProfilePictureView *)[cell viewWithTag:1];
+            [previousView removeFromSuperview];
+            [cell addSubview:imageView];
+//            cell.imageView.hidden = YES;
+//            [cell.imageView setImageWithURL:[NSURL URLWithString:[user objectForKey:@"profile_picture"]] placeholderImage:[UIImage imageNamed:@"default_profile_picture.png"]];
+//            cell.imageView.frame = CGRectMake(0, 0, 43, 43);
         }
         
     }

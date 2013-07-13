@@ -16,6 +16,8 @@
 @property (weak, nonatomic) IBOutlet FBProfilePictureView *fbProfilePictureView;
 
 @property (weak, nonatomic) IBOutlet UIImageView *profilePictureView;
+@property (weak, nonatomic) IBOutlet UILabel *editLabel;
+
 
 @property (weak, nonatomic) IBOutlet UITextField *firstNameField;
 @property (weak, nonatomic) IBOutlet UITextField *lastNameField;

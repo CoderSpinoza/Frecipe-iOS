@@ -151,11 +151,6 @@
             } else {
                 [self.profilePictureView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://localhost:5000/%@", [JSON objectForKey:@"profile_image"]]] placeholderImage:[UIImage imageNamed:@"default_profile_picture.png"]];
             }
-            
-//            self.profilePictureView.alpha = 0;
-//            [UIView animateWithDuration:0.5 animations:^{
-//                self.profilePictureView.alpha = 1;
-//            }];
         }
         
         self.nameLabel.text = [NSString stringWithFormat:@"%@ %@", [user objectForKey:@"first_name"], [user objectForKey:@"last_name"]];
@@ -372,7 +367,6 @@
         if (destinationViewController.view) {
             
             destinationViewController.profilePictureView.image = self.profilePictureView.image;
-            NSLog(@"done");
             destinationViewController.fbProfilePictureView.profileID = [NSString stringWithFormat:@"%@", [self.user objectForKey:@"uid"]];            
         }
     } else if ([segue.identifier isEqualToString:@"Profile2"] ) {
@@ -435,15 +429,15 @@
     UITextView *recipeNameView = (UITextView *)[cell viewWithTag:8];
     recipeNameView.text = [NSString stringWithFormat:@"%@",[[self.recipes objectAtIndex:indexPath.row] objectForKey:@"name"]];
     UILabel *recipeNameLabel = (UILabel *)[cell viewWithTag:2];
-    recipeNameLabel.text = [NSString stringWithFormat:@"%@",[[self.recipes objectAtIndex:indexPath.row] objectForKey:@"recipe_name"]];
+    recipeNameLabel.text = [NSString stringWithFormat:@"%@",[[self.recipes objectAtIndex:indexPath.row] objectForKey:@"name"]];
     
     UIButton *chefNameButton = (UIButton *)[cell viewWithTag:3];
-    [chefNameButton setTitle:[NSString stringWithFormat:@"%@", [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"name"]] forState:UIControlStateNormal];
+    [chefNameButton setTitle:[NSString stringWithFormat:@"%@", [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"username"]] forState:UIControlStateNormal];
     
     // chef name button, missing ingredients, and likes on front view
     
     UIButton *frontNameButton = (UIButton *)[cell viewWithTag:11];
-    [frontNameButton setTitle:[NSString stringWithFormat:@"%@", [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"name"]] forState:UIControlStateNormal];
+    [frontNameButton setTitle:[NSString stringWithFormat:@"%@", [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"username"]] forState:UIControlStateNormal];
     [frontNameButton sizeToFit];
     frontNameButton.frame = CGRectMake(cell.frame.size.width - [frontNameButton.titleLabel.text sizeWithFont:[UIFont boldSystemFontOfSize:13]].width - 7, frontNameButton.frame.origin.y, frontNameButton.frame.size.width, frontNameButton.frame.size.height);
     
@@ -485,13 +479,37 @@
 // scroll view delegate methods
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-    if ([scrollView isEqual:self.scrollView]) {
-        if (scrollView.contentOffset.y + self.view.frame.size.height + 10 > scrollView.contentSize.height && scrollView.contentSize.height < self.recipesCollectionView.frame.origin.y + 150 * ceil((float)self.recipes.count / 2) + 10) {
-            
-            scrollView.contentSize = CGSizeMake(scrollView.contentSize.width, self.view.frame.size.height + scrollView.contentOffset.y + 30);
-            self.recipesCollectionView.frame = CGRectMake(self.recipesCollectionView.frame.origin.x, self.recipesCollectionView.frame.origin.y, self.recipesCollectionView.frame.size.width, self.scrollView.contentSize.height - self.recipesCollectionView.frame.origin.y - 10);
+    if ([scrollView isEqual:self.scrollView]) {        
+        CGFloat extraOffset;
+        if ([self isTall]) {
+            extraOffset = 30;
+        } else {
+            extraOffset = 118;
+        }
+        if (scrollView.contentOffset.y + self.view.frame.size.height + extraOffset > scrollView.contentSize.height && scrollView.contentSize.height < self.recipesCollectionView.frame.origin.y + 150 * ceil((float)self.recipes.count / 2) + 30) {
+            self.recipesCollectionView.frame = CGRectMake(self.recipesCollectionView.frame.origin.x, self.recipesCollectionView.frame.origin.y, self.recipesCollectionView.frame.size.width, MIN(self.recipesCollectionView.frame.size.height + 150, 150 * ceil((float) self.recipes.count / 2)));
+            scrollView.contentSize = CGSizeMake(scrollView.contentSize.width, self.recipesCollectionView.frame.origin.y + self.recipesCollectionView.frame.size.height + extraOffset);
         }
     }
 }
 
+//- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
+//    if ([scrollView isEqual:self.scrollView]) {
+//        NSLog(@"decelerate");
+//        if (scrollView.contentOffset.y + self.view.frame.size.height + 30 > scrollView.contentSize.height && scrollView.contentSize.height < self.recipesCollectionView.frame.origin.y + 150 * ceil((float) self.recipes.count / 2) + 10) {
+//            self.recipesCollectionView.frame = CGRectMake(self.recipesCollectionView.frame.origin.x, self.recipesCollectionView.frame.origin.y, self.recipesCollectionView.frame.size.width, self.recipesCollectionView.frame.origin.y + self.recipesCollectionView.frame.size.height + 150);
+//            scrollView.contentSize = CGSizeMake(scrollView.contentSize.width, self.recipesCollectionView.frame.origin.y + self.recipesCollectionView.frame.size.height + 10);
+//        }
+//    }
+//}
+
+//- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
+//    if ([scrollView isEqual:self.scrollView]) {
+//        NSLog(@"decelerate");
+//        if (scrollView.contentOffset.y + self.view.frame.size.height + 30 > scrollView.contentSize.height && scrollView.contentSize.height < self.recipesCollectionView.frame.origin.y + 150 * ceil((float) self.recipes.count / 2) + 10) {
+//            self.recipesCollectionView.frame = CGRectMake(self.recipesCollectionView.frame.origin.x, self.recipesCollectionView.frame.origin.y, self.recipesCollectionView.frame.size.width, self.recipesCollectionView.frame.origin.y + self.recipesCollectionView.frame.size.height + 150);
+//            scrollView.contentSize = CGSizeMake(scrollView.contentSize.width, self.recipesCollectionView.frame.origin.y + self.recipesCollectionView.frame.size.height + 10);
+//        }
+//    }
+//}
 @end

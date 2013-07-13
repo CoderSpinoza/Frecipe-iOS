@@ -128,16 +128,22 @@
     }
     NSString *provider = [NSString stringWithFormat:@"%@", [source objectForKey:@"provider"]];
     
+    FBProfilePictureView *fbProfilePictreView = [[FBProfilePictureView alloc] initWithProfileID:[NSString stringWithFormat:@"%@", [source objectForKey:@"uid"]] pictureCropping:FBProfilePictureCroppingSquare];
     if ([provider isEqualToString:@"facebook"]) {
-        FBProfilePictureView *fbProfilePictreView = [[FBProfilePictureView alloc] initWithProfileID:[NSString stringWithFormat:@"%@", [source objectForKey:@"uid"]] pictureCropping:FBProfilePictureCroppingSquare];
-        
+        UIImageView *imageView = (UIImageView *)[cell viewWithTag:1];
+        [imageView removeFromSuperview];
         cell.imageView.image = [UIImage imageNamed:@"default_profile_picture.png"];
-        fbProfilePictreView.frame = CGRectMake(0, 0, 44, 43);
+        fbProfilePictreView.frame = CGRectMake(0, 0, 43, 43);
         [cell addSubview:fbProfilePictreView];
         cell.imageView.hidden = YES;
     } else {
-        cell.imageView.image = nil;
-        [cell.imageView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@", [notification objectForKey:@"profile_picture"]]] placeholderImage:[UIImage imageNamed:@"default_profile_picture.png"]];
+        cell.imageView.image = [UIImage imageNamed:@"default_profile_picture.png"];
+        fbProfilePictreView.hidden = YES;
+        UIImageView *imageView = [[UIImageView alloc] init];
+        imageView.tag = 1;
+        [imageView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@", [notification objectForKey:@"profile_picture"]]] placeholderImage:[UIImage imageNamed:@"default_profile_picture.png"]];
+        [cell addSubview:imageView];
+        imageView.frame = CGRectMake(0, 0, 43, 43);
     }
     
     return cell;

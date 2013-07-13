@@ -8,10 +8,12 @@
 
 #import "FrecipeEditProfileViewController.h"
 #import "FrecipeAPIClient.h"
+#import "ECSlidingViewController.h"
 
-@interface FrecipeEditProfileViewController () <UITextFieldDelegate, UITextViewDelegate>
+@interface FrecipeEditProfileViewController () <UITextFieldDelegate, UITextViewDelegate, UIActionSheetDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate>
 
 @property (strong, nonatomic) UITextField *currentField;
+@property (strong, nonatomic) UIImage *image;
 
 @end
 
@@ -34,6 +36,7 @@
 //
     if ([[NSString stringWithFormat:@"%@", [self.user objectForKey:@"provider"]] isEqualToString:@"facebook"]) {
         self.profilePictureView.hidden = YES;
+        self.editLabel.hidden = YES;
         
     } else {
         self.profilePictureView.hidden = NO;
@@ -80,8 +83,6 @@
 
 - (IBAction)saveButtonPressed:(UIBarButtonItem *)sender {
     NSString *path = @"tokens/update";
-    [[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];
-    [[AFNetworkActivityIndicatorManager sharedManager] incrementActivityCount];
     
     NSString *authentication_token = [[NSUserDefaults standardUserDefaults] stringForKey:@"authentication_token"];
     NSArray *keys = [NSArray arrayWithObjects:@"authentication_token", @"first_name", @"last_name", @"website", @"about", nil];
@@ -89,20 +90,59 @@
     
     NSDictionary *parameters = [NSDictionary dictionaryWithObjects:values forKeys:keys];
     FrecipeAPIClient *client = [FrecipeAPIClient client];
-    NSURLRequest *request = [client requestWithMethod:@"PUT" path:path parameters:parameters];
+//    NSURLRequest *request = [client requestWithMethod:@"PUT" path:path parameters:parameters];
+    
+    NSMutableURLRequest *request = [client multipartFormRequestWithMethod:@"PUT" path:path parameters:parameters constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
+        if (self.image) {
+             [formData appendPartWithFileData:UIImageJPEGRepresentation(self.image, 0.9) name:@"image" fileName:@"profile_picture.jpg" mimeType:@"image/jpeg"];
+        }
+    }];
+    
+    // button handling
+    UIView *blockingView = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y - 20, self.view.frame.size.width, self.view.frame.size.height)];
+    blockingView.backgroundColor = [UIColor clearColor];
+    FrecipeSpinnerView *spinnerView = [[FrecipeSpinnerView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
+    spinnerView.center = blockingView.center;
+    [spinnerView.spinner startAnimating];
+    spinnerView.label.text = @"Updating";
+    [blockingView addSubview:spinnerView];
+    [self.view addSubview:blockingView];
+    
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
         
-        [self saveUserInfo:[JSON objectForKey:@"user"] Token:nil ProfilePicture:nil];
+        [self saveUserInfo:[JSON objectForKey:@"user"] Token:nil ProfilePicture:[NSString stringWithFormat:@"%@", [JSON objectForKey:@"profile_picture"]]];
+        
+        NSLog(@"%@", self.slidingViewController.underLeftViewController);
+        [blockingView removeFromSuperview];
         [self dismissViewControllerAnimated:YES completion:nil];
-        [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         NSLog(@"%@", error);
         UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Profile Update Error" message:@"There was an error updating your profile." delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: nil];
         [alertView show];
-        [[AFNetworkActivityIndicatorManager sharedManager] decrementActivityCount];
+        [blockingView removeFromSuperview];
     }];
     FrecipeOperationQueue *queue = [FrecipeOperationQueue sharedQueue];
     [queue addOperation:operation];
+}
+
+- (void)addGestureRecognizers {
+    UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissKeyboard)];
+    [self.view addGestureRecognizer:tapGestureRecognizer];
+    
+    UITapGestureRecognizer *profilePictureTapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(openProfilePictureActionSheet)];
+    self.profilePictureView.userInteractionEnabled = YES;
+    [self.profilePictureView addGestureRecognizer:profilePictureTapGestureRecognizer];
+}
+
+- (void)dismissKeyboard {
+    [self.currentField resignFirstResponder];
+    [self.websiteField resignFirstResponder];
+    [self.aboutTextView resignFirstResponder];
+}
+
+- (void)openProfilePictureActionSheet {
+    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"How to upload profile picture?" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Camera", @"Photo Library", nil];
+    [actionSheet showInView:self.view];
 }
 
 // text field delegate methods
@@ -120,16 +160,42 @@
     return YES;
 }
 
-- (void)addGestureRecognizers {
-    UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissKeyboard)];
-    [self.view addGestureRecognizer:tapGestureRecognizer];
+
+// action sheet delegate methods
+- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
+    if (buttonIndex == 0) {
+        [self openRecipeImagePicker:@"camera"];
+    } else if (buttonIndex == 1){
+        [self openRecipeImagePicker:@"library"];
+    }
 }
 
-- (void)dismissKeyboard {
-    [self.currentField resignFirstResponder];
-    [self.websiteField resignFirstResponder];
-    [self.aboutTextView resignFirstResponder];
+- (void)openRecipeImagePicker:(NSString *)sourceType {
+    UIImagePickerController *imagePickerController = [[UIImagePickerController alloc] init];
+    
+    if ([sourceType isEqualToString:@"camera"]) {
+        imagePickerController.sourceType = UIImagePickerControllerSourceTypeCamera;
+    } else {
+        imagePickerController.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+    }
+    imagePickerController.delegate = self;
+    imagePickerController.restorationIdentifier = @"profilePicture";
+    imagePickerController.allowsEditing = YES;
+    [self presentViewController:imagePickerController animated:YES completion:nil];
 }
+
+// image picker delegate methods
+
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
+    if ([picker.restorationIdentifier isEqualToString:@"profilePicture"]) {
+        UIImage *image = [info valueForKey:UIImagePickerControllerEditedImage];
+        self.image = image;
+        self.profilePictureView.image = image;
+        [picker dismissViewControllerAnimated:YES completion:nil];
+    }
+}
+
+//keyboard registration
 
 - (void)keyboardWillBeShown:(NSNotification *)notification {
     

@@ -63,6 +63,7 @@
     NSURLRequest *request = [client requestWithMethod:@"GET" path:path parameters:nil];
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
         self.allIngredients = [NSMutableArray arrayWithArray:JSON];
+        NSLog(@"%@", self.allIngredients);
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         
     }];
