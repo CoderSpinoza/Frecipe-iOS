@@ -7,9 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <MLPAutoCompleteTextField/MLPAutoCompleteTextField.h>
+#import <MLPAutoCompleteTextField/MLPAutoCompleteTextFieldDataSource.h>
+#import <MLPAutoCompleteTextField/MLPAutoCompleteTextFieldDelegate.h>
 
 @interface FrecipeAddIngredientsViewController : UIViewController
-@property (weak, nonatomic) IBOutlet UITextField *ingredientField;
+@property (weak, nonatomic) IBOutlet MLPAutoCompleteTextField *ingredientField;
 @property (weak, nonatomic) IBOutlet UITableView *ingredientsTableView;
 
 @end

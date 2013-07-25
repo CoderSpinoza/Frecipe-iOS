@@ -11,6 +11,20 @@
 
 @implementation FrecipeAPIClient
 
++ (NSURL *)baseUrl {
+    NSString *url;
+    if (PRODUCTION) {
+        if (STAGING) {
+            url = @"http://frecipe-staging.herokuapp.com";
+        } else {
+            url = @"http://frecipe.herokuapp.com";
+        }
+    } else {
+        url = @"http://localhost:5000";
+    }
+    return [NSURL URLWithString:url];
+}
+
 + (FrecipeAPIClient *)client {
     NSString *url;
     if (PRODUCTION) {

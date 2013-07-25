@@ -159,7 +159,7 @@
     [self.searchedFriends removeAllObjects];
     
     NSPredicate *firstNameFilterPredicate = [NSPredicate predicateWithFormat:@"first_name beginswith[c] %@", searchString];
-    
+
     NSPredicate *lastNameFilterPredicate = [NSPredicate predicateWithFormat:@"last_name beginswith[cd] %@", searchString];
     
     NSArray *firstNameArray = [self.facebookFriends filteredArrayUsingPredicate:firstNameFilterPredicate];

@@ -56,7 +56,7 @@
 	// Do any additional setup after loading the view.
     
     // menu setup
-    self.menu = [NSArray arrayWithObjects:@"frecipe.png", @"my_fridge.png", @"my_restaurant.png", @"grocery_list.png", @"settings.png", @"logout.png", nil];
+    self.menu = [NSArray arrayWithObjects:@"frecipe.png", @"my_fridge.png", @"my_restaurant.png", @"grocery_list.png", @"leaderboard.png", @"settings.png", nil];
     [self.slidingViewController setAnchorRightRevealAmount:200.0f];
     self.slidingViewController.underLeftWidthLayout = ECFullWidth;
     
@@ -108,32 +108,28 @@
     NSIndexPath *indexPath = [self.menuCollectionView indexPathForCell:cell];
     NSString *identifier = [NSString stringWithFormat:@"%@", [self.menu objectAtIndex:indexPath.row]];
     
-    if ([identifier isEqualToString:@"logout.png"]) {
+    UIViewController *newTopViewController = [self.storyboard instantiateViewControllerWithIdentifier:identifier];
+    [self.slidingViewController anchorTopViewOffScreenTo:ECRight animations:nil onComplete:^{
+        self.slidingViewController.topViewController = newTopViewController;
+        [self.slidingViewController resetTopView];
         
-//        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-        [FrecipeUser clearUserInfo];
-        
-        [FBSession.activeSession closeAndClearTokenInformation];
-        
-       [self.slidingViewController anchorTopViewOffScreenTo:ECRight animations:nil onComplete:^{
-           FrecipeAppDelegate *delegate = [[UIApplication sharedApplication] delegate];
-           [UIView transitionWithView:delegate.window duration:0.7 options:UIViewAnimationOptionTransitionFlipFromRight animations:^{
-               BOOL oldState = [UIView areAnimationsEnabled];
-               [UIView setAnimationsEnabled:NO];
-               delegate.window.rootViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"Login"];
-               [UIView setAnimationsEnabled:oldState];
-           } completion:nil];
-           
-           
-        }];
-    } else {
-        UIViewController *newTopViewController = [self.storyboard instantiateViewControllerWithIdentifier:identifier];
-        [self.slidingViewController anchorTopViewOffScreenTo:ECRight animations:nil onComplete:^{
-            self.slidingViewController.topViewController = newTopViewController;
-            [self.slidingViewController resetTopView];
-            
-        }];
-    }
+    }];
+}
+
+- (IBAction)logoutButtonPressed {
+    [FrecipeUser clearUserInfo];
+    
+    [FBSession.activeSession closeAndClearTokenInformation];
+    
+    [self.slidingViewController anchorTopViewOffScreenTo:ECRight animations:nil onComplete:^{
+        FrecipeAppDelegate *delegate = [[UIApplication sharedApplication] delegate];
+        [UIView transitionWithView:delegate.window duration:0.7 options:UIViewAnimationOptionTransitionFlipFromRight animations:^{
+            BOOL oldState = [UIView areAnimationsEnabled];
+            [UIView setAnimationsEnabled:NO];
+            delegate.window.rootViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"Login"];
+            [UIView setAnimationsEnabled:oldState];
+        } completion:nil];
+    }];
 }
 
 - (IBAction)notificationButtonPressed {
@@ -183,6 +179,9 @@
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSString *authentication_token = [defaults stringForKey:@"authentication_token"];
     
+    if (authentication_token == nil) {
+        return;
+    }
     NSDictionary *parameters = [NSDictionary dictionaryWithObject:authentication_token forKey:@"authentication_token"];
     
     FrecipeAPIClient *client = [FrecipeAPIClient client];
@@ -333,7 +332,7 @@
     return cell;
 }
 
-// table view delegate and dataSource methods
+// table view dataSource methods
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 2;
@@ -385,7 +384,6 @@
             fbProfilePictureView.frame = CGRectMake(0, 0, 43, 43);
             fbProfilePictureView.tag = 1;
             [cell addSubview:fbProfilePictureView];
-//            cell.imageView.hidden = YES;
             
         } else {
             cell.imageView.image = [UIImage imageNamed:@"default_profile_picture.png"];
@@ -394,14 +392,45 @@
             FBProfilePictureView *previousView = (FBProfilePictureView *)[cell viewWithTag:1];
             [previousView removeFromSuperview];
             [cell addSubview:imageView];
-//            cell.imageView.hidden = YES;
-//            [cell.imageView setImageWithURL:[NSURL URLWithString:[user objectForKey:@"profile_picture"]] placeholderImage:[UIImage imageNamed:@"default_profile_picture.png"]];
-//            cell.imageView.frame = CGRectMake(0, 0, 43, 43);
         }
         
     }
     return cell;
 }
+
+// table view delegate methods
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    CGFloat fontSize = 14;
+    UIFont *boldFont = [UIFont boldSystemFontOfSize:fontSize];
+    
+    NSDictionary *notification = [self.notifications objectAtIndex:indexPath.row];
+    NSDictionary *source = [notification objectForKey:@"source"];
+    NSDictionary *recipe = [notification objectForKey:@"recipe"];
+    NSString *category = [NSString stringWithFormat:@"%@", [notification objectForKey:@"category"]];
+    
+    NSString *sourceName = [NSString stringWithFormat:@"%@ %@", [source objectForKey:@"first_name"], [source objectForKey:@"last_name"]];
+    NSString *originalText;
+    if ([category isEqualToString:@"like"]) {
+        originalText = [NSString stringWithFormat:@"%@ liked your recipe %@.", sourceName, [recipe objectForKey:@"name"]];
+    } else if ([category isEqualToString:@"comment"]) {
+        originalText = [NSString stringWithFormat:@"%@ commented on your recipe %@.", sourceName, [recipe objectForKey:@"name"]];
+    } else if ([category isEqualToString:@"follow"]) {
+        originalText = [NSString stringWithFormat:@"%@ is now following you!", sourceName];
+    } else {
+        originalText = [NSString stringWithFormat:@"%@ uploaded a new recipe %@.", sourceName, [recipe objectForKey:@"name"]];
+    }
+    
+    CGSize constraintSize = CGSizeMake(200, MAXFLOAT);
+    CGSize labelSize = [originalText sizeWithFont:boldFont constrainedToSize:constraintSize lineBreakMode:NSLineBreakByWordWrapping];    
+    if (labelSize.height > 40) {
+        return labelSize.height+10;
+    } else {
+        return 44;
+    }
+    
+}
+
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];

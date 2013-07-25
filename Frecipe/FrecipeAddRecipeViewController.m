@@ -9,11 +9,12 @@
 #import "FrecipeAddRecipeViewController.h"
 #import "FrecipeAPIClient.h"
 
-@interface FrecipeAddRecipeViewController () <UITextFieldDelegate, UITableViewDataSource, UITableViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIAlertViewDelegate, UIActionSheetDelegate> {
+@interface FrecipeAddRecipeViewController () <UITextFieldDelegate, UITableViewDataSource, UITableViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIAlertViewDelegate, UIActionSheetDelegate, MLPAutoCompleteTextFieldDataSource, MLPAutoCompleteTextFieldDelegate> {
     BOOL userHasUploadedRecipePhoto;
 }
 
 @property (strong, nonatomic) UITextField *currentField;
+@property (strong, nonatomic) NSArray *allIngredients;
 
 @end
 
@@ -60,14 +61,19 @@
     self.ingredientField.delegate = self;
     self.directionField.delegate = self;
     
+    self.ingredientField.autoCompleteTableCellBackgroundColor = [UIColor whiteColor];
+    self.ingredientField.autoCompleteDataSource = self;
+    self.ingredientField.autoCompleteTableView.userInteractionEnabled = YES;
+    self.ingredientField.autoCompleteDelegate = self;
     self.ingredientsTableView.dataSource = self;
     self.ingredientsTableView.delegate = self;
     
     self.directionsTableView.dataSource = self;
     self.directionsTableView.delegate = self;
-    
-    [self addGestureRecognizers];
+
+//    [self addGestureRecognizers];
     [self registerForKeyboardNotifications];
+    [self fetchAllIngredients];
 }
 
 - (void)didReceiveMemoryWarning
@@ -76,11 +82,28 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (void)fetchAllIngredients {
+    NSString *path = @"ingredients.json";
+    FrecipeAPIClient *client = [FrecipeAPIClient client];
+    NSURLRequest *request = [client requestWithMethod:@"GET" path:path parameters:nil];
+    AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
+        self.allIngredients = [NSMutableArray arrayWithArray:JSON];
+    } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
+        
+    }];
+    FrecipeOperationQueue *queue = [FrecipeOperationQueue sharedQueue];
+    [queue addOperation:operation];
+}
+
 - (IBAction)cancelButtonPressed:(UIBarButtonItem *)sender {
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (IBAction)segmentedControlPressed:(UISegmentedControl *)sender {
+    
+    if (self.ingredientField.autoCompleteTableViewHidden == NO) {
+        [self.ingredientField resignFirstResponder];
+    }
     if (sender.selectedSegmentIndex == 0) {
         self.recipeNameField.hidden = NO;
         self.recipeImageButton.hidden = NO;
@@ -163,11 +186,19 @@
 
 - (void)addGestureRecognizers {
     UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissKeyboard)];
+    
+//    UITapGestureRecognizer *tapGestureRecognizer2 = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissKeyboardForIngredientsTableView)];
     [self.view addGestureRecognizer:tapGestureRecognizer];
+//    [self.ingredientsTableView addGestureRecognizer:tapGestureRecognizer2];
+//    [self.directionsTableView addGestureRecognizer:tapGestureRecognizer2];
 }
 
 - (void)dismissKeyboard {
     [self.currentField resignFirstResponder];
+}
+
+- (void)dismissKeyboardForIngredientsTableView {
+    [self.ingredientField resignFirstResponder];
 }
 
 - (IBAction)showImagePickerActionSheet {
@@ -359,6 +390,23 @@
             [self.directionsTableView setEditing:YES animated:YES];
         }
     }
+}
+
+// MLPAutoCompleteTextField dataSource and delegate methods
+
+- (void)autoCompleteTextField:(MLPAutoCompleteTextField *)textField possibleCompletionsForString:(NSString *)string completionHandler:(void (^)(NSArray *))handler {
+    
+    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0);
+    dispatch_async(queue, ^{
+        handler(self.allIngredients);
+    });
+}
+
+- (void)autoCompleteTextField:(MLPAutoCompleteTextField *)textField didSelectAutoCompleteString:(NSString *)selectedString withAutoCompleteObject:(id<MLPAutoCompletionObject>)selectedObject forRowAtIndexPath:(NSIndexPath *)indexPath {
+    [self.ingredients addObject:[selectedString capitalizedString]];
+    self.ingredientField.text = @"";
+    [self.ingredientsTableView reloadData];
+    [self.ingredientField performSelector:@selector(becomeFirstResponder) withObject:nil afterDelay:0.1f];
 }
 
 // keyboard notification

@@ -7,13 +7,15 @@
 //
 
 #import <UIKit/UIKit.h>
-
+#import <MLPAutoCompleteTextField/MLPAutoCompleteTextField.h>
+#import <MLPAutoCompleteTextField/MLPAutoCompleteTextFieldDataSource.h>
+#import <MLPAutoCompleteTextField/MLPAutoCompleteTextFieldDelegate.h>
 @interface FrecipeAddRecipeViewController : UIViewController
 
 @property (weak, nonatomic) IBOutlet UINavigationBar *navigationBar;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *segmentedControl;
 @property (weak, nonatomic) IBOutlet UITextField *recipeNameField;
-@property (weak, nonatomic) IBOutlet UITextField *ingredientField;
+@property (weak, nonatomic) IBOutlet MLPAutoCompleteTextField *ingredientField;
 @property (weak, nonatomic) IBOutlet UITextField *directionField;
 @property (weak, nonatomic) IBOutlet UIButton *recipeImageButton;
 @property (weak, nonatomic) IBOutlet UITableView *ingredientsTableView;

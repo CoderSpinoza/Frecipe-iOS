@@ -9,7 +9,7 @@
 #import "FrecipeAddIngredientsViewController.h"
 #import "FrecipeAPIClient.h"
 
-@interface FrecipeAddIngredientsViewController () <UITextFieldDelegate, UITableViewDataSource, UITableViewDelegate> {
+@interface FrecipeAddIngredientsViewController () <UITextFieldDelegate, UITableViewDataSource, UITableViewDelegate, MLPAutoCompleteTextFieldDataSource, MLPAutoCompleteTextFieldDelegate> {
     CGFloat originalHeight;
 }
 
@@ -42,6 +42,8 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
+    self.ingredientField.autoCompleteDataSource = self;
+    self.ingredientField.autoCompleteDelegate = self;
     self.ingredientField.delegate = self;
     self.ingredientsTableView.delegate = self;
     self.ingredientsTableView.dataSource = self;
@@ -49,6 +51,12 @@
     [self fetchAllIngredients];
     [self addGestureRecognizers];
     [self registerForKeyboardNotification];
+    [self.ingredientField setAutoCompleteTableAppearsAsKeyboardAccessory:NO];
+    self.ingredientField.autoCompleteTableBackgroundColor = [UIColor whiteColor];
+    self.ingredientField.autoCompleteTableCellBackgroundColor = [UIColor whiteColor];
+//    [self.ingredientField registerAutoCompleteCellClass:[DEMOCustomAutoCompleteCell class]
+//                                       forCellReuseIdentifier:@"CustomCellId"];
+
 }
 
 - (void)didReceiveMemoryWarning
@@ -63,7 +71,6 @@
     NSURLRequest *request = [client requestWithMethod:@"GET" path:path parameters:nil];
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
         self.allIngredients = [NSMutableArray arrayWithArray:JSON];
-        NSLog(@"%@", self.allIngredients);
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         
     }];
@@ -81,7 +88,7 @@
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSString *authentication_token = [defaults objectForKey:@"authentication_token"];
-    
+
     [self.ingredients addObject:[self.ingredientField.text capitalizedString]];
     NSString *ingredientsString = [self.ingredients componentsJoinedByString:@","];
     
@@ -108,12 +115,13 @@
 
 - (void)addGestureRecognizers {
     UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissKeyboard)];
-    [self.view addGestureRecognizer:tapGestureRecognizer];
+    [self.ingredientsTableView addGestureRecognizer:tapGestureRecognizer];
 }
 
 - (void)dismissKeyboard {
     [self.ingredientField resignFirstResponder];
 }
+
 
 // text field delegate methods
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
@@ -132,6 +140,24 @@
     }
     return YES;
 }
+
+// MLPAutoCompleteTextField dataSource and delegate methods
+- (void)autoCompleteTextField:(MLPAutoCompleteTextField *)textField possibleCompletionsForString:(NSString *)string completionHandler:(void (^)(NSArray *))handler {
+    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0);
+    dispatch_async(queue, ^{        
+        handler(self.allIngredients);
+    });
+    
+}
+
+- (void)autoCompleteTextField:(MLPAutoCompleteTextField *)textField didSelectAutoCompleteString:(NSString *)selectedString withAutoCompleteObject:(id<MLPAutoCompletionObject>)selectedObject forRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    [self.ingredients addObject:selectedString];
+    self.ingredientField.text = @"";
+    [self.ingredientsTableView reloadData];
+    [self.ingredientField performSelector:@selector(becomeFirstResponder) withObject:nil afterDelay:0.1f];
+}
+
 // table view methods
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {

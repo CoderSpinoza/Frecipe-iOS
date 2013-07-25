@@ -10,6 +10,7 @@
 		BC272C53E9E9495BB99A3C98 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CC3902FF59D545519B935676 /* libPods.a */; };
 		C2009095176331DD009D3259 /* frecipe_name_high.png in Resources */ = {isa = PBXBuildFile; fileRef = C2009094176331DD009D3259 /* frecipe_name_high.png */; };
 		C205D7A6175858650032BD34 /* FrecipeProfileDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C205D7A5175858640032BD34 /* FrecipeProfileDetailViewController.m */; };
+		C21E47A71798AEE00049A7D1 /* leaderboard.png in Resources */ = {isa = PBXBuildFile; fileRef = C21E47A61798AEE00049A7D1 /* leaderboard.png */; };
 		C23358CE1765DCC100AF0CE2 /* NewRelicAgent.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C23358CD1765DCC100AF0CE2 /* NewRelicAgent.framework */; };
 		C23358D01765DCEC00AF0CE2 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C23358CF1765DCEC00AF0CE2 /* CoreTelephony.framework */; };
 		C23358D21765DCFB00AF0CE2 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C23358D11765DCFB00AF0CE2 /* libz.dylib */; };
@@ -94,6 +95,7 @@
 		C2A32893172E988D00EBB23B /* FrecipeFacebookInviteViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C2A32892172E988C00EBB23B /* FrecipeFacebookInviteViewController.m */; };
 		C2CB619817458D8A004B9C11 /* iPadInitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C2CB619717458D8A004B9C11 /* iPadInitViewController.m */; };
 		C2CB619B1745EC7D004B9C11 /* UIView+Frecipe.m in Sources */ = {isa = PBXBuildFile; fileRef = C2CB619A1745EC7D004B9C11 /* UIView+Frecipe.m */; };
+		C2D10DD217925DD600306BE3 /* FrecipeLeaderboardViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C2D10DD117925DD600306BE3 /* FrecipeLeaderboardViewController.m */; };
 		C2D1FB231749A8D50096C036 /* checkbox.png in Resources */ = {isa = PBXBuildFile; fileRef = C2D1FB211749A8D50096C036 /* checkbox.png */; };
 		C2D1FB241749A8D50096C036 /* checkmark.png in Resources */ = {isa = PBXBuildFile; fileRef = C2D1FB221749A8D50096C036 /* checkmark.png */; };
 		C2D1FB281749BF7F0096C036 /* black_leather.png in Resources */ = {isa = PBXBuildFile; fileRef = C2D1FB271749BF7F0096C036 /* black_leather.png */; };
@@ -167,6 +169,7 @@
 		C2009094176331DD009D3259 /* frecipe_name_high.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = frecipe_name_high.png; sourceTree = "<group>"; };
 		C205D7A4175858630032BD34 /* FrecipeProfileDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrecipeProfileDetailViewController.h; sourceTree = "<group>"; };
 		C205D7A5175858640032BD34 /* FrecipeProfileDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FrecipeProfileDetailViewController.m; sourceTree = "<group>"; };
+		C21E47A61798AEE00049A7D1 /* leaderboard.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = leaderboard.png; sourceTree = "<group>"; };
 		C23358CD1765DCC100AF0CE2 /* NewRelicAgent.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = NewRelicAgent.framework; sourceTree = "<group>"; };
 		C23358CF1765DCEC00AF0CE2 /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
 		C23358D11765DCFB00AF0CE2 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
@@ -294,6 +297,8 @@
 		C2CB619717458D8A004B9C11 /* iPadInitViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iPadInitViewController.m; sourceTree = "<group>"; };
 		C2CB61991745EC7D004B9C11 /* UIView+Frecipe.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+Frecipe.h"; sourceTree = "<group>"; };
 		C2CB619A1745EC7D004B9C11 /* UIView+Frecipe.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Frecipe.m"; sourceTree = "<group>"; };
+		C2D10DD017925DD600306BE3 /* FrecipeLeaderboardViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrecipeLeaderboardViewController.h; sourceTree = "<group>"; };
+		C2D10DD117925DD600306BE3 /* FrecipeLeaderboardViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FrecipeLeaderboardViewController.m; sourceTree = "<group>"; };
 		C2D1FB211749A8D50096C036 /* checkbox.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = checkbox.png; sourceTree = "<group>"; };
 		C2D1FB221749A8D50096C036 /* checkmark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = checkmark.png; sourceTree = "<group>"; };
 		C2D1FB271749BF7F0096C036 /* black_leather.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = black_leather.png; sourceTree = "<group>"; };
@@ -540,6 +545,8 @@
 				C2A32877172E047F00EBB23B /* FrecipeGroceryListViewController.m */,
 				C2E4771A172F7E0000EC3660 /* FrecipeSettingsViewController.h */,
 				C2E4771B172F7E0000EC3660 /* FrecipeSettingsViewController.m */,
+				C2D10DD017925DD600306BE3 /* FrecipeLeaderboardViewController.h */,
+				C2D10DD117925DD600306BE3 /* FrecipeLeaderboardViewController.m */,
 				C2A32879172E048D00EBB23B /* FrecipeRecipeDetailViewController.h */,
 				C2A3287A172E048D00EBB23B /* FrecipeRecipeDetailViewController.m */,
 				C24CE792177E72B200A47455 /* FrecipeCommentsViewController.h */,
@@ -608,6 +615,7 @@
 				C2E08EED1735E5B600C1C705 /* grocery_list.png */,
 				C2E6E7BD177009BB00EF87C8 /* others.png */,
 				C2E08EEE1735E5B600C1C705 /* logout.png */,
+				C21E47A61798AEE00049A7D1 /* leaderboard.png */,
 				C2E08EEF1735E5B600C1C705 /* my_fridge.png */,
 				C2E08EF01735E5B600C1C705 /* my_restaurant.png */,
 				C2E08EF11735E5B600C1C705 /* settings.png */,
@@ -850,6 +858,7 @@
 				C26C73E4176D4ECE00369462 /* 5757.png in Resources */,
 				C26C73E6176D4F0800369462 /* 114114.png in Resources */,
 				C2E6E7BE177009BB00EF87C8 /* others.png in Resources */,
+				C21E47A71798AEE00049A7D1 /* leaderboard.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -958,6 +967,7 @@
 				C27674DC17608BB200828EEF /* FrecipeOperationQueue.m in Sources */,
 				C23A133617712114003BCEE6 /* FrecipeUser.m in Sources */,
 				C24CE794177E72B200A47455 /* FrecipeCommentsViewController.m in Sources */,
+				C2D10DD217925DD600306BE3 /* FrecipeLeaderboardViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

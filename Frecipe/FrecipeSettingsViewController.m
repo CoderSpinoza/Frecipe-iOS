@@ -9,6 +9,8 @@
 #import "FrecipeSettingsViewController.h"
 #import "FrecipeNavigationController.h"
 #import "FrecipeBadgeView.h"
+#import "FrecipeUser.h"
+#import "ECSlidingViewController.h"
 
 @interface FrecipeSettingsViewController () <UITableViewDataSource, UITableViewDelegate>
 
@@ -36,7 +38,7 @@
     self.settingsTableView.delegate = self;
     self.notificationBadge = [self addNotificationBadge];
     
-    self.settings = [NSArray arrayWithObjects:@"Change Password", @"Send Feedback", nil];
+    self.settings = [NSArray arrayWithObjects:@"Change Password", @"Send Feedback", @"Log out", nil];
 }
 
 - (void)didReceiveMemoryWarning
@@ -76,6 +78,20 @@
         [self performSegueWithIdentifier:@"ChangePassword" sender:self];
     } else if (indexPath.section == 0 && indexPath.row == 1) {
         [self performSegueWithIdentifier:@"SendFeedback" sender:self];
+    } else if (indexPath.section == 0 && indexPath.row == 2) {
+        [FrecipeUser clearUserInfo];
+        
+        [FBSession.activeSession closeAndClearTokenInformation];
+        
+        [self.slidingViewController anchorTopViewOffScreenTo:ECRight animations:nil onComplete:^{
+            FrecipeAppDelegate *delegate = [[UIApplication sharedApplication] delegate];
+            [UIView transitionWithView:delegate.window duration:0.7 options:UIViewAnimationOptionTransitionFlipFromRight animations:^{
+                BOOL oldState = [UIView areAnimationsEnabled];
+                [UIView setAnimationsEnabled:NO];
+                delegate.window.rootViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"Login"];
+                [UIView setAnimationsEnabled:oldState];
+            } completion:nil];
+        }];
     }
     cell.selected = NO;
 }

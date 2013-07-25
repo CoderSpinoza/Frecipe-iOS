@@ -1,13 +1,16 @@
 PODS:
   - AFNetworking (1.2.1)
   - FPPopover (1.4.1)
+  - MLPAutoCompleteTextField (1.5)
 
 DEPENDENCIES:
   - AFNetworking
   - FPPopover
+  - MLPAutoCompleteTextField
 
 SPEC CHECKSUMS:
   AFNetworking: a44069e3c9c89867544f6639482f155c7e5f9b41
   FPPopover: 0289b796c031d8f27bd221d93d282ffe23619893
+  MLPAutoCompleteTextField: 8baf7b9a78cbc6022a50f985c1c56784248821fe
 
 COCOAPODS: 0.20.2

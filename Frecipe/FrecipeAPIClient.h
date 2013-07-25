@@ -13,6 +13,7 @@
 
 @interface FrecipeAPIClient : AFHTTPClient
 
++ (NSURL *)baseUrl;
 + (FrecipeAPIClient *)client;
 
 @end
