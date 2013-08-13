@@ -27,6 +27,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    self.trackedViewName = @"Forgot Password";
 	// Do any additional setup after loading the view.
     self.emailField.delegate = self;
     [self addGestureRecognizers];
@@ -44,7 +45,9 @@
 }
 
 - (IBAction)sendButtonPressed:(UIBarButtonItem *)sender {
+    
     if ([self validateEmail:self.emailField.text]) {
+        [[[GAI sharedInstance] defaultTracker] sendEventWithCategory:@"Settings" withAction:@"Forgot Password" withLabel:@"Forgot Password" withValue:[NSNumber numberWithInt:1]];
         NSString *path = @"tokens/reset";
         
         NSDictionary *parameters = [NSDictionary dictionaryWithObjectsAndKeys:self.emailField.text, @"email", nil];

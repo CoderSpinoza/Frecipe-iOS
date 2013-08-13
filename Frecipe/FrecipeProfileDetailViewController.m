@@ -34,6 +34,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    self.trackedViewName = @"Profile Detail";
 	// Do any additional setup after loading the view.
     if ([self.segueIdentifier isEqualToString:@"Followers"] || [self.segueIdentifier isEqualToString:@"Following"]) {
         [self fetchUsers];

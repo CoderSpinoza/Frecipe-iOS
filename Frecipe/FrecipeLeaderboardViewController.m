@@ -9,9 +9,12 @@
 #import "FrecipeLeaderboardViewController.h"
 #import "FrecipeNavigationController.h"
 #import "FrecipeUser.h"
+#import "FrecipeProfileViewController.h"
+#import "FrecipeEventDetailViewController.h"
+#import "FrecipeFunctions.h"
 #import <AFNetworking/UIImageView+AFNetworking.h>
 
-@interface FrecipeLeaderboardViewController () <UITableViewDataSource, UITableViewDelegate, UIAlertViewDelegate> {
+@interface FrecipeLeaderboardViewController () <UITableViewDataSource, UITableViewDelegate, UIAlertViewDelegate, FPPopoverControllerDelegate> {
     int myRanking;
     int myFacebookRanking;
 }
@@ -21,10 +24,23 @@
 @property (strong, nonatomic) NSMutableArray *facebookUsers;
 @property (strong, nonatomic) NSMutableArray *totalUsers;
 @property (strong, nonatomic) NSDictionary *user;
+@property (strong, nonatomic) NSDictionary *selectedUser;
+@property (strong, nonatomic) NSDictionary *event;
+@property (strong, nonatomic) NSTimer *timer;
+@property (strong, nonatomic) FrecipeEventDetailViewController *eventDetailViewController;
+
 @end
 
 @implementation FrecipeLeaderboardViewController
 @synthesize uids = _uids;
+@synthesize eventDetailViewController = _eventDetailViewController;
+
+- (FrecipeEventDetailViewController *)eventDetailViewController {
+    if (_eventDetailViewController == nil) {
+        _eventDetailViewController = [[FrecipeEventDetailViewController alloc] init];
+    }
+    return _eventDetailViewController;
+}
 
 - (NSMutableArray *)uids {
     if (_uids == nil) {
@@ -46,15 +62,18 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
+    self.trackedViewName = @"Leaderboard";
     self.friendsLeaderboard.dataSource = self;
     self.friendsLeaderboard.delegate = self;
     self.totalLeaderboard.dataSource = self;
     self.totalLeaderboard.delegate = self;
     
+    self.segmentedControl.enabled = NO;
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSString *provider = [defaults stringForKey:@"provider"];
     
+    [[NSUserDefaults standardUserDefaults]synchronize];
     if ([provider isEqualToString:@"facebook"]) {
         self.facebookHideView.hidden = YES;
         self.segmentedControl.selectedSegmentIndex = 0;
@@ -66,11 +85,22 @@
         self.friendsLeaderboard.hidden = YES;
         self.totalLeaderboard.hidden = NO;
     }
+    
+//    self.myRankingView.layer.borderColor = [[UIColor colorWithRed:0.9 green:0.9 blue:0.9 alpha:0.9] CGColor];
+    self.myRankingView.backgroundColor = [UIColor colorWithRed:0.7f green:0.7f blue:0.7f alpha:0.9f];
+
+    self.myRankingView.layer.borderWidth = 1.0f;
+
     [self fetchScores];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    [self.eventPopoverController dismissPopoverAnimated:YES];
 }
 
 - (void)fetchScores {
@@ -82,6 +112,33 @@
     } else {
         [self fetchAllScores];
     }
+}
+
+- (void)showEventPopup {
+    self.eventDetailViewController.event = self.event;
+    
+    self.eventPopoverController = [[FPPopoverController alloc] initWithViewController:self.eventDetailViewController delegate:self];
+    self.eventPopoverController.delegate = self;
+    self.eventPopoverController.arrowDirection = FPPopoverArrowDirectionAny;
+    self.eventPopoverController.contentSize = CGSizeMake(320, self.view.frame.size.height);
+    
+    [self.eventPopoverController presentPopoverFromPoint:CGPointMake(280, 20)];
+}
+
+- (void)startTimer {
+    self.timer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(advanceTimer) userInfo:nil repeats:YES];
+    [[NSRunLoop currentRunLoop] addTimer:self.timer forMode:NSDefaultRunLoopMode];
+}
+
+- (void)advanceTimer {
+    NSDate *currentDate = [NSDate date];
+    NSDate *eventDate = [FrecipeFunctions dateWithString:[NSString stringWithFormat:@"%@", [self.event objectForKey:@"deadline"]]];
+    
+    NSTimeInterval interval = [eventDate timeIntervalSinceDate:currentDate];
+    
+    
+    NSString *timerString = [FrecipeFunctions compareWithCurrentDateForTimer:interval];
+    self.eventDetailViewController.deadlineLabel.text = [NSString stringWithFormat:@"Time Left: %@", timerString];
 }
 
 - (void)fetchFriendScores {
@@ -140,6 +197,17 @@
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
         self.totalUsers = [NSArray arrayWithArray:[JSON objectForKey:@"users"]];
         self.user = [NSDictionary dictionaryWithDictionary:[JSON objectForKey:@"user"]];
+        self.event = [NSDictionary dictionaryWithDictionary:[JSON objectForKey:@"event"]];
+        
+        [self startTimer];
+        if (self.event) {
+            self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Event" style:UIBarButtonItemStyleBordered target:self action:@selector(showEventPopup)];
+            if (self.fromFrecipe) {
+                if ([self.navigationController.visibleViewController isEqual:self]) {
+                    [self showEventPopup];
+                }                
+            }
+        }
         
         NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"points" ascending:NO];
         NSSortDescriptor *sortDescriptor2 = [NSSortDescriptor sortDescriptorWithKey:@"first_name" ascending:YES];
@@ -166,7 +234,13 @@
         self.facebookUsers = [[self.totalUsers filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"uid IN %@", self.uids]] mutableCopy];
         
         myRanking = [self.totalUsers indexOfObject:self.user] + 1;
-        myFacebookRanking = [self.facebookUsers indexOfObject:self.user] + 1;
+        
+        if (self.facebookFriends) {
+            myFacebookRanking = [self.facebookUsers indexOfObject:self.user] + 1;
+        } else {
+            myFacebookRanking = 1;
+        }
+        
         
         if (self.segmentedControl.selectedSegmentIndex == 0) {
             self.myRankingLabel.text = [NSString stringWithFormat:@"%i", myFacebookRanking];
@@ -176,7 +250,9 @@
         
         
         
-        self.totalUsers = [[self.totalUsers subarrayWithRange:NSMakeRange(0, 50)] mutableCopy];
+        if (self.totalUsers.count > 50) {
+            self.totalUsers = [[self.totalUsers subarrayWithRange:NSMakeRange(0, 50)] mutableCopy];
+        }
         
         if ([provider isEqualToString:@"facebook"]) {
             self.fbProfilePictureView.profileID = [NSString stringWithFormat:@"%@", [self.user objectForKey:@"uid"]];
@@ -188,9 +264,27 @@
             }
         }
         
+        
+        self.myRankingLabel.textColor = [UIColor whiteColor];
+        self.myRankingLabel.layer.cornerRadius = 18.0f;
+        self.myRankingLabel.frame = CGRectMake(4, 15, 36, 36);
+        if ([self.myRankingLabel.text isEqualToString:@"1"]) {
+            self.myRankingLabel.backgroundColor = [UIColor colorWithRed:1.0 green:185.0/255.0 blue:15.0/255.0 alpha:1];
+        } else if ([self.myRankingLabel.text isEqualToString:@"2"]) {
+        
+            self.myRankingLabel.backgroundColor = [UIColor lightGrayColor];
+        } else if ([self.myRankingLabel.text isEqualToString:@"3"]) {
+            self.myRankingLabel.backgroundColor = [UIColor colorWithRed:166.0/255.0 green:125.0/255.0 blue:61.0/255.0 alpha:1];
+        } else {
+            self.myRankingLabel.frame = CGRectMake(0, 11, 44, 44);
+            self.myRankingLabel.layer.cornerRadius = 0;
+            self.myRankingLabel.textColor = [UIColor blackColor];
+        }
+        
         [self.friendsLeaderboard reloadData];
         [self.totalLeaderboard reloadData];
 
+        self.segmentedControl.enabled = YES;
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         NSLog(@"%@", error);
         
@@ -235,6 +329,49 @@
         self.myRankingLabel.text = [NSString stringWithFormat:@"%i", myRanking];
     }
 }
+
+- (IBAction)connectWithFacebookButtonPressed {
+    NSArray *permissions = [[NSArray alloc] initWithObjects:
+                            @"email",
+                            @"user_likes",
+                            nil];
+
+    [FBSession openActiveSessionWithReadPermissions:permissions allowLoginUI:YES completionHandler:^(FBSession *session, FBSessionState status, NSError *error) {
+        FrecipeAppDelegate *delegate = [[UIApplication sharedApplication] delegate];
+        [delegate sessionStateChanged:session State:status Error:error];
+        
+        [[FBRequest requestForMe] startWithCompletionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
+            NSDictionary *paramters = @{@"uid": [NSString stringWithFormat:@"%@", [result objectForKey:@"id"]], @"email": [result objectForKey:@"email"], @"authentication_token": [[NSUserDefaults standardUserDefaults] stringForKey:@"authentication_token"]};
+            [self connectFacebookWithParameters:paramters];
+            
+        }];
+    }];
+    
+}
+
+- (void)connectFacebookWithParameters:(NSDictionary *)parameters {
+    NSString *path = @"facebook/connect";
+    FrecipeAPIClient *client = [FrecipeAPIClient client];
+    NSURLRequest *request = [client requestWithMethod:@"POST" path:path parameters:parameters];
+    
+    AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
+        
+        [[NSUserDefaults standardUserDefaults] setValue:@"facebook" forKey:@"provider"];
+        [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%@", [parameters objectForKey:@"uid"]] forKey:@"uid"];
+        
+        [[NSUserDefaults standardUserDefaults] synchronize];
+        [self fetchScores];
+    } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
+        NSLog(@"%@", error);
+        
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Facebook Connect Error" message:[NSString stringWithFormat:@"%@", [JSON objectForKey:@"message"]] delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: nil];
+        [alertView show];
+    }];
+    
+    FrecipeOperationQueue *queue = [FrecipeOperationQueue sharedQueue];
+    [queue addOperation:operation];
+}
+
 
 // alert view delegate methods
 
@@ -289,19 +426,27 @@
         if (indexPath.row == 0) {
             rankingLabel.textColor = [UIColor whiteColor];
             rankingLabel.backgroundColor = [UIColor colorWithRed:1.0 green:185.0/255.0 blue:15.0/255.0 alpha:1];
-            cell.contentView.backgroundColor = [UIColor colorWithRed:1.0 green:185.0/255.0 blue:15.0/255.0 alpha:1];
+            rankingLabel.layer.cornerRadius = 18.0f;
+            rankingLabel.frame = CGRectMake(4, 10, 36, 36);
+//            cell.contentView.backgroundColor = [UIColor colorWithRed:1.0 green:185.0/255.0 blue:15.0/255.0 alpha:1];
         } else if (indexPath.row == 1) {
             rankingLabel.textColor = [UIColor whiteColor];
             rankingLabel.backgroundColor = [UIColor lightGrayColor];
-            cell.contentView.backgroundColor = [UIColor lightGrayColor];
+            rankingLabel.layer.cornerRadius = 18.0f;
+            rankingLabel.frame = CGRectMake(4, 10, 36, 36);
+//            cell.contentView.backgroundColor = [UIColor lightGrayColor];
         } else if (indexPath.row == 2) {
             rankingLabel.textColor = [UIColor whiteColor];
             rankingLabel.backgroundColor = [UIColor colorWithRed:166.0/255.0 green:125.0/255.0 blue:61.0/255.0 alpha:1];
-            cell.contentView.backgroundColor = [UIColor colorWithRed:166.0/255.0 green:125.0/255.0 blue:61.0/255.0 alpha:1];
+            rankingLabel.layer.cornerRadius = 18.0f;
+            rankingLabel.frame = CGRectMake(4, 10, 36, 36);
+//            cell.contentView.backgroundColor = [UIColor colorWithRed:166.0/255.0 green:125.0/255.0 blue:61.0/255.0 alpha:1];
         } else {
             rankingLabel.textColor = [UIColor blackColor];
-            rankingLabel.backgroundColor = [UIColor whiteColor];
-            cell.contentView.backgroundColor = [UIColor whiteColor];
+            rankingLabel.backgroundColor = [UIColor clearColor];
+            rankingLabel.layer.cornerRadius = 0;
+            rankingLabel.frame = CGRectMake(0, 6, 44, 44);
+//            cell.contentView.backgroundColor = [UIColor whiteColor];
         }
 
         
@@ -310,6 +455,13 @@
         nameLabel.font = [UIFont boldSystemFontOfSize:15.0f];
         UILabel *pointLabel = (UILabel *)[cell viewWithTag:5];
         pointLabel.text = [NSString stringWithFormat:@"%@", [user objectForKey:@"points"]];
+        
+        
+        if ([user isEqual:self.user]) {
+            cell.contentView.backgroundColor = self.myRankingView.backgroundColor;
+        } else {
+            cell.contentView.backgroundColor = [UIColor colorWithWhite:0.9f alpha:1.0f];
+        }
         return cell;
         
     } else {
@@ -345,34 +497,66 @@
         if (indexPath.row == 0) {
             rankingLabel.textColor = [UIColor whiteColor];
             rankingLabel.backgroundColor = [UIColor colorWithRed:1.0 green:185.0/255.0 blue:15.0/255.0 alpha:1];
-            cell.contentView.backgroundColor = [UIColor colorWithRed:1.0 green:185.0/255.0 blue:15.0/255.0 alpha:1];
+            rankingLabel.layer.cornerRadius = 18.0f;
+            rankingLabel.frame = CGRectMake(4, 10, 36, 36);
+//            cell.contentView.backgroundColor = [UIColor colorWithRed:1.0 green:185.0/255.0 blue:15.0/255.0 alpha:1];
         } else if (indexPath.row == 1) {
             rankingLabel.textColor = [UIColor whiteColor];
             rankingLabel.backgroundColor = [UIColor lightGrayColor];
+            rankingLabel.layer.cornerRadius = 18.0f;
+            rankingLabel.frame = CGRectMake(4, 10, 36, 36);
             
-            cell.contentView.backgroundColor = [UIColor lightGrayColor];
+//            cell.contentView.backgroundColor = [UIColor lightGrayColor];
         } else if (indexPath.row == 2) {
             rankingLabel.textColor = [UIColor whiteColor];
             rankingLabel.backgroundColor = [UIColor colorWithRed:166.0/255.0 green:125.0/255.0 blue:61.0/255.0 alpha:1];
-            
-            cell.contentView.backgroundColor = [UIColor colorWithRed:166.0/255.0 green:125.0/255.0 blue:61.0/255.0 alpha:1];
+            rankingLabel.layer.cornerRadius = 18.0f;
+            rankingLabel.frame = CGRectMake(4, 10, 36, 36);
+//            cell.contentView.backgroundColor = [UIColor colorWithRed:166.0/255.0 green:125.0/255.0 blue:61.0/255.0 alpha:1];
         } else {
+            rankingLabel.layer.cornerRadius = 0;
             rankingLabel.textColor = [UIColor blackColor];
-            rankingLabel.backgroundColor = [UIColor whiteColor];
-            cell.contentView.backgroundColor = [UIColor whiteColor];
+            rankingLabel.backgroundColor = [UIColor clearColor];
+            rankingLabel.frame = CGRectMake(0, 6, 44, 44);
+//            cell.contentView.backgroundColor = [UIColor whiteColor];
         }
         
         nameLabel.text = [NSString stringWithFormat:@"%@ %@", [user objectForKey:@"first_name"], [user objectForKey:@"last_name"]];
         nameLabel.font = [UIFont boldSystemFontOfSize:15.0f];
         UILabel *pointLabel = (UILabel *)[cell viewWithTag:5];
         pointLabel.text = [NSString stringWithFormat:@"%@", [user objectForKey:@"points"]];
+        
+        if ([user isEqual:self.user]) {
+            cell.contentView.backgroundColor = self.myRankingView.backgroundColor;
+        } else {
+            cell.contentView.backgroundColor = [UIColor colorWithWhite:0.9f alpha:1.0f];
+        }
+        
         return cell;
     }
     
 }
 
 // table view delegate methods
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    if ([tableView isEqual:self.friendsLeaderboard]) {
+        self.selectedUser = [self.facebookUsers objectAtIndex:indexPath.row];
+    } else if ([tableView isEqual:self.totalLeaderboard]) {
+        self.selectedUser = [self.totalUsers objectAtIndex:indexPath.row];
+    }
+    
+    [self performSegueWithIdentifier:@"Profile" sender:self];
+    
+}
 
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    if ([segue.identifier isEqualToString:@"Profile"]) {
+        FrecipeProfileViewController *destinationController = segue.destinationViewController;
+        destinationController.userId = [NSString stringWithFormat:@"%@", [self.selectedUser objectForKey:@"id"]];
+        destinationController.navigationItem.leftBarButtonItem = nil;
+        self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"back_arrow.png"] style:UIBarButtonItemStyleBordered target:segue.destinationViewController action:@selector(popViewControllerAnimated:)];
+    }
+}
 
 
 

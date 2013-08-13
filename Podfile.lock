@@ -1,16 +1,39 @@
 PODS:
   - AFNetworking (1.2.1)
   - FPPopover (1.4.1)
+  - Google-Maps-iOS-SDK (1.4.0)
+  - GoogleAnalytics-iOS-SDK (2.0beta4)
+  - libwebp (0.3.0-rc7):
+    - libwebp/dec
+    - libwebp/dsp
+    - libwebp/utils
+    - libwebp/webp
+  - libwebp/dec (0.3.0-rc7)
+  - libwebp/dsp (0.3.0-rc7)
+  - libwebp/utils (0.3.0-rc7)
+  - libwebp/webp (0.3.0-rc7)
   - MLPAutoCompleteTextField (1.5)
+  - SDWebImage (3.3):
+    - libwebp
+    - SDWebImage/MapKit
+  - SDWebImage/MapKit (3.3):
+    - libwebp
 
 DEPENDENCIES:
   - AFNetworking
   - FPPopover
+  - Google-Maps-iOS-SDK
+  - GoogleAnalytics-iOS-SDK
   - MLPAutoCompleteTextField
+  - SDWebImage
 
 SPEC CHECKSUMS:
   AFNetworking: a44069e3c9c89867544f6639482f155c7e5f9b41
   FPPopover: 0289b796c031d8f27bd221d93d282ffe23619893
+  Google-Maps-iOS-SDK: b45a7720ff24b907687a24841a4768a3b7b4ff17
+  GoogleAnalytics-iOS-SDK: ae8e58e771b6dec84c0047154cc0e550a15e6f54
+  libwebp: 40517fa1fd3716eded73b4696c45fc0b66e4b414
   MLPAutoCompleteTextField: 8baf7b9a78cbc6022a50f985c1c56784248821fe
+  SDWebImage: 79a8bac9ccf85b269100b294f7b43684dab8bf8a
 
-COCOAPODS: 0.20.2
+COCOAPODS: 0.22.2

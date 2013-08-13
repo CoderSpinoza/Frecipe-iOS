@@ -56,7 +56,8 @@
 	// Do any additional setup after loading the view.
     
     // menu setup
-    self.menu = [NSArray arrayWithObjects:@"frecipe.png", @"my_fridge.png", @"my_restaurant.png", @"grocery_list.png", @"leaderboard.png", @"settings.png", nil];
+    self.menu = [NSArray arrayWithObjects:@"frecipe.png", @"my_fridge.png", @"my_restaurant.png", @"grocery_list.png", @"chefranking.png", @"settings.png", nil];
+    self.trackedViewName = @"Navigation";
     [self.slidingViewController setAnchorRightRevealAmount:200.0f];
     self.slidingViewController.underLeftWidthLayout = ECFullWidth;
     
@@ -130,9 +131,6 @@
             [UIView setAnimationsEnabled:oldState];
         } completion:nil];
     }];
-}
-
-- (IBAction)notificationButtonPressed {
 }
 
 - (void)reloadProfilePicture {
@@ -209,6 +207,7 @@
 }
 
 - (void)checkNotifications {
+    [[[GAI sharedInstance] defaultTracker] sendEventWithCategory:@"Navigation" withAction:@"Notifications" withLabel:@"Notifications" withValue:[NSNumber numberWithInt:1]];
     NSString *path = @"notifications/check";
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -232,7 +231,7 @@
     
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
         FrecipeNavigationController *navigationController = (FrecipeNavigationController *)self.slidingViewController.topViewController;
-        
+        NSLog(@"check notifications");
         self.notificationsBadgeView.text = @"0";
         if (navigationController.childViewControllers.count > 0) {
             FrecipeMainViewController *viewController = [navigationController.childViewControllers objectAtIndex:0];
@@ -246,6 +245,7 @@
 }
 
 - (void)querySearchString:(NSString *)searchString {
+    [[[GAI sharedInstance] defaultTracker] sendEventWithCategory:@"Navigation" withAction:@"Search" withLabel:@"Search" withValue:[NSNumber numberWithInt:1]];
     NSString *path = @"tokens/search";
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -401,30 +401,36 @@
 // table view delegate methods
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    CGFloat fontSize = 14;
-    UIFont *boldFont = [UIFont boldSystemFontOfSize:fontSize];
-    
-    NSDictionary *notification = [self.notifications objectAtIndex:indexPath.row];
-    NSDictionary *source = [notification objectForKey:@"source"];
-    NSDictionary *recipe = [notification objectForKey:@"recipe"];
-    NSString *category = [NSString stringWithFormat:@"%@", [notification objectForKey:@"category"]];
-    
-    NSString *sourceName = [NSString stringWithFormat:@"%@ %@", [source objectForKey:@"first_name"], [source objectForKey:@"last_name"]];
-    NSString *originalText;
-    if ([category isEqualToString:@"like"]) {
-        originalText = [NSString stringWithFormat:@"%@ liked your recipe %@.", sourceName, [recipe objectForKey:@"name"]];
-    } else if ([category isEqualToString:@"comment"]) {
-        originalText = [NSString stringWithFormat:@"%@ commented on your recipe %@.", sourceName, [recipe objectForKey:@"name"]];
-    } else if ([category isEqualToString:@"follow"]) {
-        originalText = [NSString stringWithFormat:@"%@ is now following you!", sourceName];
-    } else {
-        originalText = [NSString stringWithFormat:@"%@ uploaded a new recipe %@.", sourceName, [recipe objectForKey:@"name"]];
-    }
-    
-    CGSize constraintSize = CGSizeMake(200, MAXFLOAT);
-    CGSize labelSize = [originalText sizeWithFont:boldFont constrainedToSize:constraintSize lineBreakMode:NSLineBreakByWordWrapping];    
-    if (labelSize.height > 40) {
-        return labelSize.height+10;
+    if ([tableView isEqual:self.notificationsViewController.tableView]) {
+        
+        CGFloat fontSize = 14;
+        UIFont *boldFont = [UIFont boldSystemFontOfSize:fontSize];
+        
+        NSDictionary *notification = [self.notifications objectAtIndex:indexPath.row];
+        NSDictionary *source = [notification objectForKey:@"source"];
+        NSDictionary *recipe = [notification objectForKey:@"recipe"];
+        NSString *category = [NSString stringWithFormat:@"%@", [notification objectForKey:@"category"]];
+        
+        NSString *sourceName = [NSString stringWithFormat:@"%@ %@", [source objectForKey:@"first_name"], [source objectForKey:@"last_name"]];
+        NSString *originalText;
+        if ([category isEqualToString:@"like"]) {
+            originalText = [NSString stringWithFormat:@"%@ liked your recipe %@.", sourceName, [recipe objectForKey:@"name"]];
+        } else if ([category isEqualToString:@"comment"]) {
+            originalText = [NSString stringWithFormat:@"%@ commented on your recipe %@.", sourceName, [recipe objectForKey:@"name"]];
+        } else if ([category isEqualToString:@"follow"]) {
+            originalText = [NSString stringWithFormat:@"%@ is now following you!", sourceName];
+        } else {
+            originalText = [NSString stringWithFormat:@"%@ uploaded a new recipe %@.", sourceName, [recipe objectForKey:@"name"]];
+        }
+        
+        CGSize constraintSize = CGSizeMake(200, MAXFLOAT);
+        CGSize labelSize = [originalText sizeWithFont:boldFont constrainedToSize:constraintSize lineBreakMode:NSLineBreakByWordWrapping];
+        if (labelSize.height > 40) {
+            
+            return labelSize.height+10;
+        } else {
+            return 44;
+        }
     } else {
         return 44;
     }
@@ -446,9 +452,9 @@
         }];
         if (indexPath.section == 0) {
             
-            [mainViewController performSegueWithNotification:@"like" Target:[self.recipes objectAtIndex:indexPath.row]];
+            [mainViewController performSegueWithNotification:@"like" Target:[self.recipes objectAtIndex:indexPath.row] CommentId:nil];
         } else {
-            [mainViewController performSegueWithNotification:@"follow" Target:[self.users objectAtIndex:indexPath.row]];
+            [mainViewController performSegueWithNotification:@"follow" Target:[self.users objectAtIndex:indexPath.row] CommentId:nil];
         }
     } else {
         
@@ -456,21 +462,32 @@
         NSString *category = [NSString stringWithFormat:@"%@", [notification objectForKey:@"category"]];
         
         [self.notificationsPopoverViewController dismissPopoverAnimated:YES];
-        if ([category isEqualToString:@"like"] || [category isEqualToString:@"comment"] || [category isEqualToString:@"upload"]) {
+        if ([category isEqualToString:@"like"] || [category isEqualToString:@"upload"]) {
             [self.slidingViewController resetTopViewWithAnimations:^{
             } onComplete:^{
+                
             }];
+            [mainViewController performSegueWithNotification:category Target:[notification objectForKey:@"recipe"] CommentId:nil];
             
             
-            [mainViewController performSegueWithNotification:category Target:[notification objectForKey:@"recipe"]];
+        } else if ([category isEqualToString:@"comment"]) {
+            [self.slidingViewController resetTopViewWithAnimations:^{
+            } onComplete:^{
+                
+            }];
+
+            NSLog(@"%@", notification);
+            [mainViewController performSegueWithNotification:category Target:[notification objectForKey:@"recipe"] CommentId:[NSString stringWithFormat:@"%@", [notification objectForKey:@"comment_id"]]];
         } else {
             [self.slidingViewController resetTopViewWithAnimations:^{
                 
             } onComplete:^{
                 
             }];
-            [mainViewController performSegueWithNotification:category Target:[notification objectForKey:@"source"]];
+            [mainViewController performSegueWithNotification:category Target:[notification objectForKey:@"source"] CommentId:nil];
+
         }
+
     }
 }
 

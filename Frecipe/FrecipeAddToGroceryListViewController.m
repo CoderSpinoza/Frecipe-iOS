@@ -47,6 +47,8 @@
     self.groceryListTableView.dataSource = self;
     [self addGestureRecognizers];
     [self registerForKeyboardNotification];
+    
+    self.trackedViewName = @"Add to Grocery List";
 }
 
 - (void)didReceiveMemoryWarning

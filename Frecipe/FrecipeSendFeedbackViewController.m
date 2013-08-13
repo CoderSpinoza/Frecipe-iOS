@@ -27,6 +27,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    self.trackedViewName = @"Send Feedback";
 	// Do any additional setup after loading the view.
     [self.feedbackTextView setShadowWithColor:[UIColor grayColor] Radius:3.0f Offset:CGSizeMake(0, 0) Opacity:0.75f];
     
@@ -49,6 +50,7 @@
 
 - (IBAction)sendButtonPressed:(UIBarButtonItem *)sender {
     
+    [[[GAI sharedInstance] defaultTracker] sendEventWithCategory:@"Settings" withAction:@"Feedback" withLabel:@"Feedback" withValue:[NSNumber numberWithInt:1]];
     if (self.feedbackTextView.text.length == 0) {
         return;
     }

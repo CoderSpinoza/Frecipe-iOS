@@ -7,8 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <GAITrackedViewController.h>
 
-@interface FrecipeLoginViewController : UIViewController
+@interface FrecipeLoginViewController : GAITrackedViewController
 
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
 @property (weak, nonatomic) IBOutlet UIImageView *loginImageView;

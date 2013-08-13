@@ -63,5 +63,39 @@
     }
 }
 
++ (NSDate *)dateWithString:(NSString *)specifiedDate {
+    NSMutableString *dateString = [NSMutableString stringWithString:specifiedDate];
+    
+    dateString = [[dateString stringByReplacingOccurrencesOfString:@"T" withString:@" "] mutableCopy];
+    dateString = [[dateString stringByReplacingOccurrencesOfString:@"Z" withString:@""] mutableCopy];
+    NSDateFormatter *localFormat = [self sharedDateFormatter];
+    
+    [localFormat setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+    [localFormat setTimeZone:[NSTimeZone timeZoneWithName:@"UTC"]];
+    
+    NSDate *date = [localFormat dateFromString:dateString];
+    return date;
+}
+
++ (NSString *)compareWithCurrentDateForTimer:(NSTimeInterval)interval {
+    NSInteger timeInterval = (NSInteger)interval;
+    
+    NSInteger days = timeInterval / 86400;
+    NSInteger hours = (timeInterval % 86400) / 3600;
+    NSInteger minutes = (timeInterval % 86400 % 3600) / 60;
+    NSInteger seconds = timeInterval % 86400 % 3600 % 60;
+    
+    NSString *daysString;
+    
+    if (days > 1) {
+        daysString = [NSString stringWithFormat:@"%i days", days];
+    } else {
+        daysString = [NSString stringWithFormat:@"%i day", days];
+    }
+    NSString *dateString = [NSString stringWithFormat:@"%@ %i:%i:%i", daysString, hours, minutes, seconds];
+    
+    return dateString;
+}
+
 
 @end

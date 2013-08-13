@@ -33,12 +33,12 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
-    
+    self.trackedViewName = @"Settings";
     self.settingsTableView.dataSource = self;
     self.settingsTableView.delegate = self;
     self.notificationBadge = [self addNotificationBadge];
     
-    self.settings = [NSArray arrayWithObjects:@"Change Password", @"Send Feedback", @"Log out", nil];
+    self.settings = [NSArray arrayWithObjects:@"Change Password", @"Send Feedback", @"Connect with Facebook", @"Log out", nil];
 }
 
 - (void)didReceiveMemoryWarning
@@ -50,6 +50,28 @@
 - (IBAction)revealMenu:(UIBarButtonItem *)sender {
     FrecipeNavigationController *navigationController = (FrecipeNavigationController *)self.navigationController;
     [navigationController revealMenu];
+}
+
+- (void)connectFacebookWithParameters:(NSDictionary *)parameters {
+    NSString *path = @"facebook/connect";
+    FrecipeAPIClient *client = [FrecipeAPIClient client];
+    NSURLRequest *request = [client requestWithMethod:@"POST" path:path parameters:parameters];
+    
+    AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
+        
+        [[NSUserDefaults standardUserDefaults] setValue:@"facebook" forKey:@"provider"];
+        [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithFormat:@"%@", [parameters objectForKey:@"uid"]] forKey:@"uid"];
+        
+        [[NSUserDefaults standardUserDefaults] synchronize];
+    } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
+        NSLog(@"%@", error);
+        
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Facebook Connect Error" message:[NSString stringWithFormat:@"%@", [JSON objectForKey:@"message"]] delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: nil];
+        [alertView show];
+    }];
+    
+    FrecipeOperationQueue *queue = [FrecipeOperationQueue sharedQueue];
+    [queue addOperation:operation];
 }
 
 // table view delegate and dataSource methods
@@ -79,6 +101,22 @@
     } else if (indexPath.section == 0 && indexPath.row == 1) {
         [self performSegueWithIdentifier:@"SendFeedback" sender:self];
     } else if (indexPath.section == 0 && indexPath.row == 2) {
+        NSArray *permissions = [[NSArray alloc] initWithObjects:
+                                @"email",
+                                @"user_likes",
+                                nil];
+        
+        [FBSession openActiveSessionWithReadPermissions:permissions allowLoginUI:YES completionHandler:^(FBSession *session, FBSessionState status, NSError *error) {
+            FrecipeAppDelegate *delegate = [[UIApplication sharedApplication] delegate];
+            [delegate sessionStateChanged:session State:status Error:error];
+            
+            [[FBRequest requestForMe] startWithCompletionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
+                NSDictionary *paramters = @{@"uid": [NSString stringWithFormat:@"%@", [result objectForKey:@"id"]], @"email": [result objectForKey:@"email"], @"authentication_token": [[NSUserDefaults standardUserDefaults] stringForKey:@"authentication_token"]};
+                [self connectFacebookWithParameters:paramters];
+                
+            }];
+        }];
+    } else if (indexPath.section == 0 && indexPath.row == 3) {
         [FrecipeUser clearUserInfo];
         
         [FBSession.activeSession closeAndClearTokenInformation];

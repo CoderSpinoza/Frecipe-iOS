@@ -16,7 +16,7 @@
 #import "FrecipeFunctions.h"
 #import "UIImageView+WebCache.h"
 #import "FrecipeLeaderboardViewController.h"
-
+#import <GAI.h>
 @interface FrecipeViewController () <UICollectionViewDelegateFlowLayout, UICollectionViewDataSource>
 
 @property (strong, nonatomic) NSMutableArray *recipes;
@@ -29,7 +29,7 @@
 @property (strong, nonatomic) NSDictionary *selectedEvent;
 @property (strong, nonatomic) NSString *selectedUserId;
 @property (strong, nonatomic) UIView *headerView;
-
+@property (strong, nonatomic) NSMutableArray *userIngredients;
 
 @end
 
@@ -56,6 +56,7 @@
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
     self.title = @"Frecipe";
+    self.trackedViewName = @"Frecipe";
     self.recipesCollectionView.dataSource = self;
     self.recipesCollectionView.delegate = self;
     [self addRefreshControl];
@@ -65,6 +66,10 @@
     [super viewWillAppear:animated];
     self.selectedUser = nil;
     [self fetchRecipes];
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];    
 }
 
 - (void)didReceiveMemoryWarning
@@ -105,11 +110,22 @@
         self.ingredients = [NSMutableArray arrayWithArray:[JSON objectForKey:@"ingredients"]];
         [self.recipes removeAllObjects];
         NSMutableArray *recipes = [NSMutableArray arrayWithArray:[JSON objectForKey:@"recipes"]];
+        
+        self.userIngredients = [NSArray arrayWithArray:[JSON objectForKey:@"ingredient_values"]];
         [recipes enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
             NSMutableDictionary *recipe = (NSMutableDictionary *)obj;
             
             NSMutableArray *recipeIngredients = [[[NSString stringWithFormat:@"%@", [recipe objectForKey:@"ingredients_string"]] componentsSeparatedByString:@","] mutableCopy];
-            [recipeIngredients removeObjectsInArray:self.ingredients];
+            
+            NSMutableArray *recipeIngredientValues = [[[NSString stringWithFormat:@"%@", [recipe objectForKey:@"ingredient_values"]] componentsSeparatedByString:@","] mutableCopy];
+            
+            NSIndexSet *indexSet = [recipeIngredientValues indexesOfObjectsPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+                return [self.userIngredients containsObject:obj];
+
+            }];
+            [recipeIngredients removeObjectsAtIndexes:indexSet];
+            
+            
             
             NSArray *keys = [NSArray arrayWithObjects:@"id", @"name", @"user_id", @"username", @"likes", @"ingredients", @"recipe_image",  nil];
             NSArray *values = [NSArray arrayWithObjects:[NSString stringWithFormat:@"%@", [recipe objectForKey:@"recipe_id"]], [NSString stringWithFormat:@"%@", [recipe objectForKey:@"name"]], [NSString stringWithFormat:@"%@", [recipe objectForKey:@"user_id"]], [NSString stringWithFormat:@"%@ %@", [recipe objectForKey:@"first_name"], [recipe objectForKey:@"last_name"]], [NSString stringWithFormat:@"%@", [recipe objectForKey:@"likes_count"]], recipeIngredients, [NSString stringWithFormat:@"%@", [recipe objectForKey:@"recipe_image_file_name"]], nil];
@@ -199,6 +215,7 @@
 }
 
 - (void)flipCell:(UITapGestureRecognizer *)tapGestureRecognizer {
+    [[[GAI sharedInstance] defaultTracker] sendEventWithCategory:@"Frecipe" withAction:@"Flip Recipe" withLabel:@"Flip Recipe" withValue:[NSNumber numberWithInt:1]];
     UITableViewCell *cell;
     UIView *view1;
     UIView *view2;
@@ -232,38 +249,38 @@
     self.recipesCollectionView.alwaysBounceVertical = YES;
 }
 
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    if ([segue.identifier isEqualToString:@"RecipeDetail"]) {
-        FrecipeRecipeDetailViewController *recipeDetailViewController = (FrecipeRecipeDetailViewController *) segue.destinationViewController;
-        
-        recipeDetailViewController.navigationItem.leftBarButtonItem = nil;
-        recipeDetailViewController.recipeId = [self.selectedRecipe objectForKey:@"id"];
-        self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"back_arrow.png"] style:UIBarButtonItemStyleBordered target:segue.destinationViewController action:@selector(popViewControllerAnimated:)];
-    } else if ([segue.identifier isEqualToString:@"Profile"] || [segue.identifier isEqualToString:@"Profile2"]) {
-        FrecipeProfileViewController *destinationViewController = (FrecipeProfileViewController *)segue.destinationViewController;
-        destinationViewController.navigationItem.leftBarButtonItem = nil;
-        if (self.selectedUser == nil) {
-            UIButton *button = (UIButton *)sender;
-            UICollectionViewCell *cell = (UICollectionViewCell *)button.superview.superview.superview;
-            NSLog(@"from frecipe");
-        
-            destinationViewController.userId = [NSString stringWithFormat:@"%@", [[self.recipes objectAtIndex:[self rowForItem:[self.recipesCollectionView indexPathForCell:cell]]] objectForKey:@"user_id"]];
-            
-        } else {
-            destinationViewController.userId = [NSString stringWithFormat:@"%@", [self.selectedUser objectForKey:@"id"]];
-
-        }
-        destinationViewController.fromSegue = YES;
-        
-        destinationViewController.navigationItem.leftBarButtonItem = nil;
-        self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"back_arrow.png"] style:UIBarButtonItemStyleBordered target:segue.destinationViewController action:@selector(popViewControllerAnimated:)];
-    } else if ([segue.identifier isEqualToString:@"Leaderboard"]) {
-        FrecipeLeaderboardViewController *destinationController = segue.destinationViewController;
-        
-        destinationController.navigationItem.leftBarButtonItem = nil;
-        self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"back_arrow.png"] style:UIBarButtonItemStyleBordered target:segue.destinationViewController action:@selector(popViewControllerAnimated:)];
-    }
-}
+//- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+//    if ([segue.identifier isEqualToString:@"RecipeDetail"]) {
+//        
+//        FrecipeRecipeDetailViewController *recipeDetailViewController = (FrecipeRecipeDetailViewController *) segue.destinationViewController;
+//        
+//        recipeDetailViewController.navigationItem.leftBarButtonItem = nil;
+//        recipeDetailViewController.recipeId = [self.selectedRecipe objectForKey:@"id"];
+//        self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"back_arrow.png"] style:UIBarButtonItemStyleBordered target:segue.destinationViewController action:@selector(popViewControllerAnimated:)];
+//    } else if ([segue.identifier isEqualToString:@"Profile"] || [segue.identifier isEqualToString:@"Profile2"]) {
+//        FrecipeProfileViewController *destinationViewController = (FrecipeProfileViewController *)segue.destinationViewController;
+//        destinationViewController.navigationItem.leftBarButtonItem = nil;
+//        if (self.selectedUser == nil) {
+//            UIButton *button = (UIButton *)sender;
+//            UICollectionViewCell *cell = (UICollectionViewCell *)button.superview.superview.superview;
+//        
+//            destinationViewController.userId = [NSString stringWithFormat:@"%@", [[self.recipes objectAtIndex:[self rowForItem:[self.recipesCollectionView indexPathForCell:cell]]] objectForKey:@"user_id"]];
+//            
+//        } else {
+//            destinationViewController.userId = [NSString stringWithFormat:@"%@", [self.selectedUser objectForKey:@"id"]];
+//
+//        }
+//        destinationViewController.fromSegue = YES;
+//        
+//        destinationViewController.navigationItem.leftBarButtonItem = nil;
+//        self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"back_arrow.png"] style:UIBarButtonItemStyleBordered target:segue.destinationViewController action:@selector(popViewControllerAnimated:)];
+//    } else if ([segue.identifier isEqualToString:@"Leaderboard"]) {
+//        FrecipeLeaderboardViewController *destinationController = segue.destinationViewController;
+//        destinationController.fromFrecipe = YES;
+//        destinationController.navigationItem.leftBarButtonItem = nil;
+//        self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"back_arrow.png"] style:UIBarButtonItemStyleBordered target:segue.destinationViewController action:@selector(popViewControllerAnimated:)];
+//    }
+//}
 
 // alert view delegate methods
 
@@ -397,7 +414,7 @@
 
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
     
-    NSDictionary *recipe = [self.recipes objectAtIndex:[self rowForItem:indexPath]];
+//    NSDictionary *recipe = [self.recipes objectAtIndex:[self rowForItem:indexPath]];
     CGSize cellSize;
     if (indexPath.row == 0) {
         cellSize = CGSizeMake(self.recipesCollectionView.frame.size.width, self.recipesCollectionView.frame.size.width / 2);

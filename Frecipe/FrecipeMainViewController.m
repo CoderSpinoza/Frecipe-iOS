@@ -10,8 +10,10 @@
 #import "FrecipeAPIClient.h"
 #import "FrecipeRecipeDetailViewController.h"
 #import "FrecipeProfileViewController.h"
+#import "FrecipeLeaderboardViewController.h"
 
 @interface FrecipeMainViewController ()
+@property (strong, nonatomic) NSString *commentId;
 
 @end
 
@@ -35,6 +37,7 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    self.commentId = nil;
     self.notificationBadge = [self addNotificationBadge];
     [self fetchNotifications];
 }
@@ -80,12 +83,14 @@
     [operation start];
 }
 
-- (void)performSegueWithNotification:(NSString *)category Target:(NSDictionary *)target{
+- (void)performSegueWithNotification:(NSString *)category Target:(NSDictionary *)target CommentId:(NSString *)commentId{
+    
     if ([category isEqualToString:@"like"]) {
         self.selectedRecipe = target;
         [self performSegueWithIdentifier:@"RecipeDetail" sender:self];
     } else if ([category isEqualToString:@"comment"]) {
         self.selectedRecipe = target;
+        self.commentId = commentId;
         [self performSegueWithIdentifier:@"RecipeDetail" sender:self];
     } else if ([category isEqualToString:@"follow"]) {
         self.selectedUser = target;
@@ -102,15 +107,20 @@
     if ([segue.identifier isEqualToString:@"RecipeDetail"]) {
         FrecipeRecipeDetailViewController *recipeDetailViewController = (FrecipeRecipeDetailViewController *) segue.destinationViewController;
         
+        recipeDetailViewController.commentId = self.commentId;
         recipeDetailViewController.recipeId = [self.selectedRecipe objectForKey:@"id"];
 
     } else if ([segue.identifier isEqualToString:@"Profile"] || [segue.identifier isEqualToString:@"Profile2"]) {
         FrecipeProfileViewController *destinationViewController = (FrecipeProfileViewController *)segue.destinationViewController;
-        NSLog(@"selected user: %@", self.selectedUser);
         destinationViewController.userId = [NSString stringWithFormat:@"%@", [self.selectedUser objectForKey:@"id"]];
         destinationViewController.fromSegue = YES;
         
         destinationViewController.navigationItem.leftBarButtonItem = nil;
+    } else if ([segue.identifier isEqualToString:@"Leaderboard"]) {
+        FrecipeLeaderboardViewController *destinationController = segue.destinationViewController;
+        destinationController.fromFrecipe = YES;
+        destinationController.navigationItem.leftBarButtonItem = nil;
+        self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"back_arrow.png"] style:UIBarButtonItemStyleBordered target:segue.destinationViewController action:@selector(popViewControllerAnimated:)];
     }
     self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"back_arrow.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(popViewControllerAnimated:)];
 }

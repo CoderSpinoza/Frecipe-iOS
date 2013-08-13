@@ -10,10 +10,11 @@
 #import "FrecipeRatingView.h"
 #import "FPPopoverController.h"
 #import "FrecipeEditDeleteViewController.h"
-
-@interface FrecipeRecipeDetailViewController : UIViewController
+#import <GAITrackedViewController.h>
+@interface FrecipeRecipeDetailViewController : GAITrackedViewController
 
 @property (strong, nonatomic) NSString *recipeId;
+@property (strong, nonatomic) NSString *commentId;
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
 @property (weak, nonatomic) IBOutlet UIButton *nameButton;
 @property (weak, nonatomic) IBOutlet UIButton *likesButton;
@@ -42,6 +43,10 @@
 @property (strong,nonatomic) FPPopoverController *editDeletePopoverViewController;
 @property (strong, nonatomic) FrecipeEditDeleteViewController *editDeleteViewController;
 
-@property (strong, nonatomic) FPPopoverController *commentsPopoverViewController;
+@property (weak, nonatomic) IBOutlet UIView *bottomBar;
+@property (weak, nonatomic) IBOutlet UIButton *shareNewButton;
+@property (weak, nonatomic) IBOutlet UIButton *commentNewButton;
+@property (weak, nonatomic) IBOutlet UIButton *heartButton;
+@property (weak, nonatomic) IBOutlet UILabel *beTheFirstToCommentLabel;
 
 @end

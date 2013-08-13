@@ -10,8 +10,8 @@
 #import <MLPAutoCompleteTextField/MLPAutoCompleteTextField.h>
 #import <MLPAutoCompleteTextField/MLPAutoCompleteTextFieldDataSource.h>
 #import <MLPAutoCompleteTextField/MLPAutoCompleteTextFieldDelegate.h>
-
-@interface FrecipeAddIngredientsViewController : UIViewController
+#import <GAITrackedViewController.h>
+@interface FrecipeAddIngredientsViewController : GAITrackedViewController
 @property (weak, nonatomic) IBOutlet MLPAutoCompleteTextField *ingredientField;
 @property (weak, nonatomic) IBOutlet UITableView *ingredientsTableView;
 

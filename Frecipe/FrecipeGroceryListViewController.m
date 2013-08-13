@@ -73,6 +73,7 @@
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
     
+    self.trackedViewName = @"Grocery List";
     firstTimeDisplayingAll = YES;
     self.groceryListTableView.dataSource = self;
     self.groceryListTableView.delegate = self;
@@ -213,11 +214,20 @@
     [self.recipes insertObject:all atIndex:0];
     [self.recipes addObject:others];
     
-    NSLog(@"%@", [self.recipes objectAtIndex:self.displayedRecipeIndexPath.row]);
-    self.currentGroceryList = [[self.recipes objectAtIndex:self.displayedRecipeIndexPath.row] objectForKey:@"missing_ingredients"];
-    self.currentGroceryDetailList = [[self.recipes objectAtIndex:self.displayedRecipeIndexPath.row] objectForKey:@"groceries"];
-    self.recipeNameLabel.text = [NSString stringWithFormat:@"%@", [[self.recipes objectAtIndex:self.displayedRecipeIndexPath.row] objectForKey:@"name"]];
-    [self.groceryListTableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationAutomatic];
+    
+    
+    if (self.recipes.count > self.displayedRecipeIndexPath.row) {
+        NSLog(@"%@", [self.recipes objectAtIndex:self.displayedRecipeIndexPath.row]);
+        self.currentGroceryList = [[self.recipes objectAtIndex:self.displayedRecipeIndexPath.row] objectForKey:@"missing_ingredients"];
+        self.currentGroceryDetailList = [[self.recipes objectAtIndex:self.displayedRecipeIndexPath.row] objectForKey:@"groceries"];
+        self.recipeNameLabel.text = [NSString stringWithFormat:@"%@", [[self.recipes objectAtIndex:self.displayedRecipeIndexPath.row] objectForKey:@"name"]];
+    } else {
+        self.displayedRecipeIndexPath = [NSIndexPath indexPathForRow:0 inSection:0];
+        self.currentGroceryList = [[self.recipes objectAtIndex:0] objectForKey:@"missing_ingredients"];
+        self.currentGroceryDetailList = [[self.recipes objectAtIndex:0] objectForKey:@"groceries"];
+        self.recipeNameLabel.text = [NSString stringWithFormat:@"%@", [[self.recipes objectAtIndex:0] objectForKey:@"name"]];
+    }
+        [self.groceryListTableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationAutomatic];
     [self.recipesCollectionView reloadData];
 }
 
@@ -249,46 +259,48 @@
     
 }
 
-- (IBAction)addToFridgeButtonPressed:(UIBarButtonItem *)sender {
-    NSString *path = @"groceries/fridge";
-    
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    
-    NSString *authentication_token = [defaults stringForKey:@"authentication_token"];
-    NSMutableArray *ids = [[NSMutableArray alloc] initWithCapacity:self.selectedGroceryList.count];
-    for (NSDictionary *ingredient in self.selectedGroceryList) {
-        NSString *ingredientId = [NSString stringWithFormat:@"%@", [ingredient objectForKey:@"id"]];
-        [ids addObject:ingredientId];
-    }
-    
-    NSArray *keys = [NSArray arrayWithObjects:@"authentication_token", @"ids", nil];
-    NSArray *values = [NSArray arrayWithObjects:authentication_token, ids, nil];
-    
-    NSDictionary *parameters = [NSDictionary dictionaryWithObjects:values forKeys:keys];
-    
-    FrecipeAPIClient *client = [FrecipeAPIClient client];
-    NSURLRequest *request = [client requestWithMethod:@"POST" path:path parameters:parameters];
-    
-    AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
-        NSMutableArray *deletedGroceries = [NSMutableArray arrayWithArray:[JSON objectForKey:@"fridge"]];
-        
-        for (NSDictionary *deletedGrocery in deletedGroceries) {
-            if ([self.groceryList containsObject:deletedGrocery]) {
-            
-                NSInteger rowIndex = [self.groceryList indexOfObject:deletedGrocery];
-                 [self.groceryList removeObject:deletedGrocery];
-                [self.groceryListTableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:rowIndex inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
-            }
-        }
-        [self.selectedGroceryList removeAllObjects];
-    } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
-        NSLog(@"%@", error);
-    }];
-    FrecipeOperationQueue *queue = [FrecipeOperationQueue sharedQueue];
-    [queue addOperation:operation];
-}
+//- (IBAction)addToFridgeButtonPressed:(UIBarButtonItem *)sender {
+//    [[[GAI sharedInstance] defaultTracker] sendEventWithCategory:@"Grocery List" withAction:@"Done Shopping" withLabel:@"Done Shopping" withValue:[NSNumber numberWithInt:1]];
+//    NSString *path = @"groceries/fridge";
+//    
+//    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+//    
+//    NSString *authentication_token = [defaults stringForKey:@"authentication_token"];
+//    NSMutableArray *ids = [[NSMutableArray alloc] initWithCapacity:self.selectedGroceryList.count];
+//    for (NSDictionary *ingredient in self.selectedGroceryList) {
+//        NSString *ingredientId = [NSString stringWithFormat:@"%@", [ingredient objectForKey:@"id"]];
+//        [ids addObject:ingredientId];
+//    }
+//    
+//    NSArray *keys = [NSArray arrayWithObjects:@"authentication_token", @"ids", nil];
+//    NSArray *values = [NSArray arrayWithObjects:authentication_token, ids, nil];
+//    
+//    NSDictionary *parameters = [NSDictionary dictionaryWithObjects:values forKeys:keys];
+//    
+//    FrecipeAPIClient *client = [FrecipeAPIClient client];
+//    NSURLRequest *request = [client requestWithMethod:@"POST" path:path parameters:parameters];
+//    
+//    AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
+//        NSMutableArray *deletedGroceries = [NSMutableArray arrayWithArray:[JSON objectForKey:@"fridge"]];
+//        
+//        for (NSDictionary *deletedGrocery in deletedGroceries) {
+//            if ([self.groceryList containsObject:deletedGrocery]) {
+//            
+//                NSInteger rowIndex = [self.groceryList indexOfObject:deletedGrocery];
+//                 [self.groceryList removeObject:deletedGrocery];
+//                [self.groceryListTableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:rowIndex inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
+//            }
+//        }
+//        [self.selectedGroceryList removeAllObjects];
+//    } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
+//        NSLog(@"%@", error);
+//    }];
+//    FrecipeOperationQueue *queue = [FrecipeOperationQueue sharedQueue];
+//    [queue addOperation:operation];
+//}
 
 - (IBAction)deleteButtonPressed {
+    [[[GAI sharedInstance] defaultTracker] sendEventWithCategory:@"Grocery List" withAction:@"Delete" withLabel:@"Delete" withValue:[NSNumber numberWithInt:1]];
     NSString *path = @"groceries/multiple_delete";
     NSMutableArray *ids = [[NSMutableArray alloc] initWithCapacity:self.completedGroceryList.count];
     for (id ingredient in self.completedGroceryList) {
@@ -369,6 +381,7 @@
 }
 
 - (IBAction)doneButtonPressed {
+    [[[GAI sharedInstance] defaultTracker] sendEventWithCategory:@"Grocery List" withAction:@"Done Shopping" withLabel:@"Done Shopping" withValue:[NSNumber numberWithInt:1]];
     NSString *path = @"groceries/fridge";
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -407,10 +420,11 @@
 }
 
 - (IBAction)editButtonPressed:(UIBarButtonItem *)sender {
+    
     if (editingRecipes == NO) {
+        [[[GAI sharedInstance] defaultTracker] sendEventWithCategory:@"Grocery List" withAction:@"Edit" withLabel:@"Edit" withValue:[NSNumber numberWithInt:1]];
         editingRecipes = YES;
         sender.title = @"Done";
-        NSLog(@"deselect not working");
         [self.recipesCollectionView deselectItemAtIndexPath:self.displayedRecipeIndexPath animated:YES];
         [UIView animateWithDuration:0.5 animations:^{
             self.groceryListView.frame = CGRectMake(-250, self.groceryListView.frame.origin.y, self.groceryListView.frame.size.width, self.groceryListView.frame.size.height);

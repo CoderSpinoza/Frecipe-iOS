@@ -48,6 +48,8 @@
     self.ingredientsTableView.delegate = self;
     self.ingredientsTableView.dataSource = self;
     
+    
+    self.trackedViewName = @"Add Ingredients";
     [self fetchAllIngredients];
     [self addGestureRecognizers];
     [self registerForKeyboardNotification];
@@ -83,6 +85,7 @@
 }
 
 - (IBAction)addButtonPressed:(UIBarButtonItem *)sender {
+    [[[GAI sharedInstance] defaultTracker] sendEventWithCategory:@"Fridge" withAction:@"Manually Add" withLabel:@"Manually Add" withValue:[NSNumber numberWithInt:1]];
     NSString *path = @"/user_ingredients";
     FrecipeAPIClient *client = [FrecipeAPIClient client];
     

@@ -11,7 +11,7 @@
 #import "FrecipeAPIClient.h"
 #import <QuartzCore/QuartzCore.h>
 #import <FacebookSDK/FacebookSDK.h>
-
+#import <GAI.h>
 @interface FrecipeFacebookInviteViewController () <UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate, UISearchDisplayDelegate>
 
 @property (strong, nonatomic) NSMutableArray *facebookFriends;
@@ -19,6 +19,8 @@
 @property (strong, nonatomic) NSMutableArray *selectedFriends;
 @property (strong, nonatomic) NSArray *alphabets;
 @property (strong, nonatomic) NSMutableArray *searchedFriends;
+@property (strong, nonatomic) NSMutableArray *invitedFriends;
+
 @end
 
 @implementation FrecipeFacebookInviteViewController
@@ -62,6 +64,7 @@
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
     
+    self.trackedViewName = @"Find Friends";
     self.facebookFriendsTableView.delegate = self;
     self.facebookFriendsTableView.dataSource = self;
     
@@ -72,6 +75,7 @@
     
     [self loadFacebookFriends];
     [self loadFacebookUids];
+    [self loadInvitedPeople];
     
 }
 
@@ -92,13 +96,33 @@
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
         
         self.uids = [NSMutableArray arrayWithArray:JSON];
-        if (self.facebookFriends) {
+        if (self.facebookFriends && self.invitedFriends) {
             [self.facebookFriendsTableView reloadData];
         }
         NSLog(@"%@", self.uids);
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         
     }];
+    FrecipeOperationQueue *queue = [FrecipeOperationQueue sharedQueue];
+    [queue addOperation:operation];
+}
+
+- (void)loadInvitedPeople {
+    NSString *path = @"facebook/invited";
+    FrecipeAPIClient *client = [FrecipeAPIClient client];
+    NSDictionary *parameters = @{@"authentication_token": [[NSUserDefaults standardUserDefaults] stringForKey:@"authentication_token"]};
+    
+    NSURLRequest *request = [client requestWithMethod:@"GET" path:path parameters:parameters];
+    AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
+        self.invitedFriends = [JSON objectForKey:@"invites"];
+        NSLog(@"%@", self.invitedFriends);
+        if (self.facebookFriends && self.uids) {
+            [self.facebookFriendsTableView reloadData];
+        }
+    } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
+        NSLog(@"%@", [error localizedDescription]);
+    }];
+    
     FrecipeOperationQueue *queue = [FrecipeOperationQueue sharedQueue];
     [queue addOperation:operation];
 }
@@ -114,9 +138,11 @@
                     NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES];
                     NSArray *sortDescriptors = [NSArray arrayWithObjects:sortDescriptor, nil];
                     self.facebookFriends = [[self.facebookFriends sortedArrayUsingDescriptors:sortDescriptors] mutableCopy];
-                    if (self.uids) {
+                    if (self.uids && self.invitedFriends) {
                         [self.facebookFriendsTableView reloadData];
                     }
+                    
+                    
                 }];
             }];
         } else {
@@ -141,14 +167,33 @@
 }
 
 - (IBAction)inviteButtonPressed:(UIBarButtonItem *)sender {
+    
+    NSString *path = @"facebook/invite";
+    FrecipeAPIClient *client = [FrecipeAPIClient client];
+    NSDictionary *parameters = @{@"authentication_token": [[NSUserDefaults standardUserDefaults] stringForKey:@"authentication_token"], @"uids": self.selectedFriends};
+    
+    NSURLRequest *request = [client requestWithMethod:@"POST" path:path parameters:parameters];
+    
+    AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
+        NSLog(@"%@", JSON);
+    } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
+        NSLog(@"%@", [error localizedDescription]);
+    }];
+    
+    FrecipeOperationQueue *queue = [FrecipeOperationQueue sharedQueue];
+    [queue addOperation:operation];
+    
     NSArray *keys = [NSArray arrayWithObjects:@"message", @"to", nil];
     NSArray *values = [NSArray arrayWithObjects:@"Frecipe Request", [self.selectedFriends componentsJoinedByString:@","], nil];
     
-    NSDictionary *parameters = [NSDictionary dictionaryWithObjects:values forKeys:keys];
+    NSDictionary *facebookParameters = [NSDictionary dictionaryWithObjects:values forKeys:keys];
     
-    [FBWebDialogs presentRequestsDialogModallyWithSession:nil message:nil title:nil parameters:parameters handler:^(FBWebDialogResult result, NSURL *resultURL, NSError *error) {
+    [FBWebDialogs presentRequestsDialogModallyWithSession:nil message:nil title:nil parameters:facebookParameters handler:^(FBWebDialogResult result, NSURL *resultURL, NSError *error) {
         if (!error) {
+            [[[GAI sharedInstance] defaultTracker] sendSocial:@"Facebook" withAction:@"Invite" withTarget:nil];
+            
             [self dismissViewControllerAnimated:YES completion:nil];
+            
         }
     }];
 }
@@ -304,7 +349,15 @@
             label.textAlignment = NSTextAlignmentRight;
             label.font = [label.font fontWithSize:10];
             cell.accessoryView = label;
-        } else {
+        } else if ([self.invitedFriends containsObject:[facebookFriend objectForKey:@"id"]]) {
+            UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 80, 20)];
+            label.text = @"Already Invited";
+            label.textColor = [UIColor blueColor];
+            label.textAlignment = NSTextAlignmentRight;
+            label.font = [label.font fontWithSize:10];
+            cell.accessoryView = label;
+
+        }else {
             cell.accessoryView = nil;
         }
         
@@ -338,14 +391,16 @@
         NSPredicate *filterPredicate = [NSPredicate predicateWithFormat:@"first_name beginswith[c] %@", [self.alphabets objectAtIndex:indexPath.section]];
         NSArray *filteredFriends = [self.facebookFriends filteredArrayUsingPredicate:filterPredicate];
         NSDictionary *facebookFriend = [filteredFriends objectAtIndex:indexPath.row];
-        if ([self.uids containsObject:[facebookFriend objectForKey:@"id"]]) {
+        
+        if ([self.uids containsObject:[facebookFriend objectForKey:@"id"]] || [self.invitedFriends containsObject:[facebookFriend objectForKey:@"id"]]) {
+            NSLog(@"%@", facebookFriend);
             return nil;
         } else {
             return indexPath;
         }
     } else {
         NSDictionary *facebookFriend = [self.searchedFriends objectAtIndex:indexPath.row];
-        if ([self.uids containsObject:[facebookFriend objectForKey:@"id"]]) {
+        if ([self.uids containsObject:[facebookFriend objectForKey:@"id"]] || [self.invitedFriends containsObject:[facebookFriend objectForKey:@"id"]]) {
             return nil;
         } else {
             return indexPath;
@@ -369,7 +424,6 @@
         NSIndexPath *scrollIndexPath = [self indexPathForFriend:selectedFriend];
         UITableViewCell *toBeUncheckedCell = [self.facebookFriendsTableView cellForRowAtIndexPath:scrollIndexPath];
         if ([self.selectedFriends containsObject:[NSString stringWithFormat:@"%@", [selectedFriend objectForKey:@"id"]]]) {
-            NSLog(@"here");
             [self.selectedFriends removeObject:[NSString stringWithFormat:@"%@", [selectedFriend objectForKey:@"id"]]];
             toBeUncheckedCell.accessoryType = UITableViewCellAccessoryNone;
         } else {

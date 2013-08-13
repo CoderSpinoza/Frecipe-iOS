@@ -7,8 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <GAITrackedViewController.h>
 
-@interface FrecipeFacebookInviteViewController : UIViewController
+@interface FrecipeFacebookInviteViewController : GAITrackedViewController
+
 @property (weak, nonatomic) IBOutlet UISearchBar *searchBar;
 @property (weak, nonatomic) IBOutlet UITableView *facebookFriendsTableView;
 

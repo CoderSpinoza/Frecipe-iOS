@@ -29,6 +29,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    self.trackedViewName = @"Change Password";
 	// Do any additional setup after loading the view.
     self.currentPasswordField.delegate = self;
     self.differentPasswordField.delegate = self;
@@ -44,7 +45,7 @@
 }
 
 - (IBAction)saveButtonPressed:(UIBarButtonItem *)sender {
-    
+    [[[GAI sharedInstance] defaultTracker] sendEventWithCategory:@"Profile" withAction:@"Change Password" withLabel:@"Change Password" withValue:[NSNumber numberWithInt:1]];
     if (![self checkPasswordLength]) {
         self.errorLabel.text = @"Password should be longer than 6 letters.";
         return;

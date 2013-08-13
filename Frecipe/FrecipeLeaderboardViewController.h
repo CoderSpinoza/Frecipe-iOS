@@ -7,6 +7,7 @@
 //
 
 #import "FrecipeMainViewController.h"
+#import <FPPopoverController.h>
 
 @interface FrecipeLeaderboardViewController : FrecipeMainViewController
 
@@ -19,5 +20,10 @@
 @property (weak, nonatomic) IBOutlet UILabel *pointLabel;
 @property (weak, nonatomic) IBOutlet UILabel *myRankingLabel;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *segmentedControl;
+@property (weak, nonatomic) IBOutlet UIView *myRankingView;
+
+@property (assign, nonatomic) BOOL fromFrecipe;
+
+@property (strong, nonatomic) FPPopoverController *eventPopoverController;
 
 @end

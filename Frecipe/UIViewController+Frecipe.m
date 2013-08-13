@@ -100,11 +100,17 @@
 
 - (NSString *)s3BucketURL {
     NSString *url;
-    if (STAGING) {
-        url = @"https://s3.amazonaws.com/Frecipe/public/image";
+    
+    if (PRODUCTION) {
+        if (STAGING) {
+            url = @"https://s3.amazonaws.com/Frecipe/public/image";
+        } else {
+            url = @"https://s3.amazonaws.com/FrecipeProduction/public/image";
+        }
     } else {
-        url = @"https://s3.amazonaws.com/FrecipeProduction/public/image";
+        url = @"http://localhost:5000/image";
     }
+    
     return url;
 }
 

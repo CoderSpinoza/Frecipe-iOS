@@ -13,14 +13,19 @@
 #import "FrecipeAddRecipeViewController.h"
 #import "FrecipeFunctions.h"
 #import "FrecipeCommentsViewController.h"
-
+#import <GAI.h>
 #import <AFNetworking/UIImageView+AFNetworking.h>
 #import <QuartzCore/QuartzCore.h>
 
-@interface FrecipeRecipeDetailViewController () <UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate, FrecipeRatingViewDelegate, UIAlertViewDelegate, UITextFieldDelegate, FPPopoverControllerDelegate> {
+@interface FrecipeRecipeDetailViewController () <UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate, FrecipeRatingViewDelegate, UIAlertViewDelegate, UITextFieldDelegate, FPPopoverControllerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIActionSheetDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout> {
     BOOL userIsInTheMiddleOfEditingIngredientsList;
+    BOOL userHasUploadedAPhoto;
+    BOOL isCommentsOpen;
 }
+
 @property (strong, nonatomic) NSMutableArray *ingredients;
+@property (strong, nonatomic) NSMutableArray *userIngredients;
+
 @property (strong, nonatomic) NSMutableArray *directions;
 @property (strong, nonatomic) NSMutableArray *comments;
 @property (strong, nonatomic) NSDictionary *user;
@@ -33,7 +38,12 @@
 
 @property (strong, nonatomic) NSString *recipeImageURL;
 
-@property (strong, nonatomic) FrecipeCommentsViewController *commentsViewController;
+@property (strong, nonatomic) NSMutableArray *masteredImages;
+
+@property (strong, nonatomic) UIImage *masteredImage;
+
+@property (strong, nonatomic) NSIndexPath *selectedCommentIndexPath;
+
 
 @end
 
@@ -41,9 +51,6 @@
 @synthesize selectedIngredients = _selectedIngredients;
 @synthesize editMenu = _editMenu;
 @synthesize blockingView = _blockingView;
-@synthesize commentsViewController = _commentsViewController;
-@synthesize commentsPopoverViewController = _commentsPopoverViewController;
-
 - (NSMutableArray *)selectedIngredients {
     if (_selectedIngredients == nil) {
         _selectedIngredients = [[NSMutableArray alloc] init];
@@ -68,24 +75,6 @@
     return _blockingView;
 }
 
-- (FrecipeCommentsViewController *)commentsViewController {
-    if (_commentsViewController == nil) {
-        _commentsViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"Comments"];
-        _commentsViewController.recipeId = self.recipeId;
-    }
-    return _commentsViewController;
-}
-
-- (FPPopoverController *)commentsPopoverViewController {
-    if (_commentsPopoverViewController == nil) {
-        _commentsPopoverViewController = [[FPPopoverController alloc] initWithViewController:self.commentsViewController];
-        _commentsPopoverViewController.contentSize = CGSizeMake(320.0f, self.view.frame.size.height);
-        _commentsPopoverViewController.arrowDirection = FPPopoverNoArrow;
-//        _commentsPopoverViewController.tint = FPPopoverWhiteTint;
-    }
-    return _commentsPopoverViewController;
-}
-
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -99,6 +88,8 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
+    
+    self.trackedViewName = @"Recipe Detail";
     self.ingredientsTableView.dataSource = self;
     self.directionsTableView.dataSource = self;
     self.ingredientsTableView.delegate = self;
@@ -119,14 +110,14 @@
     
     self.scrollView.contentSize = CGSizeMake(self.view.frame.size.width, 900);
     
-    self.commentsView.layer.cornerRadius = 5.0f;
-    self.commentsView.layer.shadowColor = [[UIColor blackColor] CGColor];
-    self.commentsView.layer.shadowOpacity = 0.5f;
-    self.commentsView.layer.shadowRadius = 3.0f;    
+    
+    self.commentsView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bottom_bar.png"]];
+    self.commentsTableView.backgroundColor = [UIColor clearColor];   
     
     self.recipeMainView.layer.cornerRadius = 2.0f;
     [self.recipeMainView setBasicShadow];
     
+    self.bottomBar.backgroundColor = [[UIColor alloc] initWithPatternImage:[UIImage imageNamed:@"bottom_bar.png"]];
     [self addGestureRecognizers];
     [self setupEditMenu];
     
@@ -186,7 +177,6 @@
             self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Edit" style:UIBarButtonItemStyleBordered target:self action:@selector(editMenuButtonPressed)];
         }
         
-        NSDictionary *user = [JSON objectForKey:@"user"];
         self.user = [JSON objectForKey:@"user"];
         
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -195,7 +185,7 @@
         if (![provider isEqualToString:@"facebook"]) {
             self.shareButton.enabled = NO;
         }
-        [self.nameButton setTitle:[NSString stringWithFormat:@"%@ %@", [user objectForKey:@"first_name"], [user objectForKey:@"last_name"]] forState:UIControlStateNormal];
+        [self.nameButton setTitle:[NSString stringWithFormat:@"%@ %@", [self.user objectForKey:@"first_name"], [self.user objectForKey:@"last_name"]] forState:UIControlStateNormal];
         
         [self.likesButton setTitle:[NSString stringWithFormat:@"%@", [JSON objectForKey:@"likes"]] forState:UIControlStateNormal];
         
@@ -204,6 +194,18 @@
         } else {
             self.likeButton.selected = NO;
         }
+        
+        
+        
+        // new buttons
+        if ([[NSString stringWithFormat:@"%@", [JSON objectForKey:@"liked"]] isEqualToString:@"1"]) {
+            self.heartButton.selected = YES;
+        } else {
+            self.heartButton.selected = NO;
+        }
+        
+        [self.heartButton setTitle:[NSString stringWithFormat:@"%@", [JSON objectForKey:@"likes"]] forState:UIControlStateNormal];
+        
         self.ingredients = [[NSMutableArray alloc] initWithArray:[JSON objectForKey:@"ingredients"]];
         
         [self.ingredientsTableView reloadData];
@@ -217,6 +219,13 @@
         
         self.missingIngredients = [NSMutableArray arrayWithArray:[JSON objectForKey:@"missing_ingredients"]];
         
+        self.userIngredients = [NSMutableArray arrayWithArray:[JSON objectForKey:@"user_ingredients"]];
+        
+        
+        NSIndexSet *indexSet = [self.missingIngredients indexesOfObjectsPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+            return [self.userIngredients containsObject:[obj objectForKey:@"value"]];
+        }];
+        [self.missingIngredients removeObjectsAtIndexes:indexSet];
         // rating view
         self.averageRatingView.rating = [[NSString stringWithFormat:@"%@", [JSON objectForKey:@"rating"]] floatValue];
         self.ratingView.rating = [[NSString stringWithFormat:@"%@", [JSON objectForKey:@"user_rating"]] integerValue];
@@ -246,16 +255,31 @@
             self.directionsView.frame = CGRectMake(self.directionsView.frame.origin.x, self.ingredientsView.frame.origin.y + self.ingredientsView.frame.size.height + 10, self.directionsView.frame.size.width, 50);
         }
         
-        
         [self.ingredientsView setBasicShadow];
         [self.directionsView setBasicShadow];
         // comments
         
-//        self.comments = [NSMutableArray arrayWithArray:[JSON objectForKey:@"comments"]];
-//        [self.commentsTableView reloadData];
-        self.commentsViewController.comments = [NSMutableArray arrayWithArray:[JSON objectForKey:@"comments"]];
-        [self.commentsViewController.commentsTableView reloadData];
-        self.scrollView.contentSize = CGSizeMake(self.view.frame.size.width, self.directionsView.frame.origin.y + self.directionsView.frame.size.height + 10);
+        self.comments = [NSMutableArray arrayWithArray:[JSON objectForKey:@"comments"]];
+        
+        if (self.comments.count > 0) {
+            self.beTheFirstToCommentLabel.hidden = YES;
+        }
+        
+        [self.commentsTableView reloadData];
+        
+        if (self.commentId) {
+            [self commentButtonPressed];
+            [self.commentsTableView scrollToRowAtIndexPath:self.selectedCommentIndexPath atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+        }
+        
+        if (self.comments.count > 0) {
+            
+            [self.commentsTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.comments.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:NO];
+        }
+         [self.commentNewButton setTitle:[NSString stringWithFormat:@"%i", self.comments.count] forState:UIControlStateNormal];
+
+        self.scrollView.contentSize = CGSizeMake(self.view.frame.size.width, self.directionsView.frame.origin.y + self.directionsView.frame.size.height + 54);
+        
         
         if ([self isTall] == NO) {
             self.scrollView.contentSize = CGSizeMake(self.view.frame.size.width, self.scrollView.contentSize.height + 90);
@@ -273,10 +297,11 @@
 }   
 
 - (IBAction)likeButtonPressed {
-    if (self.likeButton.selected == NO) {
-        self.likeButton.selected = YES;
+    [[[GAI sharedInstance] defaultTracker] sendEventWithCategory:@"Recipe Detail" withAction:@"Like" withLabel:@"Like" withValue:[NSNumber numberWithInt:1]];
+    if (self.heartButton.selected == NO) {
+        self.heartButton.selected = YES;
     } else {
-        self.likeButton.selected = NO;
+        self.heartButton.selected = NO;
     }
     
     NSString *path = @"likes";
@@ -292,19 +317,81 @@
     
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
 
-        if ([[NSString stringWithFormat:@"%@", [JSON objectForKey:@"message"]] isEqualToString:@"like"]) {
-            self.likeButton.selected = YES;
-        } else {
-            self.likeButton.selected = NO;
-        }
+//        if ([[NSString stringWithFormat:@"%@", [JSON objectForKey:@"message"]] isEqualToString:@"like"]) {
+//            self.likeButton.selected = YES;
+//        } else {
+//            self.likeButton.selected = NO;
+//        }
         
-        [self.likesButton setTitle:[NSString stringWithFormat:@"%@", [JSON objectForKey:@"likes"]] forState:UIControlStateNormal];
+        [self.heartButton setTitle:[NSString stringWithFormat:@"%@", [JSON objectForKey:@"likes"]] forState:UIControlStateNormal];
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         NSLog(@"%@", error);
     }];
     FrecipeOperationQueue *queue = [FrecipeOperationQueue sharedQueue];
     [queue addOperation:operation];
 }
+
+- (IBAction)masterButtonPressed {
+    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"How to upload photo?" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Camera", @"Photo Library", nil];
+    [actionSheet showInView:self.view];
+}
+
+// UIActionSheetDelegate methods
+
+- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
+    if (buttonIndex == 0) {
+        [self openRecipeImagePicker:@"camera"];
+    } else if (buttonIndex == 1) {
+        [self openRecipeImagePicker:@"library"];
+    }
+}
+
+- (void)openRecipeImagePicker:(NSString *)sourceType {
+    UIImagePickerController *imagePickerController = [[UIImagePickerController alloc] init];
+    
+    if ([sourceType isEqualToString:@"camera"]) {
+        imagePickerController.sourceType = UIImagePickerControllerSourceTypeCamera;
+    } else {
+        imagePickerController.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+    }
+    imagePickerController.delegate = self;
+    imagePickerController.restorationIdentifier = @"recipeImage";
+    imagePickerController.allowsEditing = YES;
+    [self presentViewController:imagePickerController animated:YES completion:nil];
+}
+
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
+
+    
+    if ([picker.restorationIdentifier isEqualToString:@"recipeImage"]) {
+        self.masteredImage = [info valueForKey:UIImagePickerControllerEditedImage];
+        userHasUploadedAPhoto = YES;
+        [picker dismissViewControllerAnimated:YES completion:^{
+            [self uploadMasteredPicture];
+        }];
+    }
+//    }
+    
+}
+
+- (void)uploadMasteredPicture {
+    NSString *path = @"recipe_images.json";
+    FrecipeAPIClient *client = [FrecipeAPIClient client];
+    NSDictionary *parameters = @{@"authentication_token": [[NSUserDefaults standardUserDefaults] stringForKey:@"authentication_token"], @"recipe_id": self.recipeId };
+    
+    NSMutableURLRequest *request = [client multipartFormRequestWithMethod:@"POST" path:path parameters:parameters constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
+        [formData appendPartWithFileData:UIImagePNGRepresentation(self.masteredImage) name:@"recipe_image" fileName:@"recipe_image.png" mimeType:@"image/png"];
+    }];
+    
+    AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
+    } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
+        NSLog(@"%@", error);
+    }];
+    
+    FrecipeOperationQueue *queue = [FrecipeOperationQueue sharedQueue];
+    [queue addOperation:operation];
+}
+
 
 - (IBAction)shareButtonPressed {
     
@@ -314,9 +401,27 @@
 
 - (void)publishToFacebook {
     if (FBSession.activeSession.isOpen) {
-        [FBSession.activeSession requestNewPublishPermissions:[NSArray arrayWithObject:@"publish_actions"] defaultAudience:FBSessionDefaultAudienceOnlyMe completionHandler:^(FBSession *session, NSError *error) {
+        NSString *path = @"facebook/share";
+        FrecipeAPIClient *client = [FrecipeAPIClient client];
+        NSDictionary *parameters = @{@"authentication_token": [[NSUserDefaults standardUserDefaults] stringForKey:@"authentication_token"], @"recipe_id": self.recipeId};
+        
+        NSURLRequest *request = [client requestWithMethod:@"POST" path:path parameters:parameters];
+        
+        AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
+        } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
+            NSLog(@"%@", [error localizedDescription]);
+        }];
+        
+        FrecipeOperationQueue *queue = [FrecipeOperationQueue sharedQueue];
+        [queue addOperation:operation];
+        [FBSession.activeSession requestNewPublishPermissions:[NSArray arrayWithObject:@"publish_actions"] defaultAudience:FBSessionDefaultAudienceFriends completionHandler:^(FBSession *session, NSError *error) {
             
-            [FBRequestConnection startForPostOpenGraphObjectWithType:@"website" title:[NSString stringWithFormat:@"%@ has shared a recipe!", [[NSUserDefaults standardUserDefaults] stringForKey:@"name"]]image:self.recipeImageURL url:@"https://itunes.apple.com/us/app/id661973790?mt=8" description:@"Go to this link to download Frecipe!" objectProperties:nil completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
+            
+            [FBRequestConnection startForPostOpenGraphObjectWithType:@"website" title:[NSString stringWithFormat:@"%@ has shared %@'s recipe, %@!", [[NSUserDefaults standardUserDefaults] stringForKey:@"name"], [self.user objectForKey:@"first_name"], self.title] image:self.recipeImageURL url:@"https://itunes.apple.com/us/app/id661973790?mt=8" description:@"Go to this link to download Frecipe!" objectProperties:@{@"fb:explicitly_shared": @"true"} completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
+                
+                // send to google analytics
+                [[[GAI sharedInstance] defaultTracker] sendSocial:@"Facebook" withAction:@"Recipe Share" withTarget:self.title];
+                
                 UIAlertView *alertView;
                 if (!error) {
                     alertView = [[UIAlertView alloc] initWithTitle:@"Successfully Shared!" message:@"Successfully shared a recipe on your wall!" delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: nil];
@@ -330,42 +435,38 @@
 }
 
 - (IBAction)commentButtonPressed {
-//    [self.blockingView removeFromSuperview];
-//    [self.commentsView removeFromSuperview];
-    
-//    [[[[UIApplication sharedApplication] delegate] window] addSubview:self.blockingView];
-//    [[[[UIApplication sharedApplication] delegate] window] addSubview:self.commentsView];
-//    [self.view addSubview:self.blockingView];
-//    [self.view addSubview:self.commentsView];
+    CGRect frame;
+    if (isCommentsOpen) {
+        frame = CGRectMake(0, self.bottomBar.frame.origin.y, self.commentsView.frame.size.width, 0);
+        
+        [UIView animateWithDuration:0.5 animations:^{
+            self.commentsView.frame = frame;
+            self.commentsView.alpha = 0;
+        }];
+    } else {
 
-//    if (self.commentsView.alpha == 0) {
-//        [UIView animateWithDuration:0.3 animations:^{
-//            self.commentsView.alpha = 1;
-//            self.commentsView.frame = CGRectMake(0, self.commentsView.frame.origin.y, self.view.frame.size.width, self.view.frame.size.height * 0.9);
-//            self.commentsTableView.frame = CGRectMake(self.commentsTableView.frame.origin.x, self.commentsTableView.frame.origin.y, self.commentsTableView.frame.size.width, self.view.frame.size.height * 0.6);
-//            
-//        }];
-//    } else {
-//        [UIView animateWithDuration:0.3 animations:^{
-//            self.commentsView.alpha = 0;
-//            self.commentsView.frame = CGRectMake(0, self.commentsView.frame.origin.y, self.view.frame.size.width, 0);
-//        }];
-//    }
-    [self.commentsPopoverViewController presentPopoverFromPoint:CGPointMake(0, 20)];
+        frame = CGRectMake(0, 0, self.commentsView.frame.size.width, self.bottomBar.frame.origin.y);
+        
+        [UIView animateWithDuration:0.5 animations:^{
+            self.commentsView.frame = frame;
+            self.commentsView.alpha = 1;
+        }];
+        
+        self.commentsTableView.frame = CGRectMake(self.commentsTableView.frame.origin.x, self.commentsTableView.frame.origin.y, self.commentsTableView.frame.size.width, self.commentField.frame.origin.y - self.commentsTableView.frame.origin.y - 5);
+        
+        if (self.comments.count > 0) {
+            [self.commentsTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.comments.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:NO];
+        }
+    }
     
-    
+    isCommentsOpen = !isCommentsOpen;
 }
 
 - (IBAction)commentCloseButtonPressed {
-//    [self.commentField resignFirstResponder];
-//    [self.blockingView removeFromSuperview];
-//    
-//    [UIView animateWithDuration:0.3 animations:^{
-//        self.commentsView.alpha = 0;
-//        self.commentsView.frame = CGRectMake(0, self.commentsView.frame.origin.y, self.view.frame.size.width, 0);
-//    }];
-    [self.commentsPopoverViewController dismissPopoverAnimated:YES];
+    [self commentButtonPressed];
+    [self.commentField resignFirstResponder];
 }
+
 - (IBAction)commentSubmitButtonPressed {
     
     if (self.commentField.text.length > 0) {
@@ -381,14 +482,17 @@
         FrecipeAPIClient *client = [FrecipeAPIClient client];
         NSURLRequest *request = [client requestWithMethod:@"POST" path:path parameters:parameters];
         
+        self.commentSubmitButton.enabled = NO;
         AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
             self.comments = [JSON objectForKey:@"comments"];
+            [self.commentNewButton setTitle:[NSString stringWithFormat:@"%i", self.comments.count] forState:UIControlStateNormal];
             [self.commentsTableView reloadData];
-            
             [self dismissKeyboard];
             self.commentField.text = @"";
+            self.commentSubmitButton.enabled = YES;
         } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
             NSLog(@"%@", error);
+            self.commentSubmitButton.enabled = YES;
         }];
         FrecipeOperationQueue *queue = [FrecipeOperationQueue sharedQueue];
         [queue addOperation:operation];
@@ -426,6 +530,7 @@
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
         self.comments = [JSON objectForKey:@"comments"];
         [self.commentsTableView reloadData];
+        [self.commentNewButton setTitle:[NSString stringWithFormat:@"%i", self.comments.count] forState:UIControlStateNormal];
 
         [spinner stopAnimating];
         [spinner removeFromSuperview];
@@ -463,6 +568,7 @@
 }
 
 - (IBAction)addToGroceryList {
+    [[[GAI sharedInstance] defaultTracker] sendEventWithCategory:@"Recipe Detail" withAction:@"Add to Grocery List" withLabel:@"Add to Grocery List" withValue:[NSNumber numberWithInt:1]];
     NSString *path = @"groceries";
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -562,7 +668,6 @@
             [destinationController.directions addObject:step];
         }
         
-        NSLog(@"%@", destinationController.directions);
         destinationController.editing = @"1";
         
         if (destinationController.view) {
@@ -723,6 +828,14 @@
     }
 }
 
+- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
+    return 0.01f;
+}
+
+- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section {
+    return [UIView new];
+}
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     
@@ -782,9 +895,11 @@
         UIImageView *profilePictureView = (UIImageView *)[cell viewWithTag:2];
         if ([[NSString stringWithFormat:@"%@", [userAndComment objectForKey:@"provider"]] isEqualToString:@"facebook"]) {
             profilePictureView.hidden = YES;
+            fbProfilePictureView.hidden = NO;
             fbProfilePictureView.profileID = [NSString stringWithFormat:@"%@", [userAndComment objectForKey:@"uid"]];
         } else {
             fbProfilePictureView.hidden = YES;
+            profilePictureView.hidden = NO;
             [profilePictureView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@/users/%@/%@", [self s3BucketURL], [userAndComment objectForKey:@"user_id"], [userAndComment objectForKey:@"profile_picture"]]] placeholderImage:[UIImage imageNamed:@"default_profile_picture"]];
         }
         
@@ -810,10 +925,25 @@
         if (![userId isEqualToString:[NSString stringWithFormat:@"%@", [userAndComment objectForKey:@"user_id"]]]) {
             deleteButton.hidden = YES;
         } else {
-            
+            deleteButton.hidden = NO;
             deleteButton.frame = CGRectMake(timeLabel.frame.origin.x + timeLabel.frame.size.width - 5, deleteButton.frame.origin.y, deleteButton.frame.size.width, deleteButton.frame.size.height);
         }
         textView.font = [UIFont systemFontOfSize:13];
+        
+        
+        
+        // color
+        NSString *commentId = [NSString stringWithFormat:@"%@", [userAndComment objectForKey:@"comment_id"]];
+
+        if ([commentId isEqualToString:self.commentId]) {
+            
+            self.selectedCommentIndexPath = indexPath;
+            cell.contentView.backgroundColor = [UIColor yellowColor];
+            [UIView animateWithDuration:2.0 animations:^{
+                cell.contentView.backgroundColor = [UIColor clearColor];
+            }];
+            self.commentId = nil;
+        }
         return cell;
 
     } else {
@@ -845,6 +975,33 @@
 - (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath {
 }
 
+
+// collection view dataSource methods
+
+- (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
+    return 1;
+}
+
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
+    return self.masteredImages.count;
+}
+
+- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
+    UICollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"PictureCell" forIndexPath:indexPath];
+    
+    
+    UIImageView *imageView = (UIImageView *)[cell viewWithTag:1];
+    NSDictionary *masteredImage = [self.masteredImages objectAtIndex:indexPath.row];
+    
+    if ([masteredImage objectForKey:@"original"]) {
+//        [imageView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@", [[masteredImage objectForKey:@"url"]] placeholderImage:[UIImage imageNamed:@"default_recipe_picture.png"]];
+        [imageView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@/recipes/%@/%@", [self s3BucketURL], [masteredImage objectForKey:@"id"], [masteredImage objectForKey:@"picture_file_name"]]] placeholderImage:[UIImage imageNamed:@"default_recipe_picture.png"]];
+    } else {
+        [imageView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@/recipe_images/%@/%@", [self s3BucketURL], [masteredImage objectForKey:@"id"], [masteredImage objectForKey:@"picture_file_name"]]] placeholderImage:[UIImage imageNamed:@"default_recipe_picture.png"]];
+    }
+    
+    return cell;
+}
 // keybaord notification
 
 - (void)keyboardWillBeShown:(NSNotification *)notification {
@@ -857,9 +1014,13 @@
     [UIView animateWithDuration:0.3 animations:^{
         self.commentsTableView.frame = CGRectMake(self.commentsTableView.frame.origin.x, self.commentsTableView.frame.origin.y, self.commentsTableView.frame.size.width, self.commentsTableView.frame.size.height - (keyboardSize.height - self.view.frame.size.height + self.commentsTableView.frame.origin.y + self.commentsTableView.frame.size.height) - 40);
         
-        self.commentField.frame = CGRectMake(self.commentField.frame.origin.x, self.commentField.frame.origin.y - keyboardSize.height + 25, self.commentField.frame.size.width, self.commentField.frame.size.height);
+        self.commentField.frame = CGRectMake(self.commentField.frame.origin.x, self.commentField.frame.origin.y - keyboardSize.height + 40, self.commentField.frame.size.width, self.commentField.frame.size.height);
         
-        self.commentSubmitButton.frame = CGRectMake(self.commentSubmitButton.frame.origin.x, self.commentSubmitButton.frame.origin.y - keyboardSize.height + 25, self.commentSubmitButton.frame.size.width, self.commentSubmitButton.frame.size.height);
+        self.commentSubmitButton.frame = CGRectMake(self.commentSubmitButton.frame.origin.x, self.commentSubmitButton.frame.origin.y - keyboardSize.height + 40, self.commentSubmitButton.frame.size.width, self.commentSubmitButton.frame.size.height);
+        if (self.comments.count > 0) {
+            
+            [self.commentsTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.comments.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+        }
     }];
 }
 
@@ -868,16 +1029,14 @@
     CGSize keyboardSize = [[info objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
     self.commentsTableView.frame = CGRectMake(self.commentsTableView.frame.origin.x, self.commentsTableView.frame.origin.y, self.commentsTableView.frame.size.width, self.originalHeight);
     
-    [UIView animateWithDuration:0.5 animations:^{
-        self.commentField.frame = CGRectMake(self.commentField.frame.origin.x, self.commentField.frame.origin.y + keyboardSize.height - 25, self.commentField.frame.size.width, self.commentField.frame.size.height);
-        
-        self.commentSubmitButton.frame = CGRectMake(self.commentSubmitButton.frame.origin.x, self.commentSubmitButton.frame.origin.y + keyboardSize.height - 25, self.commentSubmitButton.frame.size.width, self.commentSubmitButton.frame.size.height);
-    } completion:^(BOOL finished) {
-        if (self.comments.count > 0) {
-            [self.commentsTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.comments.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
-        }
-    }];
+//    [UIView animateWithDuration:0.5 animations:^{
+//        
+//    } completion:^(BOOL finished) {
+//        
+//    }];
+    self.commentField.frame = CGRectMake(self.commentField.frame.origin.x, self.commentField.frame.origin.y + keyboardSize.height - 40, self.commentField.frame.size.width, self.commentField.frame.size.height);
     
+    self.commentSubmitButton.frame = CGRectMake(self.commentSubmitButton.frame.origin.x, self.commentSubmitButton.frame.origin.y + keyboardSize.height - 40, self.commentSubmitButton.frame.size.width, self.commentSubmitButton.frame.size.height);
 }
 
 @end

@@ -12,7 +12,7 @@
 #import "FrecipeAPIClient.h"
 #import "FrecipeAppDelegate.h"
 #import "FrecipeFunctions.h"
-#import <UIButton+WebCache.h>
+#import "UIButton+WebCache.h"
 
 @interface FrecipeFridgeViewController () <UIActionSheetDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITableViewDataSource, UITableViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout> {
     BOOL userIsInTheMiddleOfEditingIngredientsList;
@@ -50,6 +50,8 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
+    
+    self.trackedViewName = @"Fridge";
     self.navigationItem.rightBarButtonItem = self.editButtonItem;
     self.ingredientsTableView.delegate = self;
     self.ingredientsTableView.dataSource = self;
@@ -163,6 +165,8 @@
 }
 
 - (IBAction)deleteButtonPressed:(UIBarButtonItem *)sender {
+    [[[GAI sharedInstance] defaultTracker] sendEventWithCategory:@"Fridge" withAction:@"Delete" withLabel:@"Delete" withValue:[NSNumber numberWithInt:1]];
+    
     NSMutableArray *ids = [[NSMutableArray alloc] initWithCapacity:self.selectedIngredients.count];
     for (id ingredient in self.selectedIngredients) {
         NSString *ingredientId = [ingredient objectForKey:@"id"];
@@ -197,10 +201,13 @@
 }
 
 - (IBAction)segmentedControlPressed:(UISegmentedControl *)sender {
+    
     if (sender.selectedSegmentIndex == 0) {
+        [[[GAI sharedInstance] defaultTracker] sendEventWithCategory:@"Fridge" withAction:@"Collection" withLabel:@"Collection" withValue:[NSNumber numberWithInt:1]];
         self.ingredientsCollectionView.hidden = NO;
         self.ingredientsTableView.hidden = YES;
     } else {
+        [[[GAI sharedInstance] defaultTracker] sendEventWithCategory:@"Fridge" withAction:@"List" withLabel:@"List" withValue:[NSNumber numberWithInt:1]];
         self.ingredientsCollectionView.hidden = YES;
         self.ingredientsTableView.hidden = NO;
     }
@@ -252,6 +259,7 @@
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated {
     userIsInTheMiddleOfEditingIngredientsList = editing;
     if (editing) {
+        [[[GAI sharedInstance] defaultTracker] sendEventWithCategory:@"Fridge" withAction:@"Edit" withLabel:@"Edit" withValue:[NSNumber numberWithInt:1]];
         NSArray *keys = [NSArray arrayWithObjects:@"name", @"image", nil];
         NSArray *values = [NSArray arrayWithObjects:@"Add Ingredients", [NSString stringWithFormat:@"%@/ingredients/plus.png", [self s3BucketURL]], nil];
         NSDictionary *addRow = [NSDictionary dictionaryWithObjects:values forKeys:keys];

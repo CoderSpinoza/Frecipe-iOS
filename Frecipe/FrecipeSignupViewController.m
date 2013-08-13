@@ -32,6 +32,8 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
+    
+    self.trackedViewName = @"Signup";
     self.emailField.delegate = self;
     self.firstNameField.delegate = self;
     self.lastNameField.delegate = self;
@@ -92,6 +94,7 @@
 }
 
 - (IBAction)useYourFacebookInfoButtonPressed {
+    [[[GAI sharedInstance] defaultTracker] sendEventWithCategory:@"Authentication" withAction:@"Connect with Facebook" withLabel:@"Connect with Facebook" withValue:[NSNumber numberWithInt:1]];
     FrecipeSpinnerView *spinnerView = [[FrecipeSpinnerView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
     spinnerView.center = CGPointMake(self.view.frame.size.width / 2, self.view.frame.size.height / 2);
     [spinnerView.spinner startAnimating];
@@ -134,6 +137,7 @@
 }
 
 - (IBAction)signupButtonPressed:(id)sender {
+    [[[GAI sharedInstance] defaultTracker] sendEventWithCategory:@"Authentication" withAction:@"Signup" withLabel:@"Signup" withValue:[NSNumber numberWithInt:1]];
     if (![self.emailField.text isEmail]) {
         UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Signup Error" message:@"Please enter a valid email address." delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: nil];
         [alertView show];

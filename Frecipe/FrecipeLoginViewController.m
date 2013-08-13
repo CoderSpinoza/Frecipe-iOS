@@ -45,6 +45,7 @@
     self.emailField.clipsToBounds = YES;
     self.passwordField.clipsToBounds = YES;
     
+    self.trackedViewName = @"Login";
     [self addGestureRecognizers];
 }
 
@@ -67,6 +68,7 @@
 }
 
 - (IBAction)loginButtonPressed {
+    [[[GAI sharedInstance] defaultTracker] sendEventWithCategory:@"Authentication" withAction:@"Login" withLabel:@"Login" withValue:[NSNumber numberWithInt:1]];
     FrecipeAPIClient *client = [FrecipeAPIClient client];
     
     NSString *path = @"tokens";
@@ -83,26 +85,6 @@
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
         
         // save retrieved user data
-//        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-//        [defaults setObject:[JSON objectForKey:@"token"] forKey:@"authentication_token"];
-//        [defaults setObject:[[JSON objectForKey:@"user"] objectForKey:@"id"] forKey:@"id"];
-//        [defaults setObject:[[JSON objectForKey:@"user"] objectForKey:@"email"] forKey:@"email"];
-//        if ([[NSString stringWithFormat:@"%@", [[JSON objectForKey:@"user"] objectForKey:@"provider"]] isEqualToString:@"facebook"]) {
-//            [defaults setObject:[[JSON objectForKey:@"user"] objectForKey:@"provider"] forKey:@"provider"];
-//            [defaults setObject:[[JSON objectForKey:@"user"] objectForKey:@"uid"] forKey:@"uid"];
-//        } else {
-//        }
-//        
-//        [defaults setObject:[[JSON objectForKey:@"user"] objectForKey:@"first_name"] forKey:@"first_name"];
-//        [defaults setObject:[[JSON objectForKey:@"user"] objectForKey:@"last_name"] forKey:@"last_name"];
-//        [defaults setObject:[NSString stringWithFormat:@"%@ %@", [[JSON objectForKey:@"user"] objectForKey:@"first_name"], [[JSON objectForKey:@"user"] objectForKey:@"last_name"]] forKey:@"name"];
-//        
-//        NSString *profilePictureUrl = [NSString stringWithFormat:@"%@",[JSON objectForKey:@"profile_picture"]];
-//        
-//        [defaults setObject:profilePictureUrl forKey:@"profile_picture"];
-//        [defaults setObject:[[JSON objectForKey:@"user"] objectForKey:@"website"] forKey:@"website"];
-//        [defaults setObject:[[JSON objectForKey:@"user"] objectForKey:@"about"] forKey:@"about"];
-//        [defaults synchronize];
         [self saveUserInfo:[JSON objectForKey:@"user"] Token:[JSON objectForKey:@"token"] ProfilePicture:[NSString stringWithFormat:@"%@", [JSON objectForKey:@"profile_picture"]]];
         
         [self performSegueWithIdentifier:@"Login" sender:self];
@@ -119,6 +101,8 @@
     [queue addOperation:operation];
 }
 - (IBAction)loginWithFacebookButtonPressed {
+    [[[GAI sharedInstance] defaultTracker] sendEventWithCategory:@"Authentication" withAction:@"Login with Facebook" withLabel:@"Login with Facebook" withValue:[NSNumber numberWithInt:1]];
+    
     NSArray *permissions = [[NSArray alloc] initWithObjects:
                             @"email",
                             @"user_likes",

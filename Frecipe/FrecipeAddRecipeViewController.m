@@ -71,6 +71,8 @@
     self.directionsTableView.dataSource = self;
     self.directionsTableView.delegate = self;
 
+    self.trackedViewName = @"Add Recipe";
+    
 //    [self addGestureRecognizers];
     [self registerForKeyboardNotifications];
     [self fetchAllIngredients];
@@ -130,6 +132,8 @@
 
 
 - (IBAction)addButtonPressed:(UIBarButtonItem *)sender {
+    
+    [self.currentField resignFirstResponder];
     NSString *path;
     NSString *method;
     if ([self.editing isEqualToString:@"1"]) {

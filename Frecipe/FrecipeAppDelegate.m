@@ -8,8 +8,12 @@
 
 #import "FrecipeAppDelegate.h"
 #import "FrecipeAPIClient.h"
+#import <GAI.h>
+#import <GAITracker.h>
+#import <GAITrackedViewController.h>
+#import <GAITransaction.h>
+#import <GAITransactionItem.h>
 #import <NewRelicAgent/NewRelicAgent.h>
-
 @implementation FrecipeAppDelegate
 @synthesize ingredients = _ingredients;
 @synthesize recipes = _recipes;
@@ -95,6 +99,16 @@ NSString *const FBSessionStateChangedNotification = @"com.Frecipe.Frecipe:FBSess
     
     // stat new relic
 //    [NewRelicAgent startWithApplicationToken:@"AAc3ea27dc72cade020e5d024fda602d64acf5a852"];
+    
+    
+    // start Google Anayltics
+    // Optional: automatically send uncaught exceptions to Google Analytics.
+    [GAI sharedInstance].trackUncaughtExceptions = YES;
+    // Optional: set Google Analytics dispatch interval to e.g. 20 seconds.
+    [GAI sharedInstance].dispatchInterval = 20;
+    // Optional: set debug to YES for extra debugging information.
+    [GAI sharedInstance].debug = YES;
+    id<GAITracker> tracker = [[GAI sharedInstance] trackerWithTrackingId:@"UA-42729674-1"];
     self.window.rootViewController = initViewController;
     return YES;
 }

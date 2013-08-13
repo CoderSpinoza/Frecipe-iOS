@@ -10,7 +10,9 @@
 #import <MLPAutoCompleteTextField/MLPAutoCompleteTextField.h>
 #import <MLPAutoCompleteTextField/MLPAutoCompleteTextFieldDataSource.h>
 #import <MLPAutoCompleteTextField/MLPAutoCompleteTextFieldDelegate.h>
-@interface FrecipeAddRecipeViewController : UIViewController
+#import <GAITrackedViewController.h>
+
+@interface FrecipeAddRecipeViewController : GAITrackedViewController
 
 @property (weak, nonatomic) IBOutlet UINavigationBar *navigationBar;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *segmentedControl;

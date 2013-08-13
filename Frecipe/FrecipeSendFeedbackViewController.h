@@ -7,8 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
-
-@interface FrecipeSendFeedbackViewController : UIViewController
+#import <GAITrackedViewController.h>
+@interface FrecipeSendFeedbackViewController : GAITrackedViewController
 
 @property (weak, nonatomic) IBOutlet UITextView *feedbackTextView;
 @end

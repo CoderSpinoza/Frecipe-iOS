@@ -133,21 +133,114 @@
         UIImageView *imageView = (UIImageView *)[cell viewWithTag:1];
         [imageView removeFromSuperview];
         cell.imageView.image = [UIImage imageNamed:@"default_profile_picture.png"];
-        fbProfilePictreView.frame = CGRectMake(0, 0, 43, 43);
+        
+//        fbProfilePictreView.frame = CGRectMake(0, 0, 43, 43);
+        
+        CGFloat height = [self calculateHeight:indexPath];
+        
+        
+        FBProfilePictureView *previousView = (FBProfilePictureView *)[cell viewWithTag:1];
+        UIImageView *previousView2 = (UIImageView *)[cell viewWithTag:2];
+        [previousView removeFromSuperview];
+        [previousView2 removeFromSuperview];
+        fbProfilePictreView.tag = 1;
+        
+        if (height > 40) {
+            fbProfilePictreView.frame = CGRectMake(0, (height - 43) / 2, 43, 43);
+        } else {
+            fbProfilePictreView.frame = CGRectMake(0, 0, 43, 43);
+        }
         [cell addSubview:fbProfilePictreView];
         cell.imageView.hidden = YES;
     } else {
+        
+        FBProfilePictureView *previousView = (FBProfilePictureView *)[cell viewWithTag:1];
+        UIImageView *previousView2 = (UIImageView *)[cell viewWithTag:2];
+        [previousView removeFromSuperview];
+        [previousView2 removeFromSuperview];
+        
         cell.imageView.image = [UIImage imageNamed:@"default_profile_picture.png"];
         fbProfilePictreView.hidden = YES;
         UIImageView *imageView = [[UIImageView alloc] init];
         imageView.tag = 1;
         [imageView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@", [notification objectForKey:@"profile_picture"]]] placeholderImage:[UIImage imageNamed:@"default_profile_picture.png"]];
         [cell addSubview:imageView];
-        imageView.frame = CGRectMake(0, 0, 43, 43);
+        
+        
+        
+        imageView.tag = 2;
+        CGFloat height = [self calculateHeight:indexPath];
+        if (height > 40) {
+            imageView.frame = CGRectMake(0, (height - 43) / 2, 43, 43);
+        } else {
+            imageView.frame = CGRectMake(0, 0, 43, 43);
+        }
         cell.imageView.hidden = YES;
     }
     
     return cell;
+}
+
+
+- (CGFloat)calculateHeight:(NSIndexPath *)indexPath {
+    CGFloat fontSize = 14;
+    UIFont *boldFont = [UIFont boldSystemFontOfSize:fontSize];
+    
+    NSDictionary *notification = [self.notifications objectAtIndex:indexPath.row];
+    NSDictionary *source = [notification objectForKey:@"source"];
+    NSDictionary *recipe = [notification objectForKey:@"recipe"];
+    NSString *category = [NSString stringWithFormat:@"%@", [notification objectForKey:@"category"]];
+    
+    NSString *sourceName = [NSString stringWithFormat:@"%@ %@", [source objectForKey:@"first_name"], [source objectForKey:@"last_name"]];
+    NSString *originalText;
+    if ([category isEqualToString:@"like"]) {
+        originalText = [NSString stringWithFormat:@"%@ liked your recipe %@.", sourceName, [recipe objectForKey:@"name"]];
+    } else if ([category isEqualToString:@"comment"]) {
+        originalText = [NSString stringWithFormat:@"%@ commented on your recipe %@.", sourceName, [recipe objectForKey:@"name"]];
+    } else if ([category isEqualToString:@"follow"]) {
+        originalText = [NSString stringWithFormat:@"%@ is now following you!", sourceName];
+    } else {
+        originalText = [NSString stringWithFormat:@"%@ uploaded a new recipe %@.", sourceName, [recipe objectForKey:@"name"]];
+    }
+    
+    CGSize constraintSize = CGSizeMake(200, MAXFLOAT);
+    CGSize labelSize = [originalText sizeWithFont:boldFont constrainedToSize:constraintSize lineBreakMode:NSLineBreakByWordWrapping];
+    if (labelSize.height > 40) {
+        return labelSize.height+10;
+    } else {
+        return 44;
+    }
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    CGFloat fontSize = 14;
+    UIFont *boldFont = [UIFont boldSystemFontOfSize:fontSize];
+    
+    NSDictionary *notification = [self.notifications objectAtIndex:indexPath.row];
+    NSDictionary *source = [notification objectForKey:@"source"];
+    NSDictionary *recipe = [notification objectForKey:@"recipe"];
+    NSString *category = [NSString stringWithFormat:@"%@", [notification objectForKey:@"category"]];
+    
+    NSString *sourceName = [NSString stringWithFormat:@"%@ %@", [source objectForKey:@"first_name"], [source objectForKey:@"last_name"]];
+    NSString *originalText;
+    if ([category isEqualToString:@"like"]) {
+        originalText = [NSString stringWithFormat:@"%@ liked your recipe %@.", sourceName, [recipe objectForKey:@"name"]];
+    } else if ([category isEqualToString:@"comment"]) {
+        originalText = [NSString stringWithFormat:@"%@ commented on your recipe %@.", sourceName, [recipe objectForKey:@"name"]];
+    } else if ([category isEqualToString:@"follow"]) {
+        originalText = [NSString stringWithFormat:@"%@ is now following you!", sourceName];
+    } else {
+        originalText = [NSString stringWithFormat:@"%@ uploaded a new recipe %@.", sourceName, [recipe objectForKey:@"name"]];
+    }
+    
+    CGSize constraintSize = CGSizeMake(200, MAXFLOAT);
+    CGSize labelSize = [originalText sizeWithFont:boldFont constrainedToSize:constraintSize lineBreakMode:NSLineBreakByWordWrapping];
+    if (labelSize.height > 40) {
+        
+        return labelSize.height+10;
+    } else {
+        return 44;
+    }
 }
 
 /*

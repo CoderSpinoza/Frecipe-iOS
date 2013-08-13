@@ -7,8 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
-
-@interface FrecipeChangePasswordViewController : UIViewController
+#import <GAITrackedViewController.h>
+@interface FrecipeChangePasswordViewController : GAITrackedViewController
 
 @property (weak, nonatomic) IBOutlet UITextField *currentPasswordField;
 @property (weak, nonatomic) IBOutlet UITextField *differentPasswordField;

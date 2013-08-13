@@ -7,12 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
-
-@interface FrecipeMainViewController : UIViewController
+#import <GAITrackedViewController.h>
+@interface FrecipeMainViewController : GAITrackedViewController
 
 @property (strong, nonatomic) FrecipeBadgeView *notificationBadge;
 @property (strong, nonatomic) NSDictionary *selectedRecipe;
 @property (strong, nonatomic) NSDictionary *selectedUser;
 - (FrecipeBadgeView *)addNotificationBadge;
-- (void)performSegueWithNotification:(NSString *)category Target:(NSDictionary *)target;
+- (void)performSegueWithNotification:(NSString *)category Target:(NSDictionary *)target CommentId:(NSString *)commentId;
 @end

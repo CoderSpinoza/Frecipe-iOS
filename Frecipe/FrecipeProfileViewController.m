@@ -47,6 +47,8 @@
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
     
+    self.trackedViewName = @"Profile";
+    
     self.recipesCollectionView.dataSource = self;
     self.recipesCollectionView.delegate = self;
     
@@ -88,6 +90,7 @@
 }
 
 - (void)flipCell:(UITapGestureRecognizer *)tapGestureRecognizer {
+    [[[GAI sharedInstance] defaultTracker] sendEventWithCategory:@"Profile" withAction:@"Flip Recipe" withLabel:@"Flip Recipe" withValue:[NSNumber numberWithInt:1]];
     UITableViewCell *cell;
     UIView *view1;
     UIView *view2;
@@ -289,6 +292,8 @@
     [self showFacebookFriendPicker];
 }
 - (IBAction)followButtonPressed:(UIButton *)sender {
+    [[[GAI sharedInstance] defaultTracker] sendEventWithCategory:@"Profile" withAction:@"Follow" withLabel:@"Follow" withValue:[NSNumber numberWithInt:1]];
+    
     NSString *path = @"follows";
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -315,6 +320,7 @@
 }
 
 - (void)goToRecipeDetail {
+    [[[GAI sharedInstance] defaultTracker] sendEventWithCategory:@"Profile" withAction:@"Recipe Detail" withLabel:@"Recipe Detail" withValue:[NSNumber numberWithInt:1]];
     self.selectedRecipe = self.mostPopularRecipe;
     [self performSegueWithIdentifier:@"RecipeDetail" sender:self];
 }
@@ -350,6 +356,7 @@
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    [[[GAI sharedInstance] defaultTracker] sendEventWithCategory:@"Profile" withAction:segue.identifier withLabel:segue.identifier withValue:[NSNumber numberWithInt:1]];
     NSArray *identifiers = [NSArray arrayWithObjects:@"Recipes", @"Followers", @"Likes", @"Following", @"Liked", nil];
     if ([segue.identifier isEqualToString:@"RecipeDetail"]) {
         FrecipeRecipeDetailViewController *recipeDetailViewController = (FrecipeRecipeDetailViewController *) segue.destinationViewController;

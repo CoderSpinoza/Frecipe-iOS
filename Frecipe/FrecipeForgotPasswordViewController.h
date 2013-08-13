@@ -7,8 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <GAITrackedViewController.h>
 
-@interface FrecipeForgotPasswordViewController : UIViewController
+@interface FrecipeForgotPasswordViewController : GAITrackedViewController
 
 @property (weak, nonatomic) IBOutlet UITextField *emailField;
 

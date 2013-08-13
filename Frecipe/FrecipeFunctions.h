@@ -12,6 +12,7 @@
 + (NSDateFormatter *)sharedDateFormatter;
 + (NSString *)currentDate;
 + (NSString *)compareWithCurrentDate:(NSString *)specifiedDate;
-
++ (NSDate *)dateWithString:(NSString *)specifiedDate;
++ (NSString *)compareWithCurrentDateForTimer:(NSTimeInterval)interval;
 
 @end

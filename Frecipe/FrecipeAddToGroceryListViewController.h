@@ -7,8 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <GAITrackedViewController.h>
+@interface FrecipeAddToGroceryListViewController : GAITrackedViewController
 
-@interface FrecipeAddToGroceryListViewController : UIViewController
 @property (weak, nonatomic) IBOutlet UITextField *groceryField;
 @property (weak, nonatomic) IBOutlet UITableView *groceryListTableView;
 
