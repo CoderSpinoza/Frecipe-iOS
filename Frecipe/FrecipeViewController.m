@@ -16,7 +16,6 @@
 #import "FrecipeFunctions.h"
 #import "UIImageView+WebCache.h"
 #import "FrecipeLeaderboardViewController.h"
-#import <GAI.h>
 @interface FrecipeViewController () <UICollectionViewDelegateFlowLayout, UICollectionViewDataSource>
 
 @property (strong, nonatomic) NSMutableArray *recipes;
@@ -56,10 +55,11 @@
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
     self.title = @"Frecipe";
-    self.trackedViewName = @"Frecipe";
+    self.screenName = @"Frecipe";
     self.recipesCollectionView.dataSource = self;
     self.recipesCollectionView.delegate = self;
     [self addRefreshControl];
+    
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -111,7 +111,7 @@
         [self.recipes removeAllObjects];
         NSMutableArray *recipes = [NSMutableArray arrayWithArray:[JSON objectForKey:@"recipes"]];
         
-        self.userIngredients = [NSArray arrayWithArray:[JSON objectForKey:@"ingredient_values"]];
+        self.userIngredients = [NSMutableArray arrayWithArray:[JSON objectForKey:@"ingredient_values"]];
         [recipes enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
             NSMutableDictionary *recipe = (NSMutableDictionary *)obj;
             
@@ -131,7 +131,7 @@
             NSArray *values = [NSArray arrayWithObjects:[NSString stringWithFormat:@"%@", [recipe objectForKey:@"recipe_id"]], [NSString stringWithFormat:@"%@", [recipe objectForKey:@"name"]], [NSString stringWithFormat:@"%@", [recipe objectForKey:@"user_id"]], [NSString stringWithFormat:@"%@ %@", [recipe objectForKey:@"first_name"], [recipe objectForKey:@"last_name"]], [NSString stringWithFormat:@"%@", [recipe objectForKey:@"likes_count"]], recipeIngredients, [NSString stringWithFormat:@"%@", [recipe objectForKey:@"recipe_image_file_name"]], nil];
             NSDictionary *recipe2 = [NSDictionary dictionaryWithObjects:values forKeys:keys];
             
-            self.events = [NSArray arrayWithArray:[JSON objectForKey:@"events"]];
+            self.events = [NSMutableArray arrayWithArray:[JSON objectForKey:@"events"]];
             [self.recipes addObject:recipe2];
         }];
         
@@ -215,7 +215,9 @@
 }
 
 - (void)flipCell:(UITapGestureRecognizer *)tapGestureRecognizer {
-    [[[GAI sharedInstance] defaultTracker] sendEventWithCategory:@"Frecipe" withAction:@"Flip Recipe" withLabel:@"Flip Recipe" withValue:[NSNumber numberWithInt:1]];
+    
+    [[[GAI sharedInstance] defaultTracker] send:[[GAIDictionaryBuilder createEventWithCategory:@"Frecipe" action:@"Fip Recipe" label:@"Fip Recipe" value:[NSNumber numberWithInt:1]] build]];
+//    [[[GAI sharedInstance] defaultTracker] sendEventWithCategory:@"Frecipe" withAction:@"Flip Recipe" withLabel:@"Flip Recipe" withValue:[NSNumber numberWithInt:1]];
     UITableViewCell *cell;
     UIView *view1;
     UIView *view2;
@@ -249,38 +251,31 @@
     self.recipesCollectionView.alwaysBounceVertical = YES;
 }
 
-//- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-//    if ([segue.identifier isEqualToString:@"RecipeDetail"]) {
-//        
-//        FrecipeRecipeDetailViewController *recipeDetailViewController = (FrecipeRecipeDetailViewController *) segue.destinationViewController;
-//        
-//        recipeDetailViewController.navigationItem.leftBarButtonItem = nil;
-//        recipeDetailViewController.recipeId = [self.selectedRecipe objectForKey:@"id"];
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    if ([segue.identifier isEqualToString:@"Profile"] || [segue.identifier isEqualToString:@"Profile2"]) {
+        FrecipeProfileViewController *destinationViewController = (FrecipeProfileViewController *)segue.destinationViewController;
+        if (self.selectedUser == nil) {
+            UIButton *button = (UIButton *)sender;
+            UICollectionViewCell *cell = (UICollectionViewCell *)button.superview.superview.superview;
+            
+            destinationViewController.userId = [NSString stringWithFormat:@"%@", [[self.recipes objectAtIndex:[self.recipesCollectionView indexPathForCell:cell].row] objectForKey:@"user_id"]];
+            
+        } else {
+            destinationViewController.userId = [NSString stringWithFormat:@"%@", [self.selectedUser objectForKey:@"id"]];
+            
+        }
+        destinationViewController.fromSegue = YES;
+        NSLog(@"hihi");
+        destinationViewController.navigationItem.leftBarButtonItem = nil;
+//        self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemBack target:<#(id)#> action:<#(SEL)#>]
 //        self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"back_arrow.png"] style:UIBarButtonItemStyleBordered target:segue.destinationViewController action:@selector(popViewControllerAnimated:)];
-//    } else if ([segue.identifier isEqualToString:@"Profile"] || [segue.identifier isEqualToString:@"Profile2"]) {
-//        FrecipeProfileViewController *destinationViewController = (FrecipeProfileViewController *)segue.destinationViewController;
-//        destinationViewController.navigationItem.leftBarButtonItem = nil;
-//        if (self.selectedUser == nil) {
-//            UIButton *button = (UIButton *)sender;
-//            UICollectionViewCell *cell = (UICollectionViewCell *)button.superview.superview.superview;
-//        
-//            destinationViewController.userId = [NSString stringWithFormat:@"%@", [[self.recipes objectAtIndex:[self rowForItem:[self.recipesCollectionView indexPathForCell:cell]]] objectForKey:@"user_id"]];
-//            
-//        } else {
-//            destinationViewController.userId = [NSString stringWithFormat:@"%@", [self.selectedUser objectForKey:@"id"]];
-//
-//        }
-//        destinationViewController.fromSegue = YES;
-//        
-//        destinationViewController.navigationItem.leftBarButtonItem = nil;
-//        self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"back_arrow.png"] style:UIBarButtonItemStyleBordered target:segue.destinationViewController action:@selector(popViewControllerAnimated:)];
-//    } else if ([segue.identifier isEqualToString:@"Leaderboard"]) {
-//        FrecipeLeaderboardViewController *destinationController = segue.destinationViewController;
-//        destinationController.fromFrecipe = YES;
-//        destinationController.navigationItem.leftBarButtonItem = nil;
-//        self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"back_arrow.png"] style:UIBarButtonItemStyleBordered target:segue.destinationViewController action:@selector(popViewControllerAnimated:)];
-//    }
-//}
+        
+        self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:segue.destinationViewController action:@selector(popViewControllerAnimated:)];
+    } else {
+        [super prepareForSegue:segue sender:segue];
+    }
+}
+
 
 // alert view delegate methods
 
@@ -299,7 +294,7 @@
 }
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
-    return self.recipes.count + self.events.count;
+    return self.recipes.count;
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
@@ -311,89 +306,75 @@
     UIButton *frontNameButton = (UIButton *)[cell viewWithTag:11];
     UILabel *likesLabel = (UILabel *)[cell viewWithTag:9];
     UIView *whiteView = (UIView *)[cell viewWithTag:7];
-    if (indexPath.row < self.events.count) {
-        recipeImageView.backgroundColor = [UIColor whiteColor];
-        recipeImageView.frame = CGRectMake(0, 0, 320, 160);
-        [recipeImageView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@/events/%@/%@", [self s3BucketURL], [[self.events objectAtIndex:indexPath.row] objectForKey:@"id"], [[self.events objectAtIndex:indexPath.row] objectForKey:@"photo_file_name"]]] placeholderImage:nil completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType) {
-        }];
-        missingIngredientsButton.hidden = YES;
-        recipeNameView.hidden = YES;
-        frontNameButton.hidden = YES;
-        likesLabel.hidden = YES;
-        whiteView.hidden = YES;
-        
-    } else {
+    
         // setting the image view for the cell using AFNetworking. Does this do caching automatically?
-        recipeImageView.alpha = 0;
-        if (PRODUCTION) {
-//            [recipeImageView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@/recipes/%@/%@", [self s3BucketURL],[[self.recipes objectAtIndex:[self rowForItem:indexPath]] objectForKey:@"id"], [[self.recipes objectAtIndex:[self rowForItem:indexPath]] objectForKey:@"recipe_image"]]] placeholderImage:[UIImage imageNamed:@"default_recipe_picture.png"]];
-            [recipeImageView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@/recipes/%@/%@", [self s3BucketURL],[[self.recipes objectAtIndex:[self rowForItem:indexPath]] objectForKey:@"id"], [[self.recipes objectAtIndex:[self rowForItem:indexPath]] objectForKey:@"recipe_image"]]] placeholderImage:[UIImage imageNamed:@"default_recipe_picture.png"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType) {
-                UIImageView *recipeImageView = (UIImageView *)[cell viewWithTag:6];
-                [UIView animateWithDuration:0.2 animations:^{
-                    recipeImageView.alpha = 1;
-                }];
-                
+    recipeImageView.alpha = 0;
+    if (PRODUCTION) {
+        [recipeImageView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@/recipes/%@/%@", [self s3BucketURL],[[self.recipes objectAtIndex:indexPath.row] objectForKey:@"id"], [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"recipe_image"]]] placeholderImage:[UIImage imageNamed:@"default_recipe_picture.png"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType) {
+            UIImageView *recipeImageView = (UIImageView *)[cell viewWithTag:6];
+            [UIView animateWithDuration:0.2 animations:^{
+                recipeImageView.alpha = 1;
             }];
-        } else {
-            [recipeImageView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://localhost:5000/image/recipes/%@/%@",[[self.recipes objectAtIndex:[self rowForItem:indexPath]] objectForKey:@"id"], [[self.recipes objectAtIndex:[self rowForItem:indexPath]] objectForKey:@"recipe_image"]]] placeholderImage:[UIImage imageNamed:@"default_recipe_picture.png"]];
-            recipeImageView.alpha = 1;
-        }
-        recipeImageView.frame = CGRectMake(0, 0, 160, 160);
-        
-        whiteView.hidden = NO;
-        recipeNameView.hidden = NO;
-        recipeNameView.text = [NSString stringWithFormat:@"%@", [[self.recipes objectAtIndex:[self rowForItem:indexPath]] objectForKey:@"name"]];
-        
-        UILabel *recipeNameLabel = (UILabel *)[cell viewWithTag:2];
-        recipeNameLabel.text = [NSString stringWithFormat:@"%@", [[self.recipes objectAtIndex:[self rowForItem:indexPath]] objectForKey:@"name"]];
-        
-        //    NSDictionary *user = [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"user"];
-        UIButton *chefNameButton = (UIButton *)[cell viewWithTag:3];
-        [chefNameButton setTitle:[NSString stringWithFormat:@"%@", [[self.recipes objectAtIndex:[self rowForItem:indexPath]] objectForKey:@"username"]] forState:UIControlStateNormal];
-        //
-        
-        // configure the front of the cell. chef name button and missing ingredients and likes on front view
-        frontNameButton.hidden = NO;
-        [frontNameButton setTitle:[NSString stringWithFormat:@"%@", [[self.recipes objectAtIndex:[self rowForItem:indexPath]] objectForKey:@"username"]] forState:UIControlStateNormal];
-        [frontNameButton sizeToFit];
-        frontNameButton.frame = CGRectMake(160 - [frontNameButton.titleLabel.text sizeWithFont:[UIFont boldSystemFontOfSize:13]].width - 7, frontNameButton.frame.origin.y, frontNameButton.frame.size.width, frontNameButton.frame.size.height);
-        
-        likesLabel.hidden = NO;
-        likesLabel.text = [NSString stringWithFormat:@"%@ likes", [[self.recipes objectAtIndex:[self rowForItem:indexPath]] objectForKey:@"likes"]];
-        
-        NSArray *missingIngredients = [[self.recipes objectAtIndex:[self rowForItem:indexPath]] objectForKey:@"ingredients"];
-        
-        UITextView *missingIngredientsView = (UITextView *)[cell viewWithTag:4];
-        missingIngredientsView.text = [NSString stringWithFormat:@"%u Missing Ingredients: %@", missingIngredients.count, [missingIngredients componentsJoinedByString:@","]];
-        
-        if (missingIngredients.count == 0) {
-            missingIngredientsButton.hidden = YES;
-            //        [missingIngredientsButton setTitle:@"" forState:UIControlStateNormal];
-        } else {
-            missingIngredientsButton.hidden = NO;
-            missingIngredientsButton.selected = NO;
-            [missingIngredientsButton setTitle:[NSString stringWithFormat:@"%u", missingIngredients.count] forState:UIControlStateNormal];
-        }
-        
-        // make back view invisible.
-        UIView *backView = [cell viewWithTag:1];
-        UIView *frontView = [cell viewWithTag:5];
-        frontView.alpha = 1.0;
-        backView.alpha = 0;
-        
-        // adding flip gesture recognizers
-        UIView *flipView1 = [cell viewWithTag:12];
-        UIView *flipView2 = [cell viewWithTag:1];
-        
-        if (flipView1.gestureRecognizers.count == 0) {
-            UITapGestureRecognizer *flipGestureRecognizer1 = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(flipCell:)];
-            [flipView1 addGestureRecognizer:flipGestureRecognizer1];
-        }
-        
-        if (flipView2.gestureRecognizers.count == 0) {
-            UITapGestureRecognizer *flipGestureRecognizer2 =[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(flipCell:)];
-            [flipView2 addGestureRecognizer:flipGestureRecognizer2];
-        }
+            
+        }];
+    } else {
+        [recipeImageView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://localhost:5000/image/recipes/%@/%@",[[self.recipes objectAtIndex:indexPath.row] objectForKey:@"id"], [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"recipe_image"]]] placeholderImage:[UIImage imageNamed:@"default_recipe_picture.png"]];
+        recipeImageView.alpha = 1;
+    }
+    recipeImageView.frame = CGRectMake(0, 0, 160, 160);
+    
+    whiteView.hidden = NO;
+    recipeNameView.hidden = NO;
+    recipeNameView.text = [NSString stringWithFormat:@"%@", [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"name"]];
+    
+    UILabel *recipeNameLabel = (UILabel *)[cell viewWithTag:2];
+    recipeNameLabel.text = [NSString stringWithFormat:@"%@", [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"name"]];
+    
+    UIButton *chefNameButton = (UIButton *)[cell viewWithTag:3];
+    [chefNameButton setTitle:[NSString stringWithFormat:@"%@", [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"username"]] forState:UIControlStateNormal];
+    //
+    
+    // configure the front of the cell. chef name button and missing ingredients and likes on front view
+    frontNameButton.hidden = NO;
+    [frontNameButton setTitle:[NSString stringWithFormat:@"%@", [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"username"]] forState:UIControlStateNormal];
+    [frontNameButton sizeToFit];
+    frontNameButton.frame = CGRectMake(160 - [frontNameButton.titleLabel.text sizeWithFont:[UIFont boldSystemFontOfSize:13]].width - 7, frontNameButton.frame.origin.y, frontNameButton.frame.size.width, frontNameButton.frame.size.height);
+    
+    likesLabel.hidden = NO;
+    likesLabel.text = [NSString stringWithFormat:@"%@ likes", [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"likes"]];
+    
+    NSArray *missingIngredients = [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"ingredients"];
+    
+    UITextView *missingIngredientsView = (UITextView *)[cell viewWithTag:4];
+    missingIngredientsView.text = [NSString stringWithFormat:@"%u Missing Ingredients: %@", missingIngredients.count, [missingIngredients componentsJoinedByString:@","]];
+    
+    if (missingIngredients.count == 0) {
+        missingIngredientsButton.hidden = YES;
+        //        [missingIngredientsButton setTitle:@"" forState:UIControlStateNormal];
+    } else {
+        missingIngredientsButton.hidden = NO;
+        missingIngredientsButton.selected = NO;
+        [missingIngredientsButton setTitle:[NSString stringWithFormat:@"%u", missingIngredients.count] forState:UIControlStateNormal];
+    }
+    
+    // make back view invisible.
+    UIView *backView = [cell viewWithTag:1];
+    UIView *frontView = [cell viewWithTag:5];
+    frontView.alpha = 1.0;
+    backView.alpha = 0;
+    
+    // adding flip gesture recognizers
+    UIView *flipView1 = [cell viewWithTag:12];
+    UIView *flipView2 = [cell viewWithTag:1];
+    
+    if (flipView1.gestureRecognizers.count == 0) {
+        UITapGestureRecognizer *flipGestureRecognizer1 = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(flipCell:)];
+        [flipView1 addGestureRecognizer:flipGestureRecognizer1];
+    }
+    
+    if (flipView2.gestureRecognizers.count == 0) {
+        UITapGestureRecognizer *flipGestureRecognizer2 =[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(flipCell:)];
+        [flipView2 addGestureRecognizer:flipGestureRecognizer2];
     }
     // configure the back of the cell. fill all the info.
         return cell;
@@ -402,33 +383,63 @@
 // collection view delegate methods
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.row < self.events.count) {
-        self.selectedEvent = [self.events objectAtIndex:indexPath.row];
-        [self performSegueWithIdentifier:@"Leaderboard" sender:self];
-    } else {
-        self.selectedRecipe = [self.recipes objectAtIndex:[self rowForItem:indexPath]];
-        [self performSegueWithIdentifier:@"RecipeDetail" sender:self];
 
-    }
+    self.selectedRecipe = [self.recipes objectAtIndex:indexPath.row];
+    [self performSegueWithIdentifier:@"RecipeDetail"sender:self];
 }
 
-- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
+//- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
+//    
+////    NSDictionary *recipe = [self.recipes objectAtIndex:[self rowForItem:indexPath]];
+//    CGSize cellSize;
+//    if (indexPath.row == 0) {
+//        cellSize = CGSizeMake(self.recipesCollectionView.frame.size.width, self.recipesCollectionView.frame.size.width / 2);
+//    } else {
+//        cellSize = CGSizeMake(self.recipesCollectionView.frame.size.width / 2, self.recipesCollectionView.frame.size.width / 2);
+//    }
+//    return cellSize;
+//}
+
+//- (NSInteger)rowForItem:(NSIndexPath *)indexPath {
+//    if (indexPath.row < self.events.count) {
+//        return indexPath.row;
+//    } else {
+//        return indexPath.row - 1;
+//    }
+//}
+
+// notifications
+
+- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+    [self sendDeviceToken:deviceToken];
+}
+
+- (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
+    NSLog(@"Failed to register for push notifications.");
+}
+
+- (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification {
     
-//    NSDictionary *recipe = [self.recipes objectAtIndex:[self rowForItem:indexPath]];
-    CGSize cellSize;
-    if (indexPath.row == 0) {
-        cellSize = CGSizeMake(self.recipesCollectionView.frame.size.width, self.recipesCollectionView.frame.size.width / 2);
-    } else {
-        cellSize = CGSizeMake(self.recipesCollectionView.frame.size.width / 2, self.recipesCollectionView.frame.size.width / 2);
-    }
-    return cellSize;
 }
 
-- (NSInteger)rowForItem:(NSIndexPath *)indexPath {
-    if (indexPath.row < self.events.count) {
-        return indexPath.row;
-    } else {
-        return indexPath.row - 1;
-    }
+- (void)sendDeviceToken:(NSData *)deviceToken {
+    
+    NSLog(@"send device token");
+    NSString *path = @"tokens/device.json";
+    FrecipeAPIClient *client = [FrecipeAPIClient client];
+    NSString *authentication_token = [[NSUserDefaults standardUserDefaults] stringForKey:@"authentication_token"];
+    
+    NSLog(@"%@", [deviceToken description]);
+    NSURLRequest *request = [client requestWithMethod:@"POST" path:path parameters:@{@"authentication_token": authentication_token, @"device_token": [deviceToken description]}];
+    
+    AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
+        NSLog(@"%@", JSON);
+    } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
+        NSLog(@"%@", error);
+    }];
+    
+    FrecipeOperationQueue *queue = [FrecipeOperationQueue sharedQueue];
+    [queue addOperation:operation];
 }
+
 @end

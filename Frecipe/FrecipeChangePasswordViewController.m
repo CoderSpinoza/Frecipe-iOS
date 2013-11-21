@@ -29,7 +29,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.trackedViewName = @"Change Password";
+    self.screenName = @"Change Password";
 	// Do any additional setup after loading the view.
     self.currentPasswordField.delegate = self;
     self.differentPasswordField.delegate = self;
@@ -45,7 +45,9 @@
 }
 
 - (IBAction)saveButtonPressed:(UIBarButtonItem *)sender {
-    [[[GAI sharedInstance] defaultTracker] sendEventWithCategory:@"Profile" withAction:@"Change Password" withLabel:@"Change Password" withValue:[NSNumber numberWithInt:1]];
+    
+    [[[GAI sharedInstance] defaultTracker] send:[[GAIDictionaryBuilder createEventWithCategory:@"Profile" action:@"Change Password" label:@"Change Password" value:[NSNumber numberWithInt:1]] build]];
+//    [[[GAI sharedInstance] defaultTracker] sendEventWithCategory:@"Profile" withAction:@"Change Password" withLabel:@"Change Password" withValue:[NSNumber numberWithInt:1]];
     if (![self checkPasswordLength]) {
         self.errorLabel.text = @"Password should be longer than 6 letters.";
         return;

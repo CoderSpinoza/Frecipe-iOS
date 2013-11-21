@@ -20,6 +20,15 @@
 		C23358D21765DCFB00AF0CE2 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C23358D11765DCFB00AF0CE2 /* libz.dylib */; };
 		C23A133617712114003BCEE6 /* FrecipeUser.m in Sources */ = {isa = PBXBuildFile; fileRef = C23A133517712114003BCEE6 /* FrecipeUser.m */; };
 		C24CE794177E72B200A47455 /* FrecipeCommentsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C24CE793177E72B200A47455 /* FrecipeCommentsViewController.m */; };
+		C24D100B17BC617E0057B7A4 /* Pods.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = B229DB6A887849DC88A926C2 /* Pods.xcconfig */; };
+		C24D100F17BC65940057B7A4 /* GoogleMaps.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C24D100E17BC65940057B7A4 /* GoogleMaps.framework */; };
+		C24D101117BC65BE0057B7A4 /* GoogleMaps.bundle in Resources */ = {isa = PBXBuildFile; fileRef = C24D101017BC65BE0057B7A4 /* GoogleMaps.bundle */; };
+		C24D101317BC65DD0057B7A4 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C24D101217BC65DD0057B7A4 /* AVFoundation.framework */; };
+		C24D101517BC65EA0057B7A4 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C24D101417BC65EA0057B7A4 /* CoreLocation.framework */; };
+		C24D101717BC65F60057B7A4 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C24D101617BC65F60057B7A4 /* GLKit.framework */; };
+		C24D101917BC65FF0057B7A4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C24D101817BC65FE0057B7A4 /* OpenGLES.framework */; };
+		C24D101C17BC6B0F0057B7A4 /* FrecipeNearbyStoresViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C24D101B17BC6B0F0057B7A4 /* FrecipeNearbyStoresViewController.m */; };
+		C24D101F17BC7AB70057B7A4 /* FrecipeStoreViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C24D101E17BC7AB70057B7A4 /* FrecipeStoreViewController.m */; };
 		C251F006175D839C00DF956F /* FrecipeSendFeedbackViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C251F005175D839B00DF956F /* FrecipeSendFeedbackViewController.m */; };
 		C25651AB174D95AA005755A9 /* fridge_background.png in Resources */ = {isa = PBXBuildFile; fileRef = C25651AA174D95AA005755A9 /* fridge_background.png */; };
 		C25651AE174F6132005755A9 /* UIColor+Frecipe.m in Sources */ = {isa = PBXBuildFile; fileRef = C25651AD174F6132005755A9 /* UIColor+Frecipe.m */; };
@@ -28,8 +37,12 @@
 		C256F6791759909400D44A84 /* FrecipeChangePasswordViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C256F6781759909400D44A84 /* FrecipeChangePasswordViewController.m */; };
 		C264A27617B1B78200C0F29A /* chefranking.png in Resources */ = {isa = PBXBuildFile; fileRef = C264A27517B1B78200C0F29A /* chefranking.png */; };
 		C2670305174170FD00BBBDD6 /* iPadLoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C2670304174170FD00BBBDD6 /* iPadLoginViewController.m */; };
+		C267C18117B9F4FB00B726E7 /* libsqlite3.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C267C18017B9F4FB00B726E7 /* libsqlite3.0.dylib */; };
+		C267C19717B9F85500B726E7 /* libc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C267C19617B9F85500B726E7 /* libc++.dylib */; };
+		C267C19917B9F86200B726E7 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C267C19817B9F86200B726E7 /* libicucore.dylib */; };
 		C26C73E4176D4ECE00369462 /* 5757.png in Resources */ = {isa = PBXBuildFile; fileRef = C26C73E3176D4ECE00369462 /* 5757.png */; };
 		C26C73E6176D4F0800369462 /* 114114.png in Resources */ = {isa = PBXBuildFile; fileRef = C26C73E5176D4F0800369462 /* 114114.png */; };
+		C273BEF817C43F210038A324 /* libGoogleAnalyticsServices.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C273BEF717C43F210038A324 /* libGoogleAnalyticsServices.a */; };
 		C27674C9175F0DB400828EEF /* NSString+Frecipe.m in Sources */ = {isa = PBXBuildFile; fileRef = C27674C8175F0DB300828EEF /* NSString+Frecipe.m */; };
 		C27674CC175F208600828EEF /* FrecipeSpinnerView.m in Sources */ = {isa = PBXBuildFile; fileRef = C27674CB175F208600828EEF /* FrecipeSpinnerView.m */; };
 		C27674CE175F29ED00828EEF /* badge_green.png in Resources */ = {isa = PBXBuildFile; fileRef = C27674CD175F29EC00828EEF /* badge_green.png */; };
@@ -37,10 +50,14 @@
 		C27674D617601D8D00828EEF /* UITextField+Frecipe.m in Sources */ = {isa = PBXBuildFile; fileRef = C27674D517601D8D00828EEF /* UITextField+Frecipe.m */; };
 		C27674D917601E1500828EEF /* FrecipeTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = C27674D817601E1400828EEF /* FrecipeTextField.m */; };
 		C27674DC17608BB200828EEF /* FrecipeOperationQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = C27674DB17608BB100828EEF /* FrecipeOperationQueue.m */; };
-		C27674F31761849800828EEF /* HockeySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C27674EF1761849800828EEF /* HockeySDK.framework */; };
 		C27674F51761849800828EEF /* HockeySDKResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = C27674F21761849800828EEF /* HockeySDKResources.bundle */; };
 		C27674F7176184C700828EEF /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C27674F6176184C600828EEF /* CoreText.framework */; };
 		C287FC2117B87CD7006553DC /* arrow_down.png in Resources */ = {isa = PBXBuildFile; fileRef = C287FC2017B87CD7006553DC /* arrow_down.png */; };
+		C289DB2B183B4A9E005AE1B5 /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C289DB2A183B4A9E005AE1B5 /* FacebookSDK.framework */; };
+		C289DB2D183B4C69005AE1B5 /* 120*120.png in Resources */ = {isa = PBXBuildFile; fileRef = C289DB2C183B4C69005AE1B5 /* 120*120.png */; };
+		C289DB30183B4CDF005AE1B5 /* 29*29.png in Resources */ = {isa = PBXBuildFile; fileRef = C289DB2E183B4CDF005AE1B5 /* 29*29.png */; };
+		C289DB31183B4CDF005AE1B5 /* 80*80.png in Resources */ = {isa = PBXBuildFile; fileRef = C289DB2F183B4CDF005AE1B5 /* 80*80.png */; };
+		C289DB33183B4D21005AE1B5 /* 58*58.png in Resources */ = {isa = PBXBuildFile; fileRef = C289DB32183B4D21005AE1B5 /* 58*58.png */; };
 		C294412E1733246800FDD542 /* badge.png in Resources */ = {isa = PBXBuildFile; fileRef = C294412D1733246800FDD542 /* badge.png */; };
 		C294413117332BC800FDD542 /* UIViewController+Frecipe.m in Sources */ = {isa = PBXBuildFile; fileRef = C294413017332BC800FDD542 /* UIViewController+Frecipe.m */; };
 		C294413817349AE000FDD542 /* FrecipeBadgeView.m in Sources */ = {isa = PBXBuildFile; fileRef = C294413717349ADF00FDD542 /* FrecipeBadgeView.m */; };
@@ -76,7 +93,6 @@
 		C2A32841172DFFBC00EBB23B /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C2A32836172DFFBC00EBB23B /* Security.framework */; };
 		C2A32842172DFFBC00EBB23B /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C2A32837172DFFBC00EBB23B /* Social.framework */; };
 		C2A32843172DFFBC00EBB23B /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C2A32838172DFFBC00EBB23B /* SystemConfiguration.framework */; };
-		C2A32845172DFFC900EBB23B /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C2A32844172DFFC900EBB23B /* FacebookSDK.framework */; };
 		C2A3284D172DFFDA00EBB23B /* ECSlidingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C2A3284A172DFFDA00EBB23B /* ECSlidingViewController.m */; };
 		C2A3284E172DFFDA00EBB23B /* UIImage+ImageWithUIView.m in Sources */ = {isa = PBXBuildFile; fileRef = C2A3284C172DFFDA00EBB23B /* UIImage+ImageWithUIView.m */; };
 		C2A32850172E01DF00EBB23B /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C2A3284F172E01DF00EBB23B /* libsqlite3.dylib */; };
@@ -180,6 +196,16 @@
 		C23A133517712114003BCEE6 /* FrecipeUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FrecipeUser.m; sourceTree = "<group>"; };
 		C24CE792177E72B200A47455 /* FrecipeCommentsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrecipeCommentsViewController.h; sourceTree = "<group>"; };
 		C24CE793177E72B200A47455 /* FrecipeCommentsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FrecipeCommentsViewController.m; sourceTree = "<group>"; };
+		C24D100E17BC65940057B7A4 /* GoogleMaps.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GoogleMaps.framework; sourceTree = "<group>"; };
+		C24D101017BC65BE0057B7A4 /* GoogleMaps.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = GoogleMaps.bundle; path = GoogleMaps.framework/Versions/A/Resources/GoogleMaps.bundle; sourceTree = "<group>"; };
+		C24D101217BC65DD0057B7A4 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		C24D101417BC65EA0057B7A4 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		C24D101617BC65F60057B7A4 /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
+		C24D101817BC65FE0057B7A4 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
+		C24D101A17BC6B0F0057B7A4 /* FrecipeNearbyStoresViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrecipeNearbyStoresViewController.h; sourceTree = "<group>"; };
+		C24D101B17BC6B0F0057B7A4 /* FrecipeNearbyStoresViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FrecipeNearbyStoresViewController.m; sourceTree = "<group>"; };
+		C24D101D17BC7AB70057B7A4 /* FrecipeStoreViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrecipeStoreViewController.h; sourceTree = "<group>"; };
+		C24D101E17BC7AB70057B7A4 /* FrecipeStoreViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FrecipeStoreViewController.m; sourceTree = "<group>"; };
 		C251F004175D839B00DF956F /* FrecipeSendFeedbackViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrecipeSendFeedbackViewController.h; sourceTree = "<group>"; };
 		C251F005175D839B00DF956F /* FrecipeSendFeedbackViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FrecipeSendFeedbackViewController.m; sourceTree = "<group>"; };
 		C25651AA174D95AA005755A9 /* fridge_background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = fridge_background.png; sourceTree = "<group>"; };
@@ -194,8 +220,12 @@
 		C264A27517B1B78200C0F29A /* chefranking.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = chefranking.png; sourceTree = "<group>"; };
 		C2670303174170FD00BBBDD6 /* iPadLoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iPadLoginViewController.h; sourceTree = "<group>"; };
 		C2670304174170FD00BBBDD6 /* iPadLoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iPadLoginViewController.m; sourceTree = "<group>"; };
+		C267C18017B9F4FB00B726E7 /* libsqlite3.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.0.dylib; path = usr/lib/libsqlite3.0.dylib; sourceTree = SDKROOT; };
+		C267C19617B9F85500B726E7 /* libc++.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libc++.dylib"; path = "usr/lib/libc++.dylib"; sourceTree = SDKROOT; };
+		C267C19817B9F86200B726E7 /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = usr/lib/libicucore.dylib; sourceTree = SDKROOT; };
 		C26C73E3176D4ECE00369462 /* 5757.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 5757.png; sourceTree = "<group>"; };
 		C26C73E5176D4F0800369462 /* 114114.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 114114.png; sourceTree = "<group>"; };
+		C273BEF717C43F210038A324 /* libGoogleAnalyticsServices.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libGoogleAnalyticsServices.a; path = Pods/libGoogleAnalyticsServices.a; sourceTree = "<group>"; };
 		C27674C7175F0DB300828EEF /* NSString+Frecipe.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Frecipe.h"; sourceTree = "<group>"; };
 		C27674C8175F0DB300828EEF /* NSString+Frecipe.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Frecipe.m"; sourceTree = "<group>"; };
 		C27674CA175F208600828EEF /* FrecipeSpinnerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrecipeSpinnerView.h; sourceTree = "<group>"; };
@@ -213,6 +243,11 @@
 		C27674F21761849800828EEF /* HockeySDKResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = HockeySDKResources.bundle; sourceTree = "<group>"; };
 		C27674F6176184C600828EEF /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		C287FC2017B87CD7006553DC /* arrow_down.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = arrow_down.png; sourceTree = "<group>"; };
+		C289DB2A183B4A9E005AE1B5 /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FacebookSDK.framework; sourceTree = "<group>"; };
+		C289DB2C183B4C69005AE1B5 /* 120*120.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "120*120.png"; sourceTree = "<group>"; };
+		C289DB2E183B4CDF005AE1B5 /* 29*29.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "29*29.png"; sourceTree = "<group>"; };
+		C289DB2F183B4CDF005AE1B5 /* 80*80.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "80*80.png"; sourceTree = "<group>"; };
+		C289DB32183B4D21005AE1B5 /* 58*58.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "58*58.png"; sourceTree = "<group>"; };
 		C294412D1733246800FDD542 /* badge.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = badge.png; sourceTree = "<group>"; };
 		C294412F17332BC800FDD542 /* UIViewController+Frecipe.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+Frecipe.h"; sourceTree = "<group>"; };
 		C294413017332BC800FDD542 /* UIViewController+Frecipe.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+Frecipe.m"; sourceTree = "<group>"; };
@@ -256,7 +291,6 @@
 		C2A32836172DFFBC00EBB23B /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		C2A32837172DFFBC00EBB23B /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
 		C2A32838172DFFBC00EBB23B /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
-		C2A32844172DFFC900EBB23B /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FacebookSDK.framework; sourceTree = "<group>"; };
 		C2A32849172DFFDA00EBB23B /* ECSlidingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECSlidingViewController.h; sourceTree = "<group>"; };
 		C2A3284A172DFFDA00EBB23B /* ECSlidingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECSlidingViewController.m; sourceTree = "<group>"; };
 		C2A3284B172DFFDA00EBB23B /* UIImage+ImageWithUIView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+ImageWithUIView.h"; sourceTree = "<group>"; };
@@ -370,11 +404,19 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C267C18117B9F4FB00B726E7 /* libsqlite3.0.dylib in Frameworks */,
+				C24D101917BC65FF0057B7A4 /* OpenGLES.framework in Frameworks */,
+				C24D101717BC65F60057B7A4 /* GLKit.framework in Frameworks */,
+				C24D101517BC65EA0057B7A4 /* CoreLocation.framework in Frameworks */,
+				C24D101317BC65DD0057B7A4 /* AVFoundation.framework in Frameworks */,
+				C267C19917B9F86200B726E7 /* libicucore.dylib in Frameworks */,
+				C267C19717B9F85500B726E7 /* libc++.dylib in Frameworks */,
+				C27674F7176184C700828EEF /* CoreText.framework in Frameworks */,
+				C289DB2B183B4A9E005AE1B5 /* FacebookSDK.framework in Frameworks */,
 				C2B7ECD917A221D20018FC93 /* MapKit.framework in Frameworks */,
 				C2B7ECD717A21BAC0018FC93 /* CoreData.framework in Frameworks */,
 				C23358D21765DCFB00AF0CE2 /* libz.dylib in Frameworks */,
 				C23358D01765DCEC00AF0CE2 /* CoreTelephony.framework in Frameworks */,
-				C27674F7176184C700828EEF /* CoreText.framework in Frameworks */,
 				C2A32850172E01DF00EBB23B /* libsqlite3.dylib in Frameworks */,
 				C2A32839172DFFBC00EBB23B /* Accounts.framework in Frameworks */,
 				C2A3283A172DFFBC00EBB23B /* AdSupport.framework in Frameworks */,
@@ -391,9 +433,9 @@
 				C2A327D9172DFAAD00EBB23B /* Foundation.framework in Frameworks */,
 				C2A327DB172DFAAD00EBB23B /* CoreGraphics.framework in Frameworks */,
 				BC272C53E9E9495BB99A3C98 /* libPods.a in Frameworks */,
-				C2A32845172DFFC900EBB23B /* FacebookSDK.framework in Frameworks */,
-				C27674F31761849800828EEF /* HockeySDK.framework in Frameworks */,
 				C23358CE1765DCC100AF0CE2 /* NewRelicAgent.framework in Frameworks */,
+				C24D100F17BC65940057B7A4 /* GoogleMaps.framework in Frameworks */,
+				C273BEF817C43F210038A324 /* libGoogleAnalyticsServices.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -449,6 +491,15 @@
 		C2A327CA172DFAAD00EBB23B = {
 			isa = PBXGroup;
 			children = (
+				C289DB2A183B4A9E005AE1B5 /* FacebookSDK.framework */,
+				C273BEF717C43F210038A324 /* libGoogleAnalyticsServices.a */,
+				C24D101817BC65FE0057B7A4 /* OpenGLES.framework */,
+				C24D101617BC65F60057B7A4 /* GLKit.framework */,
+				C24D101417BC65EA0057B7A4 /* CoreLocation.framework */,
+				C24D101217BC65DD0057B7A4 /* AVFoundation.framework */,
+				C267C19817B9F86200B726E7 /* libicucore.dylib */,
+				C267C19617B9F85500B726E7 /* libc++.dylib */,
+				C267C18017B9F4FB00B726E7 /* libsqlite3.0.dylib */,
 				C2B7ECD817A221D20018FC93 /* MapKit.framework */,
 				C2B7ECD617A21BAC0018FC93 /* CoreData.framework */,
 				C26C73E5176D4F0800369462 /* 114114.png */,
@@ -463,7 +514,6 @@
 				C2A32851172E02A600EBB23B /* favicon_57*57.png */,
 				C2A3284F172E01DF00EBB23B /* libsqlite3.dylib */,
 				C2A32848172DFFDA00EBB23B /* ECSlidingViewController */,
-				C2A32844172DFFC900EBB23B /* FacebookSDK.framework */,
 				C2A3282E172DFFBC00EBB23B /* Accounts.framework */,
 				C2A3282F172DFFBC00EBB23B /* AdSupport.framework */,
 				C2A32830172DFFBC00EBB23B /* AudioToolbox.framework */,
@@ -495,6 +545,8 @@
 		C2A327D5172DFAAD00EBB23B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				C24D101017BC65BE0057B7A4 /* GoogleMaps.bundle */,
+				C24D100E17BC65940057B7A4 /* GoogleMaps.framework */,
 				C23358CD1765DCC100AF0CE2 /* NewRelicAgent.framework */,
 				C27674EE1761849800828EEF /* HockeySDK.embeddedframework */,
 				C2A327D6172DFAAD00EBB23B /* UIKit.framework */,
@@ -564,6 +616,10 @@
 				C256F6781759909400D44A84 /* FrecipeChangePasswordViewController.m */,
 				C251F004175D839B00DF956F /* FrecipeSendFeedbackViewController.h */,
 				C251F005175D839B00DF956F /* FrecipeSendFeedbackViewController.m */,
+				C24D101A17BC6B0F0057B7A4 /* FrecipeNearbyStoresViewController.h */,
+				C24D101B17BC6B0F0057B7A4 /* FrecipeNearbyStoresViewController.m */,
+				C24D101D17BC7AB70057B7A4 /* FrecipeStoreViewController.h */,
+				C24D101E17BC7AB70057B7A4 /* FrecipeStoreViewController.m */,
 				C2E08EF817389DA900C1C705 /* FrecipeMainViewController.h */,
 				C2E08EF917389DA900C1C705 /* FrecipeMainViewController.m */,
 				C2A32885172E04BD00EBB23B /* FrecipeAPIClient.h */,
@@ -604,6 +660,10 @@
 		C2A327DD172DFAAD00EBB23B /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				C289DB32183B4D21005AE1B5 /* 58*58.png */,
+				C289DB2E183B4CDF005AE1B5 /* 29*29.png */,
+				C289DB2F183B4CDF005AE1B5 /* 80*80.png */,
+				C289DB2C183B4C69005AE1B5 /* 120*120.png */,
 				C287FC2017B87CD7006553DC /* arrow_down.png */,
 				C21AA5FD17B355190031F9B4 /* heart_red.png */,
 				C21AA5FE17B355190031F9B4 /* heart_white.png */,
@@ -745,6 +805,11 @@
 				CLASSPREFIX = Frecipe;
 				LastUpgradeCheck = 0500;
 				ORGANIZATIONNAME = Frecipe;
+				TargetAttributes = {
+					C2A327D2172DFAAD00EBB23B = {
+						DevelopmentTeam = 4V5SU2T8JK;
+					};
+				};
 			};
 			buildConfigurationList = C2A327CE172DFAAD00EBB23B /* Build configuration list for PBXProject "Frecipe" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -787,6 +852,7 @@
 				C2E47725172F94E700EC3660 /* star_empty@2x.png in Resources */,
 				C2E47726172F94E700EC3660 /* star_full.png in Resources */,
 				C2E47727172F94E700EC3660 /* star_full@2x.png in Resources */,
+				C289DB31183B4CDF005AE1B5 /* 80*80.png in Resources */,
 				C294412E1733246800FDD542 /* badge.png in Resources */,
 				C2E08EDF1735E51100C1C705 /* button_background_image.png in Resources */,
 				C2E08EF21735E5B600C1C705 /* frecipe.png in Resources */,
@@ -814,6 +880,7 @@
 				C2D1FB241749A8D50096C036 /* checkmark.png in Resources */,
 				C2D1FB281749BF7F0096C036 /* black_leather.png in Resources */,
 				C2D1FB2B1749C0F50096C036 /* gogeupleather.jpg in Resources */,
+				C289DB33183B4D21005AE1B5 /* 58*58.png in Resources */,
 				C2D1FB2C1749C0F50096C036 /* orange_leather.jpg in Resources */,
 				C2D1FB2E174AF90D0096C036 /* default_ingredient_picture.png in Resources */,
 				C2D1FB32174AFB2D0096C036 /* trash.png in Resources */,
@@ -823,6 +890,7 @@
 				C27674F51761849800828EEF /* HockeySDKResources.bundle in Resources */,
 				C2009095176331DD009D3259 /* frecipe_name_high.png in Resources */,
 				C26C73E4176D4ECE00369462 /* 5757.png in Resources */,
+				C289DB2D183B4C69005AE1B5 /* 120*120.png in Resources */,
 				C26C73E6176D4F0800369462 /* 114114.png in Resources */,
 				C2E6E7BE177009BB00EF87C8 /* others.png in Resources */,
 				C21E47A71798AEE00049A7D1 /* leaderboard.png in Resources */,
@@ -832,8 +900,11 @@
 				C21AA5FC17B351FF0031F9B4 /* comment_white.png in Resources */,
 				C21AA60017B355190031F9B4 /* heart_red.png in Resources */,
 				C21AA60117B355190031F9B4 /* heart_white.png in Resources */,
+				C289DB30183B4CDF005AE1B5 /* 29*29.png in Resources */,
 				C21AA60417B356940031F9B4 /* share_white.png in Resources */,
 				C287FC2117B87CD7006553DC /* arrow_down.png in Resources */,
+				C24D100B17BC617E0057B7A4 /* Pods.xcconfig in Resources */,
+				C24D101117BC65BE0057B7A4 /* GoogleMaps.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -932,6 +1003,8 @@
 				C2D10DD217925DD600306BE3 /* FrecipeLeaderboardViewController.m in Sources */,
 				C2A8A4F817A36B8A00804DFA /* UICircle.m in Sources */,
 				C2A8A4FB17A3810000804DFA /* FrecipeEventDetailViewController.m in Sources */,
+				C24D101C17BC6B0F0057B7A4 /* FrecipeNearbyStoresViewController.m in Sources */,
+				C24D101F17BC7AB70057B7A4 /* FrecipeStoreViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -993,6 +1066,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = armv7;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -1009,6 +1083,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				OTHER_LDFLAGS = "-ObjC";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
@@ -1019,18 +1094,38 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B229DB6A887849DC88A926C2 /* Pods.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Hara Kang";
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = armv7;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Hara Kang";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)\"",
-					"\"$(SRCROOT)/HockeySDK-iOS-3/HockeySDK.embeddedframework\"",
+					"$(SRCROOT)",
+					/Users/hara0115/Developer/Frecipe,
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Frecipe/Frecipe-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = "CONFIGURATION_$(CONFIGURATION)";
+				HEADER_SEARCH_PATHS = (
+					"\"${PODS_ROOT}/Headers\"",
+					"\"${PODS_ROOT}/Headers/AFNetworking\"",
+					"\"${PODS_ROOT}/Headers/FPPopover\"",
+					"\"${PODS_ROOT}/Headers/GoogleAnalytics-iOS-SDK\"",
+					"\"${PODS_ROOT}/Headers/MLPAutoCompleteTextField\"",
+					"\"${PODS_ROOT}/Headers/SBAPNSPusher\"",
+					"\"${PODS_ROOT}/Headers/SDWebImage\"",
+					"\"${PODS_ROOT}/Headers/libwebp\"",
+					"\"${PODS_ROOT}/Headers/libwebp/webp\"",
+					"$(SDKROOT)/usr/include/libz",
+				);
 				INFOPLIST_FILE = "Frecipe/Frecipe-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+					"\"$(SRCROOT)/../../Downloads/GoogleAnalyticsServicesiOS_3.0\"",
+					"\"$(SRCROOT)/Pods\"",
+				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-framework",
@@ -1038,10 +1133,12 @@
 					"-framework",
 					SystemConfiguration,
 					"-lsqlite3.0",
+					"-lGoogleAnalyticsServices",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "247D7D5B-2139-4167-BF6B-B2DC6827E685";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "247D7D5B-2139-4167-BF6B-B2DC6827E685";
+				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
@@ -1068,6 +1165,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = armv7;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -1084,6 +1182,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				OTHER_LDFLAGS = "-ObjC";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
@@ -1094,18 +1193,39 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B229DB6A887849DC88A926C2 /* Pods.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Hara Kang";
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = armv7;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Hara Kang";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)\"",
-					"\"$(SRCROOT)/HockeySDK-iOS-3/HockeySDK.embeddedframework\"",
+					"$(SRCROOT)",
+					/Users/hara0115/Developer/Frecipe,
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Frecipe/Frecipe-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = "CONFIGURATION_$(CONFIGURATION)";
+				HEADER_SEARCH_PATHS = (
+					"\"${PODS_ROOT}/Headers\"",
+					"\"${PODS_ROOT}/Headers/AFNetworking\"",
+					"\"${PODS_ROOT}/Headers/FPPopover\"",
+					"\"${PODS_ROOT}/Headers/GoogleAnalytics-iOS-SDK\"",
+					"\"${PODS_ROOT}/Headers/MLPAutoCompleteTextField\"",
+					"\"${PODS_ROOT}/Headers/SBAPNSPusher\"",
+					"\"${PODS_ROOT}/Headers/SDWebImage\"",
+					"\"${PODS_ROOT}/Headers/libwebp\"",
+					"\"${PODS_ROOT}/Headers/libwebp/webp\"",
+					"$(SDKROOT)/usr/include/libz",
+				);
 				INFOPLIST_FILE = "Frecipe/Frecipe-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+					"\"$(SRCROOT)/../../Downloads/GoogleAnalyticsServicesiOS_3.0\"",
+					"\"$(SRCROOT)/Pods\"",
+				);
+				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-framework",
@@ -1113,10 +1233,12 @@
 					"-framework",
 					SystemConfiguration,
 					"-lsqlite3.0",
+					"-lGoogleAnalyticsServices",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "4D23EFF2-AA9E-4D9D-B7BB-4819D08D61B2";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "4D23EFF2-AA9E-4D9D-B7BB-4819D08D61B2";
+				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
@@ -1143,6 +1265,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = armv7;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -1166,6 +1289,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = "-ObjC";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -1175,6 +1299,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = armv7;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -1191,6 +1316,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				OTHER_LDFLAGS = "-ObjC";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
@@ -1201,18 +1327,39 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B229DB6A887849DC88A926C2 /* Pods.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Developer: Hara Kang (SZ33F8W375)";
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = armv7;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Hara Kang (SZ33F8W375)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)\"",
-					"\"$(SRCROOT)/HockeySDK-iOS-3/HockeySDK.embeddedframework\"",
+					"$(SRCROOT)",
+					/Users/hara0115/Developer/Frecipe,
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Frecipe/Frecipe-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = "CONFIGURATION_$(CONFIGURATION)";
+				"GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS[arch=*]" = "";
+				HEADER_SEARCH_PATHS = (
+					"\"${PODS_ROOT}/Headers\"",
+					"\"${PODS_ROOT}/Headers/AFNetworking\"",
+					"\"${PODS_ROOT}/Headers/FPPopover\"",
+					"\"${PODS_ROOT}/Headers/GoogleAnalytics-iOS-SDK\"",
+					"\"${PODS_ROOT}/Headers/MLPAutoCompleteTextField\"",
+					"\"${PODS_ROOT}/Headers/SBAPNSPusher\"",
+					"\"${PODS_ROOT}/Headers/SDWebImage\"",
+					"\"${PODS_ROOT}/Headers/libwebp\"",
+					"\"${PODS_ROOT}/Headers/libwebp/webp\"",
+					"$(SDKROOT)/usr/include/libz",
+				);
 				INFOPLIST_FILE = "Frecipe/Frecipe-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+					"\"$(SRCROOT)/../../Downloads/GoogleAnalyticsServicesiOS_3.0\"",
+					"\"$(SRCROOT)/Pods\"",
+				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-framework",
@@ -1220,10 +1367,12 @@
 					"-framework",
 					SystemConfiguration,
 					"-lsqlite3.0",
+					"-lGoogleAnalyticsServices",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "D1E46883-D6EF-4E5A-945C-2C3E787057FF";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "D1E46883-D6EF-4E5A-945C-2C3E787057FF";
+				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
@@ -1233,18 +1382,39 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B229DB6A887849DC88A926C2 /* Pods.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Hara Kang";
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = armv7;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Hara Kang";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)\"",
-					"\"$(SRCROOT)/HockeySDK-iOS-3/HockeySDK.embeddedframework\"",
+					"$(SRCROOT)",
+					/Users/hara0115/Developer/Frecipe,
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Frecipe/Frecipe-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = "CONFIGURATION_$(CONFIGURATION)";
+				HEADER_SEARCH_PATHS = (
+					"\"${PODS_ROOT}/Headers\"",
+					"\"${PODS_ROOT}/Headers/AFNetworking\"",
+					"\"${PODS_ROOT}/Headers/FPPopover\"",
+					"\"${PODS_ROOT}/Headers/GoogleAnalytics-iOS-SDK\"",
+					"\"${PODS_ROOT}/Headers/MLPAutoCompleteTextField\"",
+					"\"${PODS_ROOT}/Headers/SBAPNSPusher\"",
+					"\"${PODS_ROOT}/Headers/SDWebImage\"",
+					"\"${PODS_ROOT}/Headers/libwebp\"",
+					"\"${PODS_ROOT}/Headers/libwebp/webp\"",
+					"$(SDKROOT)/usr/include/libz",
+				);
 				INFOPLIST_FILE = "Frecipe/Frecipe-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+					"\"$(SRCROOT)/../../Downloads/GoogleAnalyticsServicesiOS_3.0\"",
+					"\"$(SRCROOT)/Pods\"",
+				);
+				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-framework",
@@ -1252,10 +1422,12 @@
 					"-framework",
 					SystemConfiguration,
 					"-lsqlite3.0",
+					"-lGoogleAnalyticsServices",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "4D23EFF2-AA9E-4D9D-B7BB-4819D08D61B2";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "4D23EFF2-AA9E-4D9D-B7BB-4819D08D61B2";
+				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};

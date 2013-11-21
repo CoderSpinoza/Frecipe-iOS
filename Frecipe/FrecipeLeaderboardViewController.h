@@ -11,6 +11,8 @@
 
 @interface FrecipeLeaderboardViewController : FrecipeMainViewController
 
+@property (weak, nonatomic) IBOutlet UIView *friendsLeaderboardView;
+@property (weak, nonatomic) IBOutlet UIView *totalLeaderboardView;
 @property (weak, nonatomic) IBOutlet UITableView *friendsLeaderboard;
 @property (weak, nonatomic) IBOutlet UITableView *totalLeaderboard;
 @property (weak, nonatomic) IBOutlet UIView *facebookHideView;

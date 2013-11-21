@@ -7,8 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <FacebookSDK/FacebookSDK.h>
-#import <GAITrackedViewController.h>
 @interface FrecipeEditProfileViewController : GAITrackedViewController
 
 @property (strong, nonatomic) NSDictionary *user;

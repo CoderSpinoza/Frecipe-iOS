@@ -27,9 +27,12 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.trackedViewName = @"Send Feedback";
+    self.screenName = @"Send Feedback";
 	// Do any additional setup after loading the view.
-    [self.feedbackTextView setShadowWithColor:[UIColor grayColor] Radius:3.0f Offset:CGSizeMake(0, 0) Opacity:0.75f];
+//    [self.feedbackTextView setShadowWithColor:[UIColor grayColor] Radius:3.0f Offset:CGSizeMake(0, -64) Opacity:0.75f];
+    
+//    self.feedbackTextView.layer.borderColor = [UIColor frecipeColor].CGColor;
+//    self.feedbackTextView.layer.borderWidth = 1.0f;
     
     self.feedbackTextView.text = @"Your feedback here.";
     self.feedbackTextView.textColor = [UIColor lightGrayColor];
@@ -50,7 +53,8 @@
 
 - (IBAction)sendButtonPressed:(UIBarButtonItem *)sender {
     
-    [[[GAI sharedInstance] defaultTracker] sendEventWithCategory:@"Settings" withAction:@"Feedback" withLabel:@"Feedback" withValue:[NSNumber numberWithInt:1]];
+    [[[GAI sharedInstance] defaultTracker] send:[[GAIDictionaryBuilder createEventWithCategory:@"Settings" action:@"Feedback" label:@"Feedback" value:[NSNumber numberWithInt:1]] build]];
+//    [[[GAI sharedInstance] defaultTracker] sendEventWithCategory:@"Settings" withAction:@"Feedback" withLabel:@"Feedback" withValue:[NSNumber numberWithInt:1]];
     if (self.feedbackTextView.text.length == 0) {
         return;
     }

@@ -13,8 +13,9 @@
 #import "NSString+Frecipe.h"
 #import "FrecipeAPIClient.h"
 #import "FrecipeOperationQueue.h"
-#import <HockeySDK/HockeySDK.h>
-#import <GAI.h>
+#import "GAI.h"
+#import "GAIDictionaryBuilder.h"
+#import "GAITrackedViewController.h"
 
 #ifndef __IPHONE_5_0
 #warning "This project uses features only available in iOS SDK 5.0 and later."

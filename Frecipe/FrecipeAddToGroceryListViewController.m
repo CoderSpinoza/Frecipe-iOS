@@ -48,7 +48,8 @@
     [self addGestureRecognizers];
     [self registerForKeyboardNotification];
     
-    self.trackedViewName = @"Add to Grocery List";
+    self.screenName = @"Add to Grocery List";
+    NSLog(@"%f", self.groceryListTableView.frame.origin.x );
 }
 
 - (void)didReceiveMemoryWarning

@@ -10,7 +10,6 @@
 #import "FrecipeRatingView.h"
 #import "FPPopoverController.h"
 #import "FrecipeEditDeleteViewController.h"
-#import <GAITrackedViewController.h>
 @interface FrecipeRecipeDetailViewController : GAITrackedViewController
 
 @property (strong, nonatomic) NSString *recipeId;

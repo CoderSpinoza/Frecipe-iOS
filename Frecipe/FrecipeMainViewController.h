@@ -7,7 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <GAITrackedViewController.h>
 @interface FrecipeMainViewController : GAITrackedViewController
 
 @property (strong, nonatomic) FrecipeBadgeView *notificationBadge;

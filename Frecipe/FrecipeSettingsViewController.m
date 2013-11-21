@@ -33,7 +33,7 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
-    self.trackedViewName = @"Settings";
+    self.screenName = @"Settings";
     self.settingsTableView.dataSource = self;
     self.settingsTableView.delegate = self;
     self.notificationBadge = [self addNotificationBadge];

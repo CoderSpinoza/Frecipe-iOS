@@ -7,6 +7,7 @@
 //
 
 #import "FrecipeLoginViewController.h"
+#import "FrecipeNavigationController.h"
 #import "FrecipeAPIClient.h"
 #import "FrecipeAppDelegate.h"
 #import "FrecipeSignupViewController.h"
@@ -45,7 +46,7 @@
     self.emailField.clipsToBounds = YES;
     self.passwordField.clipsToBounds = YES;
     
-    self.trackedViewName = @"Login";
+    self.screenName = @"Login";
     [self addGestureRecognizers];
 }
 
@@ -68,7 +69,9 @@
 }
 
 - (IBAction)loginButtonPressed {
-    [[[GAI sharedInstance] defaultTracker] sendEventWithCategory:@"Authentication" withAction:@"Login" withLabel:@"Login" withValue:[NSNumber numberWithInt:1]];
+    
+    [[[GAI sharedInstance] defaultTracker] send:[[GAIDictionaryBuilder createEventWithCategory:@"Authentication" action:@"Login" label:@"Login" value:[NSNumber numberWithInt:1]] build]];
+//    [[[GAI sharedInstance] defaultTracker] sendEventWithCategory:@"Authentication" withAction:@"Login" withLabel:@"Login" withValue:[NSNumber numberWithInt:1]];
     FrecipeAPIClient *client = [FrecipeAPIClient client];
     
     NSString *path = @"tokens";
@@ -101,7 +104,9 @@
     [queue addOperation:operation];
 }
 - (IBAction)loginWithFacebookButtonPressed {
-    [[[GAI sharedInstance] defaultTracker] sendEventWithCategory:@"Authentication" withAction:@"Login with Facebook" withLabel:@"Login with Facebook" withValue:[NSNumber numberWithInt:1]];
+    
+    [[[GAI sharedInstance] defaultTracker] send:[[GAIDictionaryBuilder createEventWithCategory:@"Authentication" action:@"Login with Facebook" label:@"Login with Facebook" value:[NSNumber numberWithInt:1]] build]];
+//    [[[GAI sharedInstance] defaultTracker] sendEventWithCategory:@"Authentication" withAction:@"Login with Facebook" withLabel:@"Login with Facebook" withValue:[NSNumber numberWithInt:1]];
     
     NSArray *permissions = [[NSArray alloc] initWithObjects:
                             @"email",
@@ -175,7 +180,9 @@
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([segue.identifier isEqualToString:@"Signup"]) {
-        FrecipeSignupViewController *signupViewController = (FrecipeSignupViewController *)segue.destinationViewController;
+        UINavigationController *navigationController = segue.destinationViewController;
+        FrecipeSignupViewController *signupViewController = (FrecipeSignupViewController *)navigationController.childViewControllers.firstObject;
+        
         if (signupViewController.view) {
             if (self.email) {                
                 signupViewController.emailField.text = self.email;

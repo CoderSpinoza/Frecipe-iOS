@@ -10,7 +10,6 @@
 #import <FacebookSDK/FacebookSDK.h>
 #import "FPPopoverController.h"
 #import "ARCMacros.h"
-#import <GAITrackedViewController.h>
 @interface FrecipeNavigationViewController : GAITrackedViewController
 
 @property (weak, nonatomic) IBOutlet FBProfilePictureView *fbProfilePictureView;

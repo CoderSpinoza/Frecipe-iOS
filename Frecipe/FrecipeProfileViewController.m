@@ -47,7 +47,7 @@
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
     
-    self.trackedViewName = @"Profile";
+    self.screenName = @"Profile";
     
     self.recipesCollectionView.dataSource = self;
     self.recipesCollectionView.delegate = self;
@@ -90,7 +90,9 @@
 }
 
 - (void)flipCell:(UITapGestureRecognizer *)tapGestureRecognizer {
-    [[[GAI sharedInstance] defaultTracker] sendEventWithCategory:@"Profile" withAction:@"Flip Recipe" withLabel:@"Flip Recipe" withValue:[NSNumber numberWithInt:1]];
+    
+    [[[GAI sharedInstance] defaultTracker] send:[[GAIDictionaryBuilder createEventWithCategory:@"Profile" action:@"Flip Recipe" label:@"Flip Recipe" value:[NSNumber numberWithInt:1]] build]];
+//    [[[GAI sharedInstance] defaultTracker] sendEventWithCategory:@"Profile" withAction:@"Flip Recipe" withLabel:@"Flip Recipe" withValue:[NSNumber numberWithInt:1]];
     UITableViewCell *cell;
     UIView *view1;
     UIView *view2;
@@ -161,9 +163,12 @@
         self.averageRatingView.rating = [[NSString stringWithFormat:@"%@", [JSON objectForKey:@"rating"]] floatValue];
         self.averageRatingView.editable = NO;        
         
+        
+        self.followButton.hidden = NO;
         if ([[NSString stringWithFormat:@"%@", [JSON objectForKey:@"follow"]] isEqualToString:@"You"]) {
             self.followButton.enabled = NO;
             self.followButton.hidden = YES;
+            self.inviteButton.hidden = NO;
             
             // make a bar button on the left for edit profile
             self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Edit" style:UIBarButtonItemStyleBordered target:self action:@selector(segueToEditProfile)];
@@ -292,24 +297,22 @@
     [self showFacebookFriendPicker];
 }
 - (IBAction)followButtonPressed:(UIButton *)sender {
-    [[[GAI sharedInstance] defaultTracker] sendEventWithCategory:@"Profile" withAction:@"Follow" withLabel:@"Follow" withValue:[NSNumber numberWithInt:1]];
+    [[[GAI sharedInstance] defaultTracker] send:[[GAIDictionaryBuilder createEventWithCategory:@"Profile" action:@"Follow" label:@"Follow" value:[NSNumber numberWithInt:1]] build]];
     
     NSString *path = @"follows";
-    
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSString *authentication_token = [defaults stringForKey:@"authentication_token"];
-    
     NSArray *keys = [NSArray arrayWithObjects:@"authentication_token", @"followId", nil];
     NSArray *values  = [NSArray arrayWithObjects:authentication_token, self.userId, nil];
     
     NSDictionary *parameters = [NSDictionary dictionaryWithObjects:values forKeys:keys];
-    
     FrecipeAPIClient *client = [FrecipeAPIClient client];
     NSURLRequest *request = [client requestWithMethod:@"POST" path:path parameters:parameters];
     
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
         [self.followButton setTitle:[NSString stringWithFormat:@"%@", [JSON objectForKey:@"message"]] forState:UIControlStateNormal];
         
+        [self.numOfFollowersButton setTitle:[NSString stringWithFormat:@"%@", [JSON objectForKey:@"followers"]] forState:UIControlStateNormal];
         
         
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
@@ -320,7 +323,8 @@
 }
 
 - (void)goToRecipeDetail {
-    [[[GAI sharedInstance] defaultTracker] sendEventWithCategory:@"Profile" withAction:@"Recipe Detail" withLabel:@"Recipe Detail" withValue:[NSNumber numberWithInt:1]];
+    [[[GAI sharedInstance] defaultTracker] send:[[GAIDictionaryBuilder createEventWithCategory:@"Profile" action:@"Recipe Detail" label:@"Recipe Detail" value:[NSNumber numberWithInt:1]] build]];
+//    [[[GAI sharedInstance] defaultTracker] sendEventWithCategory:@"Profile" withAction:@"Recipe Detail" withLabel:@"Recipe Detail" withValue:[NSNumber numberWithInt:1]];
     self.selectedRecipe = self.mostPopularRecipe;
     [self performSegueWithIdentifier:@"RecipeDetail" sender:self];
 }
@@ -356,21 +360,23 @@
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    [[[GAI sharedInstance] defaultTracker] sendEventWithCategory:@"Profile" withAction:segue.identifier withLabel:segue.identifier withValue:[NSNumber numberWithInt:1]];
+    [[[GAI sharedInstance] defaultTracker] send:[[GAIDictionaryBuilder createEventWithCategory:@"Profile" action:segue.identifier label:segue.identifier value:[NSNumber numberWithInt:1]] build]];
+//    [[[GAI sharedInstance] defaultTracker] sendEventWithCategory:@"Profile" withAction:segue.identifier withLabel:segue.identifier withValue:[NSNumber numberWithInt:1]];
     NSArray *identifiers = [NSArray arrayWithObjects:@"Recipes", @"Followers", @"Likes", @"Following", @"Liked", nil];
     if ([segue.identifier isEqualToString:@"RecipeDetail"]) {
         FrecipeRecipeDetailViewController *recipeDetailViewController = (FrecipeRecipeDetailViewController *) segue.destinationViewController;
         recipeDetailViewController.recipeId = [self.selectedRecipe objectForKey:@"id"];
         
         recipeDetailViewController.navigationItem.leftBarButtonItem = nil;
-        self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"back_arrow.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(popViewControllerFromStack)];
+        self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:segue.destinationViewController action:@selector(popViewControllerAnimated:)];
+//        self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"back_arrow.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(popViewControllerFromStack)];
     } else if ([segue.identifier isEqualToString:@"Profile"]) {
         FrecipeProfileViewController *profileViewController = (FrecipeProfileViewController *)segue.destinationViewController;
         NSDictionary *user = [self.selectedRecipe objectForKey:@"user"];
         profileViewController.userId  = [NSString stringWithFormat:@"%@", [user objectForKey:@"id"]];        
     } else if ([segue.identifier isEqualToString:@"EditProfile"]) {
-        FrecipeEditProfileViewController *destinationViewController = (FrecipeEditProfileViewController *)segue.destinationViewController;
-        
+        FrecipeNavigationController *navigationController = (FrecipeNavigationController *)segue.destinationViewController;
+        FrecipeEditProfileViewController *destinationViewController = [navigationController.childViewControllers firstObject];
         if (destinationViewController.view) {
             
             destinationViewController.profilePictureView.image = self.profilePictureView.image;

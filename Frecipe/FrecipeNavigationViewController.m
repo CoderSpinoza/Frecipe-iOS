@@ -57,7 +57,7 @@
     
     // menu setup
     self.menu = [NSArray arrayWithObjects:@"frecipe.png", @"my_fridge.png", @"my_restaurant.png", @"grocery_list.png", @"chefranking.png", @"settings.png", nil];
-    self.trackedViewName = @"Navigation";
+    self.screenName = @"Navigation";
     [self.slidingViewController setAnchorRightRevealAmount:200.0f];
     self.slidingViewController.underLeftWidthLayout = ECFullWidth;
     
@@ -172,8 +172,6 @@
 
 - (void)fetchNotifications {
     
-    NSString *path = @"notifications/user";
-    
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSString *authentication_token = [defaults stringForKey:@"authentication_token"];
     
@@ -183,10 +181,11 @@
     NSDictionary *parameters = [NSDictionary dictionaryWithObject:authentication_token forKey:@"authentication_token"];
     
     FrecipeAPIClient *client = [FrecipeAPIClient client];
-    NSURLRequest *request = [client requestWithMethod:@"POST" path:path parameters:parameters];
+    NSString *path = [NSString stringWithFormat:@"notifications/user/%@", authentication_token];
+    NSURLRequest *request = [client requestWithMethod:@"GET" path:path parameters:parameters];
     
+
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
-        
         self.notifications = [NSMutableArray arrayWithArray:[JSON objectForKey:@"notifications"]];
         NSString *unseen = [NSString stringWithFormat:@"%@", [JSON objectForKey:@"unseen_count"]];
         
@@ -207,7 +206,9 @@
 }
 
 - (void)checkNotifications {
-    [[[GAI sharedInstance] defaultTracker] sendEventWithCategory:@"Navigation" withAction:@"Notifications" withLabel:@"Notifications" withValue:[NSNumber numberWithInt:1]];
+    
+    [[[GAI sharedInstance] defaultTracker] send:[[GAIDictionaryBuilder createEventWithCategory:@"Navigation" action:@"Notifications" label:@"Notifications" value:[NSNumber numberWithInt:1]] build]];
+//    [[[GAI sharedInstance] defaultTracker] sendEventWithCategory:@"Navigation" withAction:@"Notifications" withLabel:@"Notifications" withValue:[NSNumber numberWithInt:1]];
     NSString *path = @"notifications/check";
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -231,7 +232,6 @@
     
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
         FrecipeNavigationController *navigationController = (FrecipeNavigationController *)self.slidingViewController.topViewController;
-        NSLog(@"check notifications");
         self.notificationsBadgeView.text = @"0";
         if (navigationController.childViewControllers.count > 0) {
             FrecipeMainViewController *viewController = [navigationController.childViewControllers objectAtIndex:0];
@@ -245,7 +245,9 @@
 }
 
 - (void)querySearchString:(NSString *)searchString {
-    [[[GAI sharedInstance] defaultTracker] sendEventWithCategory:@"Navigation" withAction:@"Search" withLabel:@"Search" withValue:[NSNumber numberWithInt:1]];
+    
+    [[[GAI sharedInstance] defaultTracker] send:[[GAIDictionaryBuilder createEventWithCategory:@"Navigation" action:@"Search" label:@"Search" value:[NSNumber numberWithInt:1]] build]];
+//    [[[GAI sharedInstance] defaultTracker] sendEventWithCategory:@"Navigation" withAction:@"Search" withLabel:@"Search" withValue:[NSNumber numberWithInt:1]];
     NSString *path = @"tokens/search";
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -281,7 +283,7 @@
     [self.slidingViewController anchorTopViewTo:ECRight animations:^{
     } onComplete:^{
         if (self.slidingViewController.anchorRightRevealAmount == 200.f) {
-            self.searchBar.frame = CGRectMake(0, 0, 200.0f, 44.0f);
+            self.searchBar.frame = CGRectMake(self.searchBar.frame.origin.x, self.searchBar.frame.origin.y, 200.0f, self.searchBar.frame.size.height);
         }
     }];
     return YES;
@@ -292,7 +294,7 @@
     [self.slidingViewController anchorTopViewTo:ECRight animations:^{
         
     } onComplete:^{
-        self.searchBar.frame = CGRectMake(0, 0, 200.0f, 44.0f);
+        self.searchBar.frame = CGRectMake(self.searchBar.frame.origin.x, self.searchBar.frame.origin.y, 200.0f, self.searchBar.frame.size.height);
     }];
 }
 
@@ -384,6 +386,7 @@
             fbProfilePictureView.frame = CGRectMake(0, 0, 43, 43);
             fbProfilePictureView.tag = 1;
             [cell addSubview:fbProfilePictureView];
+            cell.imageView.hidden = YES;
             
         } else {
             cell.imageView.image = [UIImage imageNamed:@"default_profile_picture.png"];
@@ -392,6 +395,7 @@
             FBProfilePictureView *previousView = (FBProfilePictureView *)[cell viewWithTag:1];
             [previousView removeFromSuperview];
             [cell addSubview:imageView];
+            cell.imageView.hidden = YES;
         }
         
     }

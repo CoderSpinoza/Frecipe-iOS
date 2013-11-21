@@ -7,7 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <GAITrackedViewController.h>
 @interface FrecipeCommentsViewController : GAITrackedViewController
 
 @property (weak, nonatomic) IBOutlet UIButton *closeButton;

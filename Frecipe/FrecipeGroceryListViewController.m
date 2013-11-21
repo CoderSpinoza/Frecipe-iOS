@@ -73,7 +73,7 @@
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
     
-    self.trackedViewName = @"Grocery List";
+    self.screenName = @"Grocery List";
     firstTimeDisplayingAll = YES;
     self.groceryListTableView.dataSource = self;
     self.groceryListTableView.delegate = self;
@@ -84,7 +84,7 @@
     self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"gogeupleather.jpg"]];
     
     self.groceryListView.layer.cornerRadius = 5.0f;
-    self.groceryListView.frame = CGRectMake(self.groceryListView.frame.origin.x, self.groceryListView.frame.origin.y, self.groceryListView.frame.size.width, self.view.frame.size.height - self.groceryListView.frame.origin.y - 54);
+//    self.groceryListView.frame = CGRectMake(self.groceryListView.frame.origin.x, self.groceryListView.frame.origin.y, self.groceryListView.frame.size.width, self.view.frame.size.height - self.groceryListView.frame.origin.y - 54);
     self.groceryListView.layer.masksToBounds = NO;
     
     [self.groceryListView setShadowWithColor:[UIColor grayColor] Radius:2.0f Offset:CGSizeMake(0, 0) Opacity:0.5f];
@@ -94,6 +94,8 @@
     
     self.notificationBadge = [self addNotificationBadge];
     
+    
+    NSLog(@"%f", self.groceryListView.frame.size.height);
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -217,15 +219,16 @@
     
     
     if (self.recipes.count > self.displayedRecipeIndexPath.row) {
-        NSLog(@"%@", [self.recipes objectAtIndex:self.displayedRecipeIndexPath.row]);
         self.currentGroceryList = [[self.recipes objectAtIndex:self.displayedRecipeIndexPath.row] objectForKey:@"missing_ingredients"];
         self.currentGroceryDetailList = [[self.recipes objectAtIndex:self.displayedRecipeIndexPath.row] objectForKey:@"groceries"];
         self.recipeNameLabel.text = [NSString stringWithFormat:@"%@", [[self.recipes objectAtIndex:self.displayedRecipeIndexPath.row] objectForKey:@"name"]];
+        [self.recipeNameButton setTitle:self.recipeNameLabel.text forState:UIControlStateNormal];
     } else {
         self.displayedRecipeIndexPath = [NSIndexPath indexPathForRow:0 inSection:0];
         self.currentGroceryList = [[self.recipes objectAtIndex:0] objectForKey:@"missing_ingredients"];
         self.currentGroceryDetailList = [[self.recipes objectAtIndex:0] objectForKey:@"groceries"];
         self.recipeNameLabel.text = [NSString stringWithFormat:@"%@", [[self.recipes objectAtIndex:0] objectForKey:@"name"]];
+        [self.recipeNameButton setTitle:self.recipeNameLabel.text forState:UIControlStateNormal];
     }
         [self.groceryListTableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationAutomatic];
     [self.recipesCollectionView reloadData];
@@ -300,7 +303,9 @@
 //}
 
 - (IBAction)deleteButtonPressed {
-    [[[GAI sharedInstance] defaultTracker] sendEventWithCategory:@"Grocery List" withAction:@"Delete" withLabel:@"Delete" withValue:[NSNumber numberWithInt:1]];
+    
+    [[[GAI sharedInstance] defaultTracker] send:[[GAIDictionaryBuilder createEventWithCategory:@"Grocery List" action:@"Delete" label:@"Delete" value:[NSNumber numberWithInt:1]] build]];
+//    [[[GAI sharedInstance] defaultTracker] sendEventWithCategory:@"Grocery List" withAction:@"Delete" withLabel:@"Delete" withValue:[NSNumber numberWithInt:1]];
     NSString *path = @"groceries/multiple_delete";
     NSMutableArray *ids = [[NSMutableArray alloc] initWithCapacity:self.completedGroceryList.count];
     for (id ingredient in self.completedGroceryList) {
@@ -381,7 +386,9 @@
 }
 
 - (IBAction)doneButtonPressed {
-    [[[GAI sharedInstance] defaultTracker] sendEventWithCategory:@"Grocery List" withAction:@"Done Shopping" withLabel:@"Done Shopping" withValue:[NSNumber numberWithInt:1]];
+    
+    [[[GAI sharedInstance] defaultTracker] send:[[GAIDictionaryBuilder createEventWithCategory:@"Grocery List" action:@"Done Shopping" label:@"Done Shopping" value:[NSNumber numberWithInt:1]] build]];
+//    [[[GAI sharedInstance] defaultTracker] sendEventWithCategory:@"Grocery List" withAction:@"Done Shopping" withLabel:@"Done Shopping" withValue:[NSNumber numberWithInt:1]];
     NSString *path = @"groceries/fridge";
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -422,7 +429,9 @@
 - (IBAction)editButtonPressed:(UIBarButtonItem *)sender {
     
     if (editingRecipes == NO) {
-        [[[GAI sharedInstance] defaultTracker] sendEventWithCategory:@"Grocery List" withAction:@"Edit" withLabel:@"Edit" withValue:[NSNumber numberWithInt:1]];
+        
+        [[[GAI sharedInstance] defaultTracker] send:[[GAIDictionaryBuilder createEventWithCategory:@"Grocery List" action:@"Edit" label:@"Edit" value:[NSNumber numberWithInt:1]] build]];
+//        [[[GAI sharedInstance] defaultTracker] sendEventWithCategory:@"Grocery List" withAction:@"Edit" withLabel:@"Edit" withValue:[NSNumber numberWithInt:1]];
         editingRecipes = YES;
         sender.title = @"Done";
         [self.recipesCollectionView deselectItemAtIndexPath:self.displayedRecipeIndexPath animated:YES];
@@ -700,7 +709,10 @@
     } else {
         displayingSpecificRecipe = indexPath.row != 0;
         self.displayedRecipeIndexPath = indexPath;
+        
+        
         self.recipeNameLabel.text = [NSString stringWithFormat:@"%@", [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"name"]];
+        [self.recipeNameButton setTitle:self.recipeNameLabel.text forState:UIControlStateNormal];
         self.currentGroceryList = [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"missing_ingredients"];
         
         self.currentGroceryDetailList = [[self.recipes objectAtIndex:indexPath.row] objectForKey:@"groceries"];

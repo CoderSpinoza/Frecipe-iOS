@@ -34,7 +34,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.trackedViewName = @"Profile Detail";
+    self.screenName = @"Profile Detail";
 	// Do any additional setup after loading the view.
     if ([self.segueIdentifier isEqualToString:@"Followers"] || [self.segueIdentifier isEqualToString:@"Following"]) {
         [self fetchUsers];
@@ -150,8 +150,8 @@
         destinationViewCotnroller.recipeId = [self.selectedRecipe objectForKey:@"id"];
         destinationViewCotnroller.navigationItem.leftBarButtonItem = nil;
     }
-    
-    self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"back_arrow.png"] style:UIBarButtonItemStyleBordered target:segue.destinationViewController action:@selector(popViewControllerAnimated:)];
+    self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:segue.destinationViewController action:@selector(popViewControllerAnimated:)];
+//    self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"back_arrow.png"] style:UIBarButtonItemStyleBordered target:segue.destinationViewController action:@selector(popViewControllerAnimated:)];
 }
 
 // table view dataSource methods

@@ -33,7 +33,7 @@
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
     self.user = [self loaduserInfo];
-    self.trackedViewName = @"Edit Profile";
+    self.screenName = @"Edit Profile";
 //
     if ([[NSString stringWithFormat:@"%@", [self.user objectForKey:@"provider"]] isEqualToString:@"facebook"]) {
         self.profilePictureView.hidden = YES;
@@ -83,7 +83,9 @@
 }
 
 - (IBAction)saveButtonPressed:(UIBarButtonItem *)sender {
-    [[[GAI sharedInstance] defaultTracker] sendEventWithCategory:@"Profile" withAction:@"Edit" withLabel:@"Edit" withValue:[NSNumber numberWithInt:1]];
+    
+    [[[GAI sharedInstance] defaultTracker] send:[[GAIDictionaryBuilder createEventWithCategory:@"Profile" action:@"Edit" label:@"Edit" value:[NSNumber numberWithInt:1]] build]];
+//    [[[GAI sharedInstance] defaultTracker] sendEventWithCategory:@"Profile" withAction:@"Edit" withLabel:@"Edit" withValue:[NSNumber numberWithInt:1]];
     
     NSString *path = @"tokens/update";
     

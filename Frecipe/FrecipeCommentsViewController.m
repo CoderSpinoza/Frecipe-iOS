@@ -34,7 +34,7 @@
     self.commentsTableView.dataSource = self;
     self.commentsField.delegate = self;
     self.title = @"Comments";
-    self.trackedViewName = @"Comments";
+    self.screenName = @"Comments";
     [self addGestureRecognizers];
     [self registerForKeyboardNotifications];
 }

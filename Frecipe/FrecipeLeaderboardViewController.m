@@ -62,7 +62,7 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
-    self.trackedViewName = @"Leaderboard";
+    self.screenName = @"Leaderboard";
     self.friendsLeaderboard.dataSource = self;
     self.friendsLeaderboard.delegate = self;
     self.totalLeaderboard.dataSource = self;
@@ -77,13 +77,13 @@
     if ([provider isEqualToString:@"facebook"]) {
         self.facebookHideView.hidden = YES;
         self.segmentedControl.selectedSegmentIndex = 0;
-        self.friendsLeaderboard.hidden = NO;
-        self.totalLeaderboard.hidden = YES;
+        self.friendsLeaderboardView.hidden = NO;
+        self.totalLeaderboardView.hidden = YES;
     } else {
         self.facebookHideView.hidden = YES;
         self.segmentedControl.selectedSegmentIndex = 1;
-        self.friendsLeaderboard.hidden = YES;
-        self.totalLeaderboard.hidden = NO;
+        self.friendsLeaderboardView.hidden = YES;
+        self.totalLeaderboardView.hidden = NO;
     }
     
 //    self.myRankingView.layer.borderColor = [[UIColor colorWithRed:0.9 green:0.9 blue:0.9 alpha:0.9] CGColor];
@@ -110,6 +110,7 @@
     if ([provider isEqualToString:@"facebook"]) {
         [self fetchFriendScores];
     } else {
+        NSLog(@"without facebook");
         [self fetchAllScores];
     }
 }
@@ -147,6 +148,7 @@
     NSString *uid = [defaults stringForKey:@"uid"];
     if (FBSession.activeSession) {
         if (!FBSession.activeSession.isOpen) {
+           
             [FBSession openActiveSessionWithReadPermissions:[NSArray arrayWithObject:@"email"] allowLoginUI:NO completionHandler:^(FBSession *session, FBSessionState status, NSError *error) {
                 FBRequest *request = [FBRequest requestForMyFriends];
                 [request startWithCompletionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
@@ -161,7 +163,7 @@
                     
                     [self.uids addObject:uid];
                     
-                    [self fetchAllScores];
+                    [self fetchAllScores];                    
                 }];
             }];
         } else {
@@ -195,18 +197,18 @@
     NSURLRequest *request = [client requestWithMethod:@"GET" path:path parameters:parameters];
     
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
-        self.totalUsers = [NSArray arrayWithArray:[JSON objectForKey:@"users"]];
+        self.totalUsers = [NSMutableArray arrayWithArray:[JSON objectForKey:@"users"]];
         self.user = [NSDictionary dictionaryWithDictionary:[JSON objectForKey:@"user"]];
         self.event = [NSDictionary dictionaryWithDictionary:[JSON objectForKey:@"event"]];
         
         [self startTimer];
         if (self.event) {
-            self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Event" style:UIBarButtonItemStyleBordered target:self action:@selector(showEventPopup)];
-            if (self.fromFrecipe) {
-                if ([self.navigationController.visibleViewController isEqual:self]) {
-                    [self showEventPopup];
-                }                
-            }
+//            self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Event" style:UIBarButtonItemStyleBordered target:self action:@selector(showEventPopup)];
+//            if (self.fromFrecipe) {
+//                if ([self.navigationController.visibleViewController isEqual:self]) {
+//                    [self showEventPopup];
+//                }                
+//            }
         }
         
         NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"points" ascending:NO];
@@ -264,23 +266,9 @@
             }
         }
         
+        NSLog(@"result: %@", JSON);
         
-        self.myRankingLabel.textColor = [UIColor whiteColor];
-        self.myRankingLabel.layer.cornerRadius = 18.0f;
-        self.myRankingLabel.frame = CGRectMake(4, 15, 36, 36);
-        if ([self.myRankingLabel.text isEqualToString:@"1"]) {
-            self.myRankingLabel.backgroundColor = [UIColor colorWithRed:1.0 green:185.0/255.0 blue:15.0/255.0 alpha:1];
-        } else if ([self.myRankingLabel.text isEqualToString:@"2"]) {
-        
-            self.myRankingLabel.backgroundColor = [UIColor lightGrayColor];
-        } else if ([self.myRankingLabel.text isEqualToString:@"3"]) {
-            self.myRankingLabel.backgroundColor = [UIColor colorWithRed:166.0/255.0 green:125.0/255.0 blue:61.0/255.0 alpha:1];
-        } else {
-            self.myRankingLabel.frame = CGRectMake(0, 11, 44, 44);
-            self.myRankingLabel.layer.cornerRadius = 0;
-            self.myRankingLabel.textColor = [UIColor blackColor];
-        }
-        
+        [self refreshRankingColor];
         [self.friendsLeaderboard reloadData];
         [self.totalLeaderboard reloadData];
 
@@ -298,6 +286,25 @@
     [queue addOperation:operation];
 }
 
+- (void)refreshRankingColor {
+    self.myRankingLabel.textColor = [UIColor whiteColor];
+    self.myRankingLabel.layer.cornerRadius = 18.0f;
+    self.myRankingLabel.frame = CGRectMake(4, 15, 36, 36);
+    if ([self.myRankingLabel.text isEqualToString:@"1"]) {
+        self.myRankingLabel.backgroundColor = [UIColor colorWithRed:1.0 green:185.0/255.0 blue:15.0/255.0 alpha:1];
+    } else if ([self.myRankingLabel.text isEqualToString:@"2"]) {
+        
+        self.myRankingLabel.backgroundColor = [UIColor lightGrayColor];
+    } else if ([self.myRankingLabel.text isEqualToString:@"3"]) {
+        self.myRankingLabel.backgroundColor = [UIColor colorWithRed:166.0/255.0 green:125.0/255.0 blue:61.0/255.0 alpha:1];
+    } else {
+        self.myRankingLabel.frame = CGRectMake(0, 11, 44, 44);
+//        self.myRankingLabel.layer.cornerRadius = 0;
+        self.myRankingLabel.backgroundColor = [UIColor clearColor];
+        self.myRankingLabel.textColor = [UIColor blackColor];
+    }
+}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -311,8 +318,8 @@
 
 - (IBAction)segmentControlPressed:(UISegmentedControl *)sender {
     if (sender.selectedSegmentIndex == 0) {
-        self.friendsLeaderboard.hidden = NO;
-        self.totalLeaderboard.hidden = YES;
+        self.friendsLeaderboardView.hidden = NO;
+        self.totalLeaderboardView.hidden = YES;
         
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
         NSString *provider = [defaults stringForKey:@"provider"];
@@ -323,11 +330,13 @@
         }
         self.myRankingLabel.text = [NSString stringWithFormat:@"%i", myFacebookRanking];
     } else {
-        self.friendsLeaderboard.hidden = YES;
+        NSLog(@"hihi");
+        self.friendsLeaderboardView.hidden = YES;
         self.facebookHideView.hidden = YES;
-        self.totalLeaderboard.hidden = NO;
+        self.totalLeaderboardView.hidden = NO;
         self.myRankingLabel.text = [NSString stringWithFormat:@"%i", myRanking];
     }
+    [self refreshRankingColor];
 }
 
 - (IBAction)connectWithFacebookButtonPressed {
@@ -361,6 +370,7 @@
         
         [[NSUserDefaults standardUserDefaults] synchronize];
         [self fetchScores];
+        NSLog(@"connect facebook gogo");
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         NSLog(@"%@", error);
         
@@ -554,7 +564,7 @@
         FrecipeProfileViewController *destinationController = segue.destinationViewController;
         destinationController.userId = [NSString stringWithFormat:@"%@", [self.selectedUser objectForKey:@"id"]];
         destinationController.navigationItem.leftBarButtonItem = nil;
-        self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"back_arrow.png"] style:UIBarButtonItemStyleBordered target:segue.destinationViewController action:@selector(popViewControllerAnimated:)];
+        self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:segue.destinationViewController action:@selector(popViewControllerAnimated:)];
     }
 }
 

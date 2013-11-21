@@ -11,7 +11,6 @@
 #import "FrecipeAPIClient.h"
 #import <QuartzCore/QuartzCore.h>
 #import <FacebookSDK/FacebookSDK.h>
-#import <GAI.h>
 @interface FrecipeFacebookInviteViewController () <UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate, UISearchDisplayDelegate>
 
 @property (strong, nonatomic) NSMutableArray *facebookFriends;
@@ -64,7 +63,7 @@
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
     
-    self.trackedViewName = @"Find Friends";
+    self.screenName = @"Find Friends";
     self.facebookFriendsTableView.delegate = self;
     self.facebookFriendsTableView.dataSource = self;
     
@@ -76,6 +75,7 @@
     [self loadFacebookFriends];
     [self loadFacebookUids];
     [self loadInvitedPeople];
+    self.edgesForExtendedLayout = UIRectEdgeLeft | UIRectEdgeBottom | UIRectEdgeRight;
     
 }
 
@@ -99,7 +99,6 @@
         if (self.facebookFriends && self.invitedFriends) {
             [self.facebookFriendsTableView reloadData];
         }
-        NSLog(@"%@", self.uids);
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         
     }];
@@ -115,7 +114,6 @@
     NSURLRequest *request = [client requestWithMethod:@"GET" path:path parameters:parameters];
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
         self.invitedFriends = [JSON objectForKey:@"invites"];
-        NSLog(@"%@", self.invitedFriends);
         if (self.facebookFriends && self.uids) {
             [self.facebookFriendsTableView reloadData];
         }
@@ -175,7 +173,6 @@
     NSURLRequest *request = [client requestWithMethod:@"POST" path:path parameters:parameters];
     
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
-        NSLog(@"%@", JSON);
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         NSLog(@"%@", [error localizedDescription]);
     }];
@@ -190,7 +187,9 @@
     
     [FBWebDialogs presentRequestsDialogModallyWithSession:nil message:nil title:nil parameters:facebookParameters handler:^(FBWebDialogResult result, NSURL *resultURL, NSError *error) {
         if (!error) {
-            [[[GAI sharedInstance] defaultTracker] sendSocial:@"Facebook" withAction:@"Invite" withTarget:nil];
+            
+            [[[GAI sharedInstance] defaultTracker] send:[[GAIDictionaryBuilder createSocialWithNetwork:@"Facebook" action:@"Invite" target:nil] build]];
+//            [[[GAI sharedInstance] defaultTracker] sendSocial:@"Facebook" withAction:@"Invite" withTarget:nil];
             
             [self dismissViewControllerAnimated:YES completion:nil];
             
@@ -203,14 +202,11 @@
 - (BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchString:(NSString *)searchString {
     [self.searchedFriends removeAllObjects];
     
-    NSPredicate *firstNameFilterPredicate = [NSPredicate predicateWithFormat:@"first_name beginswith[c] %@", searchString];
 
-    NSPredicate *lastNameFilterPredicate = [NSPredicate predicateWithFormat:@"last_name beginswith[cd] %@", searchString];
+    NSPredicate *lastNameFilterPredicate = [NSPredicate predicateWithFormat:@"name beginswith[cd] %@", searchString];
     
-    NSArray *firstNameArray = [self.facebookFriends filteredArrayUsingPredicate:firstNameFilterPredicate];
     NSArray *lastNameArray = [self.facebookFriends filteredArrayUsingPredicate:lastNameFilterPredicate];
     
-    [self.searchedFriends addObjectsFromArray:firstNameArray];
     [self.searchedFriends addObjectsFromArray:lastNameArray];
     return YES;
 }
@@ -237,7 +233,7 @@
     // Return the number of rows in the section.
     if ([tableView isEqual:self.facebookFriendsTableView]) {
         
-        NSPredicate *filterPredicate = [NSPredicate predicateWithFormat:@"first_name beginswith[c] %@", [self.alphabets objectAtIndex:section]];
+        NSPredicate *filterPredicate = [NSPredicate predicateWithFormat:@"name beginswith[c] %@", [self.alphabets objectAtIndex:section]];
         NSArray *filteredFriends = [self.facebookFriends filteredArrayUsingPredicate:filterPredicate];
         return filteredFriends.count;
     } else {
@@ -289,15 +285,23 @@
         }
         
         
-        NSPredicate *filterPredicate = [NSPredicate predicateWithFormat:@"first_name beginswith[c] %@", [self.alphabets objectAtIndex:indexPath.section]];
+        NSPredicate *filterPredicate = [NSPredicate predicateWithFormat:@"name beginswith[c] %@", [self.alphabets objectAtIndex:indexPath.section]];
         NSArray *filteredFriends = [self.facebookFriends filteredArrayUsingPredicate:filterPredicate];
         NSDictionary *facebookFriend = [filteredFriends objectAtIndex:indexPath.row];
         
         cell.imageView.image = [UIImage imageNamed:@"default_profile_picture.png"];
         
-        FBProfilePictureView *profilePictureView = [[FBProfilePictureView alloc] initWithProfileID:[NSString stringWithFormat:@"%@", [facebookFriend objectForKey:@"id"]] pictureCropping:FBProfilePictureCroppingSquare];
         
-        profilePictureView.frame = CGRectMake(0, 0, 44, 44);
+        FBProfilePictureView *profilePictureView = (FBProfilePictureView *)[cell viewWithTag:1];
+        
+        if (profilePictureView == nil) {
+            profilePictureView = [[FBProfilePictureView alloc] initWithProfileID:[NSString stringWithFormat:@"%@", [facebookFriend objectForKey:@"id"]] pictureCropping:FBProfilePictureCroppingSquare];
+        } else {
+            profilePictureView.profileID = [NSString stringWithFormat:@"%@", [facebookFriend objectForKey:@"id"]];
+        }
+        
+        profilePictureView.frame = CGRectMake(15, 0, 44, 44);
+        profilePictureView.tag = 1;
         [cell addSubview:profilePictureView];
         
         cell.textLabel.text = [NSString stringWithFormat:@"%@", [facebookFriend objectForKey:@"name"]];
@@ -334,8 +338,8 @@
         NSDictionary *facebookFriend = [self.searchedFriends objectAtIndex:indexPath.row];
         
         cell.textLabel.text = [NSString stringWithFormat:@"%@", [facebookFriend objectForKey:@"name"]];
+        cell.imageView.hidden = NO;
         cell.imageView.image = [UIImage imageNamed:@"default_profile_picture.png"];
-        
         if ([self.selectedFriends containsObject:[facebookFriend objectForKey:@"id"]]) {
             cell.accessoryType = UITableViewCellAccessoryCheckmark;
         } else {
@@ -363,7 +367,8 @@
         
         cell.textLabel.font = [UIFont boldSystemFontOfSize:15];
         FBProfilePictureView *profilePictureView = [[FBProfilePictureView alloc] initWithProfileID:[NSString stringWithFormat:@"%@", [facebookFriend objectForKey:@"id"]] pictureCropping:FBProfilePictureCroppingSquare];
-        profilePictureView.frame = CGRectMake(0, 0, 44, 44);
+        
+        profilePictureView.frame = CGRectMake(15, 0, 44, 44);
         [cell addSubview:profilePictureView];
         
         return cell;
@@ -388,12 +393,11 @@
 
 - (NSIndexPath *)tableView:(UITableView *)tableView willSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     if ([tableView isEqual:self.facebookFriendsTableView]) {
-        NSPredicate *filterPredicate = [NSPredicate predicateWithFormat:@"first_name beginswith[c] %@", [self.alphabets objectAtIndex:indexPath.section]];
+        NSPredicate *filterPredicate = [NSPredicate predicateWithFormat:@"name beginswith[c] %@", [self.alphabets objectAtIndex:indexPath.section]];
         NSArray *filteredFriends = [self.facebookFriends filteredArrayUsingPredicate:filterPredicate];
         NSDictionary *facebookFriend = [filteredFriends objectAtIndex:indexPath.row];
         
         if ([self.uids containsObject:[facebookFriend objectForKey:@"id"]] || [self.invitedFriends containsObject:[facebookFriend objectForKey:@"id"]]) {
-            NSLog(@"%@", facebookFriend);
             return nil;
         } else {
             return indexPath;
@@ -415,10 +419,13 @@
             NSDictionary *facebookFriend = [self friendForIndexPath:indexPath];
         
         [self.selectedFriends addObject:[NSString stringWithFormat:@"%@", [facebookFriend objectForKey:@"id"]]];
+        NSLog(@"select from all");
+        NSLog(@"%@", facebookFriend);
+        NSLog(@"%@", self.selectedFriends);
     } else {
         
         NSDictionary *selectedFriend = [self.searchedFriends objectAtIndex:indexPath.row];
-
+        NSLog(@"%@", selectedFriend);
         [self.searchDisplayController setActive:NO animated:YES];
 
         NSIndexPath *scrollIndexPath = [self indexPathForFriend:selectedFriend];
@@ -427,12 +434,14 @@
             [self.selectedFriends removeObject:[NSString stringWithFormat:@"%@", [selectedFriend objectForKey:@"id"]]];
             toBeUncheckedCell.accessoryType = UITableViewCellAccessoryNone;
         } else {
-            UITableViewCell *cell = [self.facebookFriendsTableView cellForRowAtIndexPath:indexPath];
-            cell.selected = YES;
+//            UITableViewCell *cell = [self.facebookFriendsTableView cellForRowAtIndexPath:indexPath];
+            [self.facebookFriendsTableView selectRowAtIndexPath:scrollIndexPath animated:YES scrollPosition:UITableViewScrollPositionTop];
             [self.selectedFriends addObject:[NSString stringWithFormat:@"%@", [selectedFriend objectForKey:@"id"]]];
             toBeUncheckedCell.accessoryType = UITableViewCellAccessoryCheckmark;
         }
         [self.facebookFriendsTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:scrollIndexPath.row inSection:scrollIndexPath.section] atScrollPosition:UITableViewScrollPositionTop animated:NO];
+        NSLog(@"select from search");
+        NSLog(@"%@", self.selectedFriends);
     }
     
 }
@@ -445,7 +454,11 @@
         
         NSDictionary *facebookFriend = [self friendForIndexPath:indexPath];
         [self.selectedFriends removeObject:[NSString stringWithFormat:@"%@", [facebookFriend objectForKey:@"id"]]];
+        NSLog(@"deselect");
     } else {
+//        NSDictionary *selectedFriend = [self.searchedFriends objectAtIndex:indexPath.row];
+        
+        [self.searchDisplayController setActive:NO animated:YES];
         
     }
     

@@ -71,7 +71,7 @@
     self.directionsTableView.dataSource = self;
     self.directionsTableView.delegate = self;
 
-    self.trackedViewName = @"Add Recipe";
+    self.screenName = @"Add Recipe";
     
 //    [self addGestureRecognizers];
     [self registerForKeyboardNotifications];
@@ -163,7 +163,7 @@
         // add a spinning view
         UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
         spinner.center = CGPointMake(self.view.frame.size.width / 2, self.view.frame.size.height / 2);
-        UIView *blockingView = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y - 20, self.view.frame.size.width, self.view.frame.size.height)];
+        UIView *blockingView = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y, self.view.frame.size.width, self.view.frame.size.height)];
         blockingView.backgroundColor = [UIColor blackColor];
         blockingView.alpha = 0.5;
         [blockingView addSubview:spinner];
@@ -447,7 +447,7 @@
 
 - (void)keyboardWillBeHidden:(NSNotification *)notification {    
     [UIView animateWithDuration:0.3 delay:0.0 options:UIViewAnimationOptionCurveEaseOut animations:^{
-        self.recipeImageButton.frame = CGRectMake(20, 135, 280, 280);
+        self.recipeImageButton.frame = CGRectMake(20, self.recipeImageButton.frame.origin.y, 280, 280);
     } completion:^(BOOL finished) {
     }];
     self.ingredientsTableView.frame = CGRectMake(self.ingredientsTableView.frame.origin.x, self.ingredientsTableView.frame.origin.y, self.ingredientsTableView.frame.size.width, 280);

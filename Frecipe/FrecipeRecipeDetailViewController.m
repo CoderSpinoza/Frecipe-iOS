@@ -13,7 +13,6 @@
 #import "FrecipeAddRecipeViewController.h"
 #import "FrecipeFunctions.h"
 #import "FrecipeCommentsViewController.h"
-#import <GAI.h>
 #import <AFNetworking/UIImageView+AFNetworking.h>
 #import <QuartzCore/QuartzCore.h>
 
@@ -89,7 +88,7 @@
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
     
-    self.trackedViewName = @"Recipe Detail";
+    self.screenName = @"Recipe Detail";
     self.ingredientsTableView.dataSource = self;
     self.directionsTableView.dataSource = self;
     self.ingredientsTableView.delegate = self;
@@ -278,7 +277,7 @@
         }
          [self.commentNewButton setTitle:[NSString stringWithFormat:@"%i", self.comments.count] forState:UIControlStateNormal];
 
-        self.scrollView.contentSize = CGSizeMake(self.view.frame.size.width, self.directionsView.frame.origin.y + self.directionsView.frame.size.height + 54);
+        self.scrollView.contentSize = CGSizeMake(self.view.frame.size.width, self.directionsView.frame.origin.y + self.directionsView.frame.size.height + 10);
         
         
         if ([self isTall] == NO) {
@@ -297,7 +296,9 @@
 }   
 
 - (IBAction)likeButtonPressed {
-    [[[GAI sharedInstance] defaultTracker] sendEventWithCategory:@"Recipe Detail" withAction:@"Like" withLabel:@"Like" withValue:[NSNumber numberWithInt:1]];
+    
+    [[[GAI sharedInstance] defaultTracker] send:[[GAIDictionaryBuilder createEventWithCategory:@"Recipe Detail" action:@"Like" label:@"Like" value:[NSNumber numberWithInt:1]] build]];
+//    [[[GAI sharedInstance] defaultTracker] sendEventWithCategory:@"Recipe Detail" withAction:@"Like" withLabel:@"Like" withValue:[NSNumber numberWithInt:1]];
     if (self.heartButton.selected == NO) {
         self.heartButton.selected = YES;
     } else {
@@ -420,7 +421,9 @@
             [FBRequestConnection startForPostOpenGraphObjectWithType:@"website" title:[NSString stringWithFormat:@"%@ has shared %@'s recipe, %@!", [[NSUserDefaults standardUserDefaults] stringForKey:@"name"], [self.user objectForKey:@"first_name"], self.title] image:self.recipeImageURL url:@"https://itunes.apple.com/us/app/id661973790?mt=8" description:@"Go to this link to download Frecipe!" objectProperties:@{@"fb:explicitly_shared": @"true"} completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
                 
                 // send to google analytics
-                [[[GAI sharedInstance] defaultTracker] sendSocial:@"Facebook" withAction:@"Recipe Share" withTarget:self.title];
+                
+                [[[GAI sharedInstance] defaultTracker] send:[[GAIDictionaryBuilder createSocialWithNetwork:@"Facebook" action:@"Recipe Share" target:self.title] build]];
+//                [[[GAI sharedInstance] defaultTracker] sendSocial:@"Facebook" withAction:@"Recipe Share" withTarget:self.title];
                 
                 UIAlertView *alertView;
                 if (!error) {
@@ -445,7 +448,7 @@
         }];
     } else {
 
-        frame = CGRectMake(0, 0, self.commentsView.frame.size.width, self.bottomBar.frame.origin.y);
+        frame = CGRectMake(0, 64, self.commentsView.frame.size.width, self.bottomBar.frame.origin.y - 64);
         
         [UIView animateWithDuration:0.5 animations:^{
             self.commentsView.frame = frame;
@@ -490,6 +493,7 @@
             [self dismissKeyboard];
             self.commentField.text = @"";
             self.commentSubmitButton.enabled = YES;
+            self.beTheFirstToCommentLabel.hidden = YES;
         } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
             NSLog(@"%@", error);
             self.commentSubmitButton.enabled = YES;
@@ -568,7 +572,9 @@
 }
 
 - (IBAction)addToGroceryList {
-    [[[GAI sharedInstance] defaultTracker] sendEventWithCategory:@"Recipe Detail" withAction:@"Add to Grocery List" withLabel:@"Add to Grocery List" withValue:[NSNumber numberWithInt:1]];
+    
+    [[[GAI sharedInstance] defaultTracker] send:[[GAIDictionaryBuilder createEventWithCategory:@"Recipe Detail" action:@"Addo to Grocery List" label:@"Add to Grocery List" value:[NSNumber numberWithInt:1]] build]];
+//    [[[GAI sharedInstance] defaultTracker] sendEventWithCategory:@"Recipe Detail" withAction:@"Add to Grocery List" withLabel:@"Add to Grocery List" withValue:[NSNumber numberWithInt:1]];
     NSString *path = @"groceries";
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -649,13 +655,17 @@
     if ([segue.identifier isEqualToString:@"Profile"]) {
         FrecipeProfileViewController *destinationViewController = segue.destinationViewController;
         destinationViewController.userId = [NSString stringWithFormat:@"%@", [self.user objectForKey:@"id"]];
-        destinationViewController.navigationItem.leftBarButtonItem = nil;
         destinationViewController.fromSegue = YES;
-        self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:self.title style:UIBarButtonItemStyleBordered target:destinationViewController action:@selector(popViewControllerFromStack)];
         
-        self.navigationItem.backBarButtonItem.image = [UIImage imageNamed:@"back_arrow.png"];
+//        destinationViewController.navigationItem.leftBarButtonItem = nil;
+//        self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:self.title style:UIBarButtonItemStyleBordered target:destinationViewController action:@selector(popViewControllerFromStack)];
+//        
+//        self.navigationItem.backBarButtonItem.image = [UIImage imageNamed:@"back_arrow.png"];
     } else if ([segue.identifier isEqualToString:@"EditRecipe"]) {
-        FrecipeAddRecipeViewController *destinationController = segue.destinationViewController;
+        
+        UINavigationController *navigationController = (UINavigationController *)segue.destinationViewController;
+        
+        FrecipeAddRecipeViewController *destinationController = navigationController.childViewControllers.firstObject;
         
         destinationController.recipeId = self.recipeId;
         destinationController.ingredients = [[NSMutableArray alloc] init];
@@ -671,7 +681,9 @@
         destinationController.editing = @"1";
         
         if (destinationController.view) {
-            destinationController.navigationBar.topItem.title = self.title;
+//            destinationController.navigationBar.topItem.title = self.title;
+            
+            destinationController.title = self.title;
             destinationController.recipeNameField.text = self.title;
             [destinationController.recipeImageButton setImage:self.recipeImageView.image forState:UIControlStateNormal];
         }

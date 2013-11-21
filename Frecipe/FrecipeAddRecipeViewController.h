@@ -10,7 +10,6 @@
 #import <MLPAutoCompleteTextField/MLPAutoCompleteTextField.h>
 #import <MLPAutoCompleteTextField/MLPAutoCompleteTextFieldDataSource.h>
 #import <MLPAutoCompleteTextField/MLPAutoCompleteTextFieldDelegate.h>
-#import <GAITrackedViewController.h>
 
 @interface FrecipeAddRecipeViewController : GAITrackedViewController
 

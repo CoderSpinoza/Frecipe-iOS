@@ -7,7 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <GAITrackedViewController.h>
 @interface FrecipeProfileDetailViewController : GAITrackedViewController
 @property (strong, nonatomic) NSString *segueIdentifier;
 @property (strong, nonatomic) NSMutableArray *recipes;
